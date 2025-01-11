@@ -1193,6 +1193,56 @@ textarea.form-input {
     text-align: center;
 }
 
+/* Table Column Widths */
+.companies-table th:not(.description-col),
+.companies-table td:not(.description-cell) {
+    white-space: nowrap;
+}
+
+.companies-table .name-col {
+    min-width: 180px;
+}
+
+.companies-table .industry-col {
+    min-width: 150px;
+}
+
+.companies-table .stage-col {
+    min-width: 120px;
+}
+
+/* Description Cell */
+.description-cell {
+    max-width: 300px;
+    text-align: left;
+}
+
+.description-content {
+    position: relative;
+}
+
+.description-text {
+    display: block;
+    max-height: 48px;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+
+.read-more-btn {
+    display: none;
+    background: none;
+    border: none;
+    color: var(--teal);
+    font-size: 0.85rem;
+    padding: 4px 0;
+    cursor: pointer;
+    margin-top: 4px;
+}
+
+.read-more-btn:hover {
+    text-decoration: underline;
+}
+
 /* Icons */
 .companies-table a {
     color: #6c757d;
@@ -1250,37 +1300,6 @@ textarea.form-input {
 .rating-d {
     background-color: #EF4444;
     color: white;
-}
-
-/* Description Cell */
-.description-cell {
-    max-width: 300px;
-}
-
-.description-content {
-    position: relative;
-}
-
-.description-text {
-    display: block;
-    max-height: 48px;
-    overflow: hidden;
-    transition: max-height 0.3s ease;
-}
-
-.read-more-btn {
-    display: none;
-    background: none;
-    border: none;
-    color: var(--teal);
-    font-size: 0.85rem;
-    padding: 4px 0;
-    cursor: pointer;
-    margin-top: 4px;
-}
-
-.read-more-btn:hover {
-    text-decoration: underline;
 }
 
 /* Pagination */

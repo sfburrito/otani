@@ -177,11 +177,11 @@
                             <span>Rating</span>
                             <i class="fas fa-sort"></i>
                         </th>
-                        <th scope="col" class="sortable" data-sort="name" aria-sort="none">
+                        <th scope="col" class="sortable text-center" data-sort="name" aria-sort="none">
                             <span>Company Name</span>
                             <i class="fas fa-sort"></i>
                         </th>
-                        <th scope="col" class="sortable" data-sort="industry" aria-sort="none">
+                        <th scope="col" class="sortable text-center" data-sort="industry" aria-sort="none">
                             <span>Industry</span>
                             <i class="fas fa-sort"></i>
                         </th>
@@ -402,8 +402,8 @@ function renderCompanies(companies) {
             <td class="rating-col text-center" data-label="Rating">
                 ${company.rating ? `<span class="rating-badge rating-${company.rating.toLowerCase()}">${company.rating}</span>` : ''}
             </td>
-            <td data-label="Company Name">${company.name}</td>
-            <td data-label="Industry">${company.industry}</td>
+            <td class="text-center" data-label="Company Name">${company.name}</td>
+            <td class="text-center" data-label="Industry">${company.industry}</td>
             <td class="text-center" data-label="Stage">${company.stage}</td>
             <td class="icon-cell" data-label="Website">
                 ${company.website ? `
@@ -426,7 +426,7 @@ function renderCompanies(companies) {
                 </div>
             </td>
         `;
-
+        
         // Add read more functionality
         const readMoreBtn = row.querySelector('.read-more-btn');
         const descriptionText = row.querySelector('.description-text');
