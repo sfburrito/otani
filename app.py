@@ -28,8 +28,8 @@ database_url = os.environ.get('DATABASE_URL', 'sqlite:///otani.db')
 app.logger.info(f'Initial DATABASE_URL: {database_url}')
 
 # Fix for SQLAlchemy URI format for PostgreSQL on Render
-if database_url.startswith('postgres://'):
-    database_url = database_url.replace('postgres://', 'postgresql://', 1)
+if database_url and database_url.startswith("postgres://"):
+    database_url = database_url.replace("postgres://", "postgresql://", 1)
     app.logger.info(f'Modified DATABASE_URL: {database_url}')
 
 app.config['SQLALCHEMY_DATABASE_URI'] = database_url
@@ -71,16 +71,20 @@ def init_db():
     """Initialize the database."""
     app.logger.info('Creating database tables...')
     try:
-        db.create_all()
-        app.logger.info('Database tables created successfully')
+        with app.app_context():
+            db.create_all()
+            app.logger.info('Database tables created successfully')
     except Exception as e:
         app.logger.error(f'Error creating database tables: {str(e)}')
         app.logger.error(traceback.format_exc())
         raise
 
 # Initialize database tables
-with app.app_context():
+try:
     init_db()
+except Exception as e:
+    app.logger.error(f'Failed to initialize database: {str(e)}')
+    app.logger.error('This is expected during the build phase on Render')
 
 @login_manager.user_loader
 def load_user(id):
