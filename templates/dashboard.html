@@ -2,13 +2,6 @@
 
 {% block content %}
 <div class="dashboard-container">
-    <div class="dashboard-header">
-        <h2>Your Portfolio</h2>
-        <button class="btn btn-primary" onclick="openModal()">
-            <i class="fas fa-plus"></i> Add Company
-        </button>
-    </div>
-
     <div class="preferences-panel" data-aos="fade-up">
         <div class="preferences-header">
             <h3>Investment Preferences</h3>
@@ -73,6 +66,13 @@
             <button class="btn btn-outline" onclick="resetPreferences()">Reset</button>
             <button class="btn btn-primary" onclick="savePreferences()">Save Preferences</button>
         </div>
+    </div>
+
+    <div class="dashboard-header">
+        <h2>Your Portfolio</h2>
+        <button class="btn btn-primary" onclick="openModal()">
+            <i class="fas fa-plus"></i> Add Company
+        </button>
     </div>
 
     <div class="company-list">
@@ -188,11 +188,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Initialize Select2 for multi-select dropdowns
+    // Initialize Select2
     $('.form-select').select2({
         theme: 'custom',
         closeOnSelect: false,
-        allowClear: true
+        allowClear: true,
+        width: '100%'
     });
 
     // Initialize AOS
@@ -219,7 +220,6 @@ function togglePreferences() {
 }
 
 function savePreferences() {
-    // TODO: Implement save functionality
     const toast = document.createElement('div');
     toast.className = 'toast success';
     toast.textContent = 'Preferences saved successfully';
