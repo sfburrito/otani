@@ -140,6 +140,16 @@
                 </div>
             </div>
         </div>
+
+        <div class="additional-preferences">
+            <label class="preference-label" for="additionalPrefs">Additional Preferences</label>
+            <textarea 
+                id="additionalPrefs" 
+                class="preference-textarea" 
+                placeholder="Enter any additional preferences, criteria, or notes not covered above (e.g., specific technologies, founder backgrounds, impact goals). This information will help us better understand your unique investment strategy."
+                rows="4"
+            ></textarea>
+        </div>
     </div>
 
     <div class="section-header">
@@ -302,6 +312,13 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+
+    // Initialize auto-expanding textarea
+    const textarea = document.getElementById('additionalPrefs');
+    textarea.addEventListener('input', function() {
+        this.style.height = 'auto';
+        this.style.height = (this.scrollHeight) + 'px';
+    });
     
     // Initialize AOS
     AOS.init({
@@ -311,12 +328,16 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function savePreferences() {
-    const preferences = {};
+    const preferences = {
+        categories: {},
+        additional: document.getElementById('additionalPrefs').value
+    };
+
     document.querySelectorAll('.custom-select').forEach(select => {
         const category = select.closest('.custom-select-container').querySelector('.preference-label').textContent;
         const selectedOptions = Array.from(select.querySelectorAll('input:checked'))
             .map(input => input.value);
-        preferences[category] = selectedOptions;
+        preferences.categories[category] = selectedOptions;
     });
     
     console.log('Saved preferences:', preferences);
@@ -339,6 +360,10 @@ function resetPreferences() {
         options.forEach(option => option.checked = false);
         selectedText.textContent = select.dataset.placeholder;
     });
+
+    const textarea = document.getElementById('additionalPrefs');
+    textarea.value = '';
+    textarea.style.height = 'auto';
 }
 
 function openModal() {
