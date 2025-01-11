@@ -118,27 +118,24 @@ def register():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('dashboard'))
+    
+    error = None
     if request.method == 'POST':
-        try:
-            email = request.form.get('email')
-            password = request.form.get('password')
-            
-            app.logger.info(f'Login attempt for email: {email}')
-            
-            user = User.query.filter_by(email=email).first()
-            if user and user.check_password(password):
-                login_user(user)
-                app.logger.info(f'Login successful for user: {email}')
-                return redirect(url_for('dashboard'))
-            
-            app.logger.warning(f'Login failed for user: {email}')
-            flash('Invalid email or password')
-        except Exception as e:
-            app.logger.error(f'Error during login: {str(e)}')
-            app.logger.error(traceback.format_exc())
-            flash('An error occurred during login')
-            
-    return render_template('login.html')
+        email = request.form.get('email')
+        password = request.form.get('password')
+        
+        user = User.query.filter_by(email=email).first()
+        if user and check_password_hash(user.password_hash, password):
+            login_user(user)
+            next_page = request.args.get('next')
+            return redirect(next_page or url_for('dashboard'))
+        else:
+            error = 'Invalid email or password'
+            flash(error)
+    
+    return render_template('login.html', error=error)
 
 @app.route('/dashboard')
 @login_required
