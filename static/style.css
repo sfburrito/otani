@@ -8,6 +8,7 @@
     --text-dark: #2C3E50;
     --shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     --transition: all 0.3s ease;
+    --navbar-height: 70px;
 }
 
 /* Reset and Base Styles */
@@ -337,6 +338,7 @@ p {
 /* Dashboard Styles */
 .dashboard-container {
     padding: 2rem;
+    padding-top: calc(var(--navbar-height) + 2rem);
     max-width: 1200px;
     margin: 0 auto;
 }
