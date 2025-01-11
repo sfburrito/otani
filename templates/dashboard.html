@@ -163,43 +163,48 @@
         </div>
     </div>
 
-    <div class="company-list">
-        {% for company in companies %}
-        <div class="company-row" data-aos="fade-up" data-aos-delay="{{ loop.index * 50 }}">
-            <div class="company-main">
-                <div class="company-title">
-                    <h3 class="company-name">{{ company.name }}</h3>
-                    <span class="company-stage">{{ company.stage }}</span>
-                </div>
-                <div class="company-industry">{{ company.industry }}</div>
-                <p class="company-description">{{ company.description }}</p>
-            </div>
-            <div class="company-actions">
-                {% if company.website %}
-                <a href="{{ company.website }}" class="company-link" target="_blank">
-                    <i class="fas fa-globe"></i> Website
-                </a>
-                {% endif %}
-                {% if company.contact_email %}
-                <a href="mailto:{{ company.contact_email }}" class="company-link">
-                    <i class="fas fa-envelope"></i> Contact
-                </a>
-                {% endif %}
-                <div class="company-date">
-                    <i class="fas fa-calendar"></i> {{ company.created_at.strftime('%Y-%m-%d') }}
-                </div>
-            </div>
+    <div class="companies-section">
+        <div class="search-bar">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" id="companySearch" placeholder="Search companies..." aria-label="Search companies">
         </div>
-        {% else %}
-        <div class="empty-state" data-aos="fade-up">
-            <i class="fas fa-folder-open"></i>
-            <h3>No Companies Yet</h3>
-            <p>Start building your portfolio by adding your first company.</p>
-            <button class="btn btn-primary mt-4" onclick="openModal()">
-                <i class="fas fa-plus"></i> Add Your First Company
+
+        <div class="table-responsive">
+            <table class="companies-table" aria-label="Companies List">
+                <thead>
+                    <tr>
+                        <th scope="col" class="sortable" data-sort="name" aria-sort="none">
+                            <span>Company Name</span>
+                            <i class="fas fa-sort"></i>
+                        </th>
+                        <th scope="col" class="sortable" data-sort="industry" aria-sort="none">
+                            <span>Industry</span>
+                            <i class="fas fa-sort"></i>
+                        </th>
+                        <th scope="col" class="sortable text-center" data-sort="stage" aria-sort="none">
+                            <span>Stage</span>
+                            <i class="fas fa-sort"></i>
+                        </th>
+                        <th scope="col">Website</th>
+                        <th scope="col">Email</th>
+                        <th scope="col" class="description-col">Description</th>
+                    </tr>
+                </thead>
+                <tbody id="companiesTableBody">
+                    <!-- Table rows will be dynamically populated -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="pagination">
+            <button class="btn btn-outline btn-sm" id="prevPage" aria-label="Previous page">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <span id="pageInfo">Page <span id="currentPage">1</span> of <span id="totalPages">1</span></span>
+            <button class="btn btn-outline btn-sm" id="nextPage" aria-label="Next page">
+                <i class="fas fa-chevron-right"></i>
             </button>
         </div>
-        {% endfor %}
     </div>
 </div>
 
@@ -325,7 +330,145 @@ document.addEventListener('DOMContentLoaded', function() {
         duration: 800,
         once: true
     });
+
+    // Table sorting functionality
+    const sortableHeaders = document.querySelectorAll('.sortable');
+    sortableHeaders.forEach(header => {
+        header.addEventListener('click', () => {
+            const currentSort = header.getAttribute('aria-sort');
+            
+            // Reset all other headers
+            sortableHeaders.forEach(h => {
+                h.setAttribute('aria-sort', 'none');
+                h.querySelector('i').className = 'fas fa-sort';
+            });
+            
+            // Set new sort direction
+            let newSort = 'ascending';
+            if (currentSort === 'ascending') {
+                newSort = 'descending';
+            }
+            
+            header.setAttribute('aria-sort', newSort);
+            header.querySelector('i').className = `fas fa-sort-${newSort === 'ascending' ? 'up' : 'down'}`;
+            
+            sortTable(header.dataset.sort, newSort === 'ascending');
+        });
+    });
+
+    // Search functionality
+    const searchInput = document.getElementById('companySearch');
+    let searchTimeout;
+    searchInput.addEventListener('input', () => {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+            filterCompanies(searchInput.value.toLowerCase());
+        }, 300);
+    });
+
+    // Initialize table data
+    loadCompanies();
 });
+
+function loadCompanies() {
+    // Sample data - replace with actual API call
+    const companies = [
+        {
+            name: 'TechCorp',
+            industry: 'Software',
+            stage: 'Series A',
+            website: 'https://techcorp.com',
+            email: 'contact@techcorp.com',
+            description: 'Leading provider of enterprise software solutions...'
+        },
+        // Add more sample data
+    ];
+
+    renderCompanies(companies);
+}
+
+function renderCompanies(companies) {
+    const tbody = document.getElementById('companiesTableBody');
+    tbody.innerHTML = '';
+
+    companies.forEach(company => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${company.name}</td>
+            <td>${company.industry}</td>
+            <td class="text-center">${company.stage}</td>
+            <td>
+                ${company.website ? `
+                    <a href="${company.website}" target="_blank" rel="noopener noreferrer" aria-label="Visit ${company.name} website">
+                        <i class="fas fa-globe"></i>
+                    </a>
+                ` : ''}
+            </td>
+            <td>
+                ${company.email ? `
+                    <a href="mailto:${company.email}" aria-label="Email ${company.name}">
+                        <i class="fas fa-envelope"></i>
+                    </a>
+                ` : ''}
+            </td>
+            <td class="description-cell">
+                <div class="description-content">
+                    <span class="description-text">${company.description}</span>
+                    <button class="read-more-btn" aria-expanded="false">Read More</button>
+                </div>
+            </td>
+        `;
+
+        // Add read more functionality
+        const readMoreBtn = row.querySelector('.read-more-btn');
+        const descriptionText = row.querySelector('.description-text');
+        
+        if (descriptionText.scrollHeight > descriptionText.clientHeight) {
+            readMoreBtn.style.display = 'inline-block';
+            readMoreBtn.addEventListener('click', () => {
+                const isExpanded = readMoreBtn.getAttribute('aria-expanded') === 'true';
+                descriptionText.style.maxHeight = isExpanded ? null : descriptionText.scrollHeight + 'px';
+                readMoreBtn.textContent = isExpanded ? 'Read More' : 'Show Less';
+                readMoreBtn.setAttribute('aria-expanded', !isExpanded);
+            });
+        } else {
+            readMoreBtn.style.display = 'none';
+        }
+
+        tbody.appendChild(row);
+    });
+}
+
+function sortTable(column, ascending) {
+    const tbody = document.getElementById('companiesTableBody');
+    const rows = Array.from(tbody.querySelectorAll('tr'));
+    
+    rows.sort((a, b) => {
+        const aValue = a.children[getColumnIndex(column)].textContent;
+        const bValue = b.children[getColumnIndex(column)].textContent;
+        return ascending ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
+    });
+    
+    tbody.innerHTML = '';
+    rows.forEach(row => tbody.appendChild(row));
+}
+
+function getColumnIndex(column) {
+    const columns = {
+        'name': 0,
+        'industry': 1,
+        'stage': 2
+    };
+    return columns[column];
+}
+
+function filterCompanies(query) {
+    const rows = document.querySelectorAll('#companiesTableBody tr');
+    rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(query) ? '' : 'none';
+    });
+}
 
 function savePreferences() {
     const preferences = {
