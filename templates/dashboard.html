@@ -8,54 +8,130 @@
         </div>
         
         <div class="preferences-grid">
-            <div class="preference-group">
+            <div class="custom-select-container">
                 <label class="preference-label">Investment Stage</label>
-                <select class="form-select" multiple data-placeholder="Select stages">
-                    <option value="seed">Seed</option>
-                    <option value="series_a">Series A</option>
-                    <option value="series_b">Series B</option>
-                    <option value="series_c">Series C+</option>
-                    <option value="growth">Growth</option>
-                    <option value="late_stage">Late Stage</option>
-                </select>
+                <div class="custom-select" tabindex="0" data-placeholder="Select stages">
+                    <div class="select-trigger">
+                        <span class="selected-text">Select stages</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="custom-options">
+                        <label class="option-item">
+                            <input type="checkbox" value="seed"> Seed
+                        </label>
+                        <label class="option-item">
+                            <input type="checkbox" value="series_a"> Series A
+                        </label>
+                        <label class="option-item">
+                            <input type="checkbox" value="series_b"> Series B
+                        </label>
+                        <label class="option-item">
+                            <input type="checkbox" value="series_c"> Series C+
+                        </label>
+                        <label class="option-item">
+                            <input type="checkbox" value="growth"> Growth
+                        </label>
+                        <label class="option-item">
+                            <input type="checkbox" value="late_stage"> Late Stage
+                        </label>
+                    </div>
+                </div>
             </div>
 
-            <div class="preference-group">
+            <div class="custom-select-container">
                 <label class="preference-label">Industry Sectors</label>
-                <select class="form-select" multiple data-placeholder="Select industries">
-                    <option value="ai_ml">AI/Machine Learning</option>
-                    <option value="fintech">Fintech</option>
-                    <option value="healthcare">Healthcare/Biotech</option>
-                    <option value="saas">Enterprise SaaS</option>
-                    <option value="consumer">Consumer Tech</option>
-                    <option value="cleantech">Cleantech/Sustainability</option>
-                    <option value="cybersecurity">Cybersecurity</option>
-                    <option value="ecommerce">E-commerce</option>
-                    <option value="edtech">EdTech</option>
-                    <option value="gaming">Gaming</option>
-                </select>
+                <div class="custom-select" tabindex="0" data-placeholder="Select industries">
+                    <div class="select-trigger">
+                        <span class="selected-text">Select industries</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="custom-options">
+                        <label class="option-item">
+                            <input type="checkbox" value="ai_ml"> AI/Machine Learning
+                        </label>
+                        <label class="option-item">
+                            <input type="checkbox" value="fintech"> Fintech
+                        </label>
+                        <label class="option-item">
+                            <input type="checkbox" value="healthcare"> Healthcare/Biotech
+                        </label>
+                        <label class="option-item">
+                            <input type="checkbox" value="saas"> Enterprise SaaS
+                        </label>
+                        <label class="option-item">
+                            <input type="checkbox" value="consumer"> Consumer Tech
+                        </label>
+                        <label class="option-item">
+                            <input type="checkbox" value="cleantech"> Cleantech/Sustainability
+                        </label>
+                        <label class="option-item">
+                            <input type="checkbox" value="cybersecurity"> Cybersecurity
+                        </label>
+                        <label class="option-item">
+                            <input type="checkbox" value="ecommerce"> E-commerce
+                        </label>
+                        <label class="option-item">
+                            <input type="checkbox" value="edtech"> EdTech
+                        </label>
+                        <label class="option-item">
+                            <input type="checkbox" value="gaming"> Gaming
+                        </label>
+                    </div>
+                </div>
             </div>
 
-            <div class="preference-group">
+            <div class="custom-select-container">
                 <label class="preference-label">Geographic Focus</label>
-                <select class="form-select" multiple data-placeholder="Select regions">
-                    <option value="north_america">North America</option>
-                    <option value="europe">Europe</option>
-                    <option value="asia_pacific">Asia-Pacific</option>
-                    <option value="latam">Latin America</option>
-                    <option value="mea">Middle East and Africa</option>
-                </select>
+                <div class="custom-select" tabindex="0" data-placeholder="Select regions">
+                    <div class="select-trigger">
+                        <span class="selected-text">Select regions</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="custom-options">
+                        <label class="option-item">
+                            <input type="checkbox" value="north_america"> North America
+                        </label>
+                        <label class="option-item">
+                            <input type="checkbox" value="europe"> Europe
+                        </label>
+                        <label class="option-item">
+                            <input type="checkbox" value="asia_pacific"> Asia-Pacific
+                        </label>
+                        <label class="option-item">
+                            <input type="checkbox" value="latam"> Latin America
+                        </label>
+                        <label class="option-item">
+                            <input type="checkbox" value="mea"> Middle East and Africa
+                        </label>
+                    </div>
+                </div>
             </div>
 
-            <div class="preference-group">
+            <div class="custom-select-container">
                 <label class="preference-label">Investment Size</label>
-                <select class="form-select" multiple data-placeholder="Select investment sizes">
-                    <option value="under_1m">< $1M</option>
-                    <option value="1m_5m">$1M - $5M</option>
-                    <option value="5m_20m">$5M - $20M</option>
-                    <option value="20m_50m">$20M - $50M</option>
-                    <option value="over_50m">$50M+</option>
-                </select>
+                <div class="custom-select" tabindex="0" data-placeholder="Select investment sizes">
+                    <div class="select-trigger">
+                        <span class="selected-text">Select investment sizes</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="custom-options">
+                        <label class="option-item">
+                            <input type="checkbox" value="under_1m"> < $1M
+                        </label>
+                        <label class="option-item">
+                            <input type="checkbox" value="1m_5m"> $1M - $5M
+                        </label>
+                        <label class="option-item">
+                            <input type="checkbox" value="5m_20m"> $5M - $20M
+                        </label>
+                        <label class="option-item">
+                            <input type="checkbox" value="20m_50m"> $20M - $50M
+                        </label>
+                        <label class="option-item">
+                            <input type="checkbox" value="over_50m"> $50M+
+                        </label>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -167,33 +243,61 @@
 </div>
 
 <script>
-function openModal() {
-    document.getElementById('addCompanyModal').style.display = 'flex';
-    document.body.style.overflow = 'hidden';
-}
-
-function closeModal() {
-    document.getElementById('addCompanyModal').style.display = 'none';
-    document.body.style.overflow = 'auto';
-}
-
 document.addEventListener('DOMContentLoaded', function() {
-    // Modal handling
-    window.onclick = function(event) {
-        if (event.target.classList.contains('modal')) {
-            closeModal();
-        }
-    }
-
-    // Initialize Select2
-    $('.form-select').select2({
-        theme: 'custom',
-        closeOnSelect: false,
-        allowClear: true,
-        width: '100%',
-        dropdownAutoWidth: true
+    // Initialize custom dropdowns
+    const customSelects = document.querySelectorAll('.custom-select');
+    
+    customSelects.forEach(select => {
+        const trigger = select.querySelector('.select-trigger');
+        const selectedText = select.querySelector('.selected-text');
+        const options = select.querySelectorAll('.option-item input');
+        const placeholder = select.dataset.placeholder;
+        
+        // Handle click outside
+        document.addEventListener('click', (e) => {
+            if (!select.contains(e.target)) {
+                select.classList.remove('open');
+            }
+        });
+        
+        // Toggle dropdown
+        trigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const isOpen = select.classList.contains('open');
+            
+            // Close all other dropdowns
+            customSelects.forEach(s => s.classList.remove('open'));
+            
+            // Toggle current dropdown
+            select.classList.toggle('open', !isOpen);
+        });
+        
+        // Handle option selection
+        options.forEach(option => {
+            option.addEventListener('change', () => {
+                const selectedOptions = Array.from(options)
+                    .filter(opt => opt.checked)
+                    .map(opt => opt.parentElement.textContent.trim());
+                
+                if (selectedOptions.length > 0) {
+                    selectedText.textContent = selectedOptions.join(', ');
+                } else {
+                    selectedText.textContent = placeholder;
+                }
+            });
+        });
+        
+        // Handle keyboard navigation
+        select.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                select.classList.toggle('open');
+            } else if (e.key === 'Escape') {
+                select.classList.remove('open');
+            }
+        });
     });
-
+    
     // Initialize AOS
     AOS.init({
         duration: 800,
@@ -202,6 +306,16 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function savePreferences() {
+    const preferences = {};
+    document.querySelectorAll('.custom-select').forEach(select => {
+        const category = select.closest('.custom-select-container').querySelector('.preference-label').textContent;
+        const selectedOptions = Array.from(select.querySelectorAll('input:checked'))
+            .map(input => input.value);
+        preferences[category] = selectedOptions;
+    });
+    
+    console.log('Saved preferences:', preferences);
+    
     const toast = document.createElement('div');
     toast.className = 'toast success';
     toast.textContent = 'Preferences saved successfully';
@@ -213,7 +327,29 @@ function savePreferences() {
 }
 
 function resetPreferences() {
-    $('.form-select').val(null).trigger('change');
+    document.querySelectorAll('.custom-select').forEach(select => {
+        const selectedText = select.querySelector('.selected-text');
+        const options = select.querySelectorAll('input');
+        
+        options.forEach(option => option.checked = false);
+        selectedText.textContent = select.dataset.placeholder;
+    });
+}
+
+function openModal() {
+    document.getElementById('addCompanyModal').style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+    document.getElementById('addCompanyModal').style.display = 'none';
+    document.body.style.overflow = 'auto';
+}
+
+window.onclick = function(event) {
+    if (event.target.classList.contains('modal')) {
+        closeModal();
+    }
 }
 </script>
 {% endblock %}
