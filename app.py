@@ -40,6 +40,33 @@ db = SQLAlchemy(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 
+def init_db():
+    """Initialize the database."""
+    app.logger.info('Creating database tables...')
+    try:
+        with app.app_context():
+            # Check if tables exist
+            inspector = db.inspect(db.engine)
+            existing_tables = inspector.get_table_names()
+            app.logger.info(f'Existing tables: {existing_tables}')
+            
+            if 'users' not in existing_tables or 'companies' not in existing_tables:
+                app.logger.info('Creating missing tables...')
+                db.create_all()
+                app.logger.info('Database tables created successfully')
+            else:
+                app.logger.info('Tables already exist')
+    except Exception as e:
+        app.logger.error(f'Error during database initialization: {str(e)}')
+        app.logger.error(traceback.format_exc())
+        raise
+
+@app.before_first_request
+def ensure_tables():
+    """Ensure database tables exist before handling any requests."""
+    app.logger.info('Checking database tables before first request...')
+    init_db()
+
 # Define models
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
@@ -66,25 +93,6 @@ class Company(db.Model):
     notes = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-
-def init_db():
-    """Initialize the database."""
-    app.logger.info('Creating database tables...')
-    try:
-        with app.app_context():
-            db.create_all()
-            app.logger.info('Database tables created successfully')
-    except Exception as e:
-        app.logger.error(f'Error creating database tables: {str(e)}')
-        app.logger.error(traceback.format_exc())
-        raise
-
-# Initialize database tables
-try:
-    init_db()
-except Exception as e:
-    app.logger.error(f'Failed to initialize database: {str(e)}')
-    app.logger.error('This is expected during the build phase on Render')
 
 @login_manager.user_loader
 def load_user(id):
