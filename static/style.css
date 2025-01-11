@@ -467,6 +467,7 @@ p {
     bottom: 0;
     background: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(5px);
+    z-index: 1050;
 }
 
 .modal-container {
@@ -481,6 +482,7 @@ p {
     display: flex;
     flex-direction: column;
     animation: modalSlideIn 0.3s ease;
+    z-index: 1051;
 }
 
 .modal-header {

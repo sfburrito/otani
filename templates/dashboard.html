@@ -402,6 +402,8 @@ function renderCompanies(companies) {
 
     companies.forEach(company => {
         const row = document.createElement('tr');
+        row.style.cursor = 'pointer';
+        row.addEventListener('click', () => openCompanyDetails(company.name));
         row.innerHTML = `
             <td class="rating-col text-center" data-label="Rating">
                 ${company.rating ? `<span class="rating-badge rating-${company.rating.toLowerCase()}">${company.rating}</span>` : ''}
