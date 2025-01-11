@@ -1075,7 +1075,7 @@ textarea.form-input {
 }
 
 .preference-textarea::placeholder {
-    color: var(--gray);
+    color: #6B7280;
     font-size: 0.9rem;
-    opacity: 0.8;
+    opacity: 0.9;
 }
