@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for, flash, request
+from flask import Flask, render_template, redirect, url_for, flash, request, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -20,16 +20,7 @@ app.logger.setLevel(logging.INFO)
 
 # Configure app
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev')
-database_url = os.environ.get('DATABASE_URL')
-if not database_url:
-    app.logger.error('No DATABASE_URL provided')
-    raise ValueError('No DATABASE_URL provided')
-
-# Fix for SQLAlchemy URI format
-if database_url.startswith("postgres://"):
-    database_url = database_url.replace("postgres://", "postgresql://", 1)
-
-app.config['SQLALCHEMY_DATABASE_URI'] = database_url
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///otani.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialize extensions
@@ -63,11 +54,6 @@ class Company(db.Model):
     notes = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-
-# Create tables
-with app.app_context():
-    db.create_all()
-    app.logger.info('Database tables created')
 
 @login_manager.user_loader
 def load_user(id):
@@ -216,6 +202,11 @@ def add_company():
         flash('Error adding company. Please try again.')
         return redirect(url_for('dashboard'))
 
+@app.route('/static/<path:filename>')
+def serve_static(filename):
+    app.logger.info(f'Serving static file: {filename}')
+    return send_from_directory('static', filename)
+
 @app.errorhandler(404)
 def not_found_error(error):
     app.logger.error(f'Page not found: {request.url}')
@@ -229,4 +220,6 @@ def internal_error(error):
     return render_template('500.html'), 500
 
 if __name__ == '__main__':
+    with app.app_context():
+        db.create_all()
     app.run(debug=True)

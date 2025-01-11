@@ -1,12 +1,33 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-8 text-center">
-        <h1 class="display-4 mb-4">Welcome to Otani</h1>
-        <p class="lead">Your personal venture capital investment tracker</p>
-        <div class="mt-5">
+<div class="hero-section" data-aos="fade-up">
+    <div class="hero-content">
+        <h1 class="hero-title">Welcome to Otani</h1>
+        <p class="hero-subtitle">Your intelligent venture capital portfolio management platform</p>
+        <div class="hero-cta">
             <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg">Get Started</a>
+            <a href="{{ url_for('register') }}" class="btn btn-outline btn-lg">Create Account</a>
+        </div>
+    </div>
+</div>
+
+<div class="features-section">
+    <div class="grid">
+        <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
+            <i class="fas fa-chart-line"></i>
+            <h3>Portfolio Tracking</h3>
+            <p>Monitor your investments with real-time updates and comprehensive analytics</p>
+        </div>
+        <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
+            <i class="fas fa-search-dollar"></i>
+            <h3>Deal Flow</h3>
+            <p>Streamline your deal flow process with our intuitive management system</p>
+        </div>
+        <div class="feature-card" data-aos="fade-up" data-aos-delay="300">
+            <i class="fas fa-file-contract"></i>
+            <h3>Due Diligence</h3>
+            <p>Organize and track due diligence documents in one centralized location</p>
         </div>
     </div>
 </div>
