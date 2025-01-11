@@ -3,8 +3,14 @@
 {% block content %}
 <div class="dashboard-container">
     <div class="preferences-panel" data-aos="fade-up">
-        <div class="preferences-header">
-            <h3>Investment Preferences</h3>
+        <div class="section-header">
+            <div class="header-title">
+                <h3>Investment Preferences</h3>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-outline" onclick="resetPreferences()">Reset</button>
+                <button class="btn btn-primary" onclick="savePreferences()">Save Preferences</button>
+            </div>
         </div>
         
         <div class="preferences-grid">
@@ -134,18 +140,17 @@
                 </div>
             </div>
         </div>
-
-        <div class="preferences-footer">
-            <button class="btn btn-outline" onclick="resetPreferences()">Reset</button>
-            <button class="btn btn-primary" onclick="savePreferences()">Save Preferences</button>
-        </div>
     </div>
 
-    <div class="dashboard-header">
-        <h2>Your Portfolio</h2>
-        <button class="btn btn-primary" onclick="openModal()">
-            <i class="fas fa-plus"></i> Add Company
-        </button>
+    <div class="section-header">
+        <div class="header-title">
+            <h3>Your Companies</h3>
+        </div>
+        <div class="header-actions">
+            <button class="btn btn-primary" onclick="openModal()">
+                <i class="fas fa-plus"></i> Add Company
+            </button>
+        </div>
     </div>
 
     <div class="company-list">

@@ -703,22 +703,16 @@ textarea.form-input {
     }
 }
 
-/* Preferences Panel */
-.preferences-panel {
-    max-width: 1200px;
-    margin: 7rem auto 3rem;
-    padding: 0 1rem;
-    width: 100%;
-}
-
-.preferences-header {
+/* Section Headers */
+.section-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 2rem;
+    padding: 0 1rem;
 }
 
-.preferences-header h3 {
+.header-title h3 {
     margin: 0;
     color: var(--navy);
     font-size: 1.75rem;
@@ -729,11 +723,26 @@ textarea.form-input {
     -webkit-text-fill-color: transparent;
 }
 
+.header-actions {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+/* Preferences Panel */
+.preferences-panel {
+    max-width: 1200px;
+    margin: 7rem auto 3rem;
+    padding: 0;
+    width: 100%;
+}
+
 .preferences-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 1.5rem;
     margin-bottom: 1.5rem;
+    padding: 0 1rem;
 }
 
 .preference-label {
@@ -744,13 +753,45 @@ textarea.form-input {
     opacity: 0.9;
 }
 
-.preferences-footer {
-    display: flex;
-    justify-content: flex-end;
-    gap: 1rem;
-    padding-top: 1.5rem;
-    margin-top: 0.5rem;
-    border-top: 1px solid var(--light-gray);
+/* Company List */
+.company-list {
+    padding: 0 1rem;
+}
+
+@media (max-width: 1024px) {
+    .preferences-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .header-actions {
+        width: 100%;
+        justify-content: flex-end;
+    }
+}
+
+@media (max-width: 640px) {
+    .preferences-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .preferences-panel {
+        margin-top: 5rem;
+    }
+    
+    .header-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .header-actions .btn {
+        width: 100%;
+    }
 }
 
 /* Select2 Custom Theme */
@@ -823,22 +864,6 @@ textarea.form-input {
 
 .select2-container--custom .select2-search--inline .select2-search__field {
     margin-top: 3px;
-}
-
-@media (max-width: 1024px) {
-    .preferences-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-@media (max-width: 640px) {
-    .preferences-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .preferences-panel {
-        margin-top: 5rem;
-    }
 }
 
 /* Custom Dropdowns */
