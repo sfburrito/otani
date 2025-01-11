@@ -9,6 +9,72 @@
         </button>
     </div>
 
+    <div class="preferences-panel" data-aos="fade-up">
+        <div class="preferences-header">
+            <h3>Investment Preferences</h3>
+            <button class="btn-icon" onclick="togglePreferences()" id="togglePrefs">
+                <i class="fas fa-chevron-up"></i>
+            </button>
+        </div>
+        
+        <div class="preferences-grid" id="preferencesGrid">
+            <div class="preference-group">
+                <label class="preference-label">Investment Stage</label>
+                <select class="form-select" multiple data-placeholder="Select stages">
+                    <option value="seed">Seed</option>
+                    <option value="series_a">Series A</option>
+                    <option value="series_b">Series B</option>
+                    <option value="series_c">Series C+</option>
+                    <option value="growth">Growth</option>
+                    <option value="late_stage">Late Stage</option>
+                </select>
+            </div>
+
+            <div class="preference-group">
+                <label class="preference-label">Industry Sectors</label>
+                <select class="form-select" multiple data-placeholder="Select industries">
+                    <option value="ai_ml">AI/Machine Learning</option>
+                    <option value="fintech">Fintech</option>
+                    <option value="healthcare">Healthcare/Biotech</option>
+                    <option value="saas">Enterprise SaaS</option>
+                    <option value="consumer">Consumer Tech</option>
+                    <option value="cleantech">Cleantech/Sustainability</option>
+                    <option value="cybersecurity">Cybersecurity</option>
+                    <option value="ecommerce">E-commerce</option>
+                    <option value="edtech">EdTech</option>
+                    <option value="gaming">Gaming</option>
+                </select>
+            </div>
+
+            <div class="preference-group">
+                <label class="preference-label">Geographic Focus</label>
+                <select class="form-select" multiple data-placeholder="Select regions">
+                    <option value="north_america">North America</option>
+                    <option value="europe">Europe</option>
+                    <option value="asia_pacific">Asia-Pacific</option>
+                    <option value="latam">Latin America</option>
+                    <option value="mea">Middle East and Africa</option>
+                </select>
+            </div>
+
+            <div class="preference-group">
+                <label class="preference-label">Investment Size</label>
+                <select class="form-select" multiple data-placeholder="Select investment sizes">
+                    <option value="under_1m">< $1M</option>
+                    <option value="1m_5m">$1M - $5M</option>
+                    <option value="5m_20m">$5M - $20M</option>
+                    <option value="20m_50m">$20M - $50M</option>
+                    <option value="over_50m">$50M+</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="preferences-footer">
+            <button class="btn btn-outline" onclick="resetPreferences()">Reset</button>
+            <button class="btn btn-primary" onclick="savePreferences()">Save Preferences</button>
+        </div>
+    </div>
+
     <div class="company-list">
         {% for company in companies %}
         <div class="company-row" data-aos="fade-up" data-aos-delay="{{ loop.index * 50 }}">
@@ -74,7 +140,7 @@
                         <option value="Seed">Seed</option>
                         <option value="Series A">Series A</option>
                         <option value="Series B">Series B</option>
-                        <option value="Series C">Series C</option>
+                        <option value="Series C">Series C+</option>
                         <option value="Growth">Growth</option>
                     </select>
                 </div>
@@ -122,11 +188,50 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Initialize Select2 for multi-select dropdowns
+    $('.form-select').select2({
+        theme: 'custom',
+        closeOnSelect: false,
+        allowClear: true
+    });
+
     // Initialize AOS
     AOS.init({
         duration: 800,
         once: true
     });
 });
+
+function togglePreferences() {
+    const grid = document.getElementById('preferencesGrid');
+    const btn = document.getElementById('togglePrefs');
+    const icon = btn.querySelector('i');
+    
+    if (grid.style.display === 'none') {
+        grid.style.display = 'grid';
+        icon.classList.remove('fa-chevron-down');
+        icon.classList.add('fa-chevron-up');
+    } else {
+        grid.style.display = 'none';
+        icon.classList.remove('fa-chevron-up');
+        icon.classList.add('fa-chevron-down');
+    }
+}
+
+function savePreferences() {
+    // TODO: Implement save functionality
+    const toast = document.createElement('div');
+    toast.className = 'toast success';
+    toast.textContent = 'Preferences saved successfully';
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.remove();
+    }, 3000);
+}
+
+function resetPreferences() {
+    $('.form-select').val(null).trigger('change');
+}
 </script>
 {% endblock %}

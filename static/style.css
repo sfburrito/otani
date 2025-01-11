@@ -700,3 +700,145 @@ textarea.form-input {
         opacity: 1;
     }
 }
+
+/* Preferences Panel */
+.preferences-panel {
+    background: var(--white);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow);
+}
+
+.preferences-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.preferences-header h3 {
+    margin: 0;
+    color: var(--navy);
+    font-size: 1.25rem;
+}
+
+.btn-icon {
+    background: none;
+    border: none;
+    color: var(--navy);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-icon:hover {
+    background: var(--gray);
+}
+
+.preferences-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.preference-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.preference-label {
+    font-weight: 500;
+    color: var(--navy);
+}
+
+.preferences-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--gray);
+}
+
+/* Select2 Custom Theme */
+.select2-container--custom {
+    width: 100% !important;
+}
+
+.select2-container--custom .select2-selection--multiple {
+    border: 1px solid var(--gray);
+    border-radius: 6px;
+    min-height: 38px;
+    padding: 0.25rem;
+}
+
+.select2-container--custom .select2-selection--multiple .select2-selection__choice {
+    background: var(--teal);
+    color: var(--white);
+    border: none;
+    border-radius: 20px;
+    padding: 2px 8px;
+    margin: 2px;
+}
+
+.select2-container--custom .select2-selection--multiple .select2-selection__choice__remove {
+    color: var(--white);
+    margin-right: 5px;
+}
+
+.select2-container--custom .select2-dropdown {
+    border-color: var(--gray);
+    box-shadow: var(--shadow);
+}
+
+.select2-container--custom .select2-results__option--highlighted[aria-selected] {
+    background-color: var(--teal);
+}
+
+.select2-container--custom .select2-search__field {
+    margin-top: 0;
+}
+
+/* Toast Notifications */
+.toast {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    padding: 1rem 2rem;
+    border-radius: 6px;
+    color: var(--white);
+    font-weight: 500;
+    animation: slideIn 0.3s ease, fadeOut 0.3s ease 2.7s;
+    z-index: 1000;
+}
+
+.toast.success {
+    background: #10B981;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
