@@ -44,28 +44,21 @@ def init_db():
     """Initialize the database."""
     app.logger.info('Creating database tables...')
     try:
-        with app.app_context():
-            # Check if tables exist
-            inspector = db.inspect(db.engine)
-            existing_tables = inspector.get_table_names()
-            app.logger.info(f'Existing tables: {existing_tables}')
-            
-            if 'users' not in existing_tables or 'companies' not in existing_tables:
-                app.logger.info('Creating missing tables...')
-                db.create_all()
-                app.logger.info('Database tables created successfully')
-            else:
-                app.logger.info('Tables already exist')
+        # Check if tables exist
+        inspector = db.inspect(db.engine)
+        existing_tables = inspector.get_table_names()
+        app.logger.info(f'Existing tables: {existing_tables}')
+        
+        if 'users' not in existing_tables or 'companies' not in existing_tables:
+            app.logger.info('Creating missing tables...')
+            db.create_all()
+            app.logger.info('Database tables created successfully')
+        else:
+            app.logger.info('Tables already exist')
     except Exception as e:
         app.logger.error(f'Error during database initialization: {str(e)}')
         app.logger.error(traceback.format_exc())
         raise
-
-@app.before_first_request
-def ensure_tables():
-    """Ensure database tables exist before handling any requests."""
-    app.logger.info('Checking database tables before first request...')
-    init_db()
 
 # Define models
 class User(UserMixin, db.Model):
@@ -106,7 +99,9 @@ def load_user(id):
 # Routes
 @app.route('/')
 def index():
+    """Ensure database is initialized on first request."""
     try:
+        init_db()  # Initialize database tables if they don't exist
         if current_user.is_authenticated:
             return redirect(url_for('dashboard'))
         return render_template('index.html')
