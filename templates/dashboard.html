@@ -5,12 +5,9 @@
     <div class="preferences-panel" data-aos="fade-up">
         <div class="preferences-header">
             <h3>Investment Preferences</h3>
-            <button class="btn-icon" onclick="togglePreferences()" id="togglePrefs">
-                <i class="fas fa-chevron-up"></i>
-            </button>
         </div>
         
-        <div class="preferences-grid" id="preferencesGrid">
+        <div class="preferences-grid">
             <div class="preference-group">
                 <label class="preference-label">Investment Stage</label>
                 <select class="form-select" multiple data-placeholder="Select stages">
@@ -193,7 +190,8 @@ document.addEventListener('DOMContentLoaded', function() {
         theme: 'custom',
         closeOnSelect: false,
         allowClear: true,
-        width: '100%'
+        width: '100%',
+        dropdownAutoWidth: true
     });
 
     // Initialize AOS
@@ -202,22 +200,6 @@ document.addEventListener('DOMContentLoaded', function() {
         once: true
     });
 });
-
-function togglePreferences() {
-    const grid = document.getElementById('preferencesGrid');
-    const btn = document.getElementById('togglePrefs');
-    const icon = btn.querySelector('i');
-    
-    if (grid.style.display === 'none') {
-        grid.style.display = 'grid';
-        icon.classList.remove('fa-chevron-down');
-        icon.classList.add('fa-chevron-up');
-    } else {
-        grid.style.display = 'none';
-        icon.classList.remove('fa-chevron-up');
-        icon.classList.add('fa-chevron-down');
-    }
-}
 
 function savePreferences() {
     const toast = document.createElement('div');
