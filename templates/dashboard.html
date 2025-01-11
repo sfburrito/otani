@@ -173,6 +173,10 @@
             <table class="companies-table" aria-label="Companies List">
                 <thead>
                     <tr>
+                        <th scope="col" class="sortable rating-col text-center" data-sort="rating" aria-sort="none">
+                            <span>Rating</span>
+                            <i class="fas fa-sort"></i>
+                        </th>
                         <th scope="col" class="sortable" data-sort="name" aria-sort="none">
                             <span>Company Name</span>
                             <i class="fas fa-sort"></i>
@@ -379,7 +383,8 @@ function loadCompanies() {
             stage: 'Series A',
             website: 'https://techcorp.com',
             email: 'contact@techcorp.com',
-            description: 'Leading provider of enterprise software solutions...'
+            description: 'Leading provider of enterprise software solutions...',
+            rating: 'A'
         },
         // Add more sample data
     ];
@@ -394,24 +399,27 @@ function renderCompanies(companies) {
     companies.forEach(company => {
         const row = document.createElement('tr');
         row.innerHTML = `
-            <td>${company.name}</td>
-            <td>${company.industry}</td>
-            <td class="text-center">${company.stage}</td>
-            <td>
+            <td class="rating-col text-center" data-label="Rating">
+                ${company.rating ? `<span class="rating-badge rating-${company.rating.toLowerCase()}">${company.rating}</span>` : ''}
+            </td>
+            <td data-label="Company Name">${company.name}</td>
+            <td data-label="Industry">${company.industry}</td>
+            <td class="text-center" data-label="Stage">${company.stage}</td>
+            <td data-label="Website">
                 ${company.website ? `
                     <a href="${company.website}" target="_blank" rel="noopener noreferrer" aria-label="Visit ${company.name} website">
                         <i class="fas fa-globe"></i>
                     </a>
                 ` : ''}
             </td>
-            <td>
+            <td data-label="Email">
                 ${company.email ? `
                     <a href="mailto:${company.email}" aria-label="Email ${company.name}">
                         <i class="fas fa-envelope"></i>
                     </a>
                 ` : ''}
             </td>
-            <td class="description-cell">
+            <td class="description-cell" data-label="Description">
                 <div class="description-content">
                     <span class="description-text">${company.description}</span>
                     <button class="read-more-btn" aria-expanded="false">Read More</button>
@@ -455,9 +463,10 @@ function sortTable(column, ascending) {
 
 function getColumnIndex(column) {
     const columns = {
-        'name': 0,
-        'industry': 1,
-        'stage': 2
+        'rating': 0,
+        'name': 1,
+        'industry': 2,
+        'stage': 3
     };
     return columns[column];
 }

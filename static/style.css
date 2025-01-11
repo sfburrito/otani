@@ -1193,6 +1193,48 @@ textarea.form-input {
     text-align: center;
 }
 
+/* Rating Column */
+.rating-col {
+    width: 90px;
+    min-width: 90px;
+}
+
+.rating-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    line-height: 1;
+    text-align: center;
+    min-width: 32px;
+}
+
+.rating-a-plus {
+    background-color: #059669;
+    color: white;
+}
+
+.rating-a {
+    background-color: #10B981;
+    color: white;
+}
+
+.rating-b {
+    background-color: #3B82F6;
+    color: white;
+}
+
+.rating-c {
+    background-color: #F59E0B;
+    color: white;
+}
+
+.rating-d {
+    background-color: #EF4444;
+    color: white;
+}
+
 /* Description Cell */
 .description-cell {
     max-width: 300px;
@@ -1266,6 +1308,7 @@ textarea.form-input {
         border: 1px solid #dee2e6;
         border-radius: 6px;
         background: var(--white) !important;
+        position: relative;
     }
     
     .companies-table td {
@@ -1274,8 +1317,20 @@ textarea.form-input {
         border: none;
         position: relative;
     }
+
+    .rating-col {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        width: auto;
+        padding: 0 !important;
+    }
+
+    .rating-col::before {
+        display: none !important;
+    }
     
-    .companies-table td::before {
+    .companies-table td:not(.rating-col)::before {
         content: attr(data-label);
         font-weight: 600;
         margin-bottom: 4px;
