@@ -10,27 +10,24 @@ import traceback
 
 # Configure logging
 logging.basicConfig(
-    level=logging.DEBUG,
+    level=logging.INFO,
     format='%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'
 )
 
-# Initialize Flask app
+# Create Flask app
 app = Flask(__name__)
-app.logger.setLevel(logging.DEBUG)
-
-# Log basic configuration information
-app.logger.info('Starting application...')
-app.logger.info(f'Python version: {sys.version}')
+app.logger.setLevel(logging.INFO)
 
 # Configure app
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev')
-database_url = os.environ.get('DATABASE_URL', 'sqlite:///otani.db')
-app.logger.info(f'Initial DATABASE_URL: {database_url}')
+database_url = os.environ.get('DATABASE_URL')
+if not database_url:
+    app.logger.error('No DATABASE_URL provided')
+    raise ValueError('No DATABASE_URL provided')
 
-# Fix for SQLAlchemy URI format for PostgreSQL on Render
-if database_url and database_url.startswith("postgres://"):
+# Fix for SQLAlchemy URI format
+if database_url.startswith("postgres://"):
     database_url = database_url.replace("postgres://", "postgresql://", 1)
-    app.logger.info(f'Modified DATABASE_URL: {database_url}')
 
 app.config['SQLALCHEMY_DATABASE_URI'] = database_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -39,26 +36,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
-
-def init_db():
-    """Initialize the database."""
-    app.logger.info('Creating database tables...')
-    try:
-        # Check if tables exist
-        inspector = db.inspect(db.engine)
-        existing_tables = inspector.get_table_names()
-        app.logger.info(f'Existing tables: {existing_tables}')
-        
-        if 'users' not in existing_tables or 'companies' not in existing_tables:
-            app.logger.info('Creating missing tables...')
-            db.create_all()
-            app.logger.info('Database tables created successfully')
-        else:
-            app.logger.info('Tables already exist')
-    except Exception as e:
-        app.logger.error(f'Error during database initialization: {str(e)}')
-        app.logger.error(traceback.format_exc())
-        raise
 
 # Define models
 class User(UserMixin, db.Model):
@@ -87,29 +64,21 @@ class Company(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
+# Create tables
+with app.app_context():
+    db.create_all()
+    app.logger.info('Database tables created')
+
 @login_manager.user_loader
 def load_user(id):
-    try:
-        return User.query.get(int(id))
-    except Exception as e:
-        app.logger.error(f'Error loading user: {str(e)}')
-        app.logger.error(traceback.format_exc())
-        return None
+    return User.query.get(int(id))
 
 # Routes
 @app.route('/')
 def index():
-    """Ensure database is initialized on first request."""
-    try:
-        init_db()  # Initialize database tables if they don't exist
-        if current_user.is_authenticated:
-            return redirect(url_for('dashboard'))
-        return render_template('index.html')
-    except Exception as e:
-        app.logger.error(f'Error in index route: {str(e)}')
-        app.logger.error(traceback.format_exc())
-        flash('An unexpected error occurred')
-        return render_template('index.html')
+    if current_user.is_authenticated:
+        return redirect(url_for('dashboard'))
+    return render_template('index.html')
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
