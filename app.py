@@ -42,7 +42,7 @@ class User(UserMixin, db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    password_hash = db.Column(db.String(128))
+    password_hash = db.Column(db.String(256))  # Increased from 128 to 256 for scrypt hashes
     companies = db.relationship('Company', backref='analyst', lazy=True)
 
     def set_password(self, password):
