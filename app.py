@@ -88,7 +88,7 @@ def register():
             password = request.form.get('password')
             confirm_password = request.form.get('confirm_password')
 
-            app.logger.info(f'Registration attempt for email: {email}')
+            app.logger.info(f'Starting registration process for email: {email}')
 
             # Check if user already exists
             user_exists = User.query.filter_by(email=email).first()
@@ -104,19 +104,26 @@ def register():
                 return redirect(url_for('register'))
 
             # Create new user
+            app.logger.info('Creating new user...')
             new_user = User(email=email)
             new_user.set_password(password)
             
+            app.logger.info('Adding user to database...')
             db.session.add(new_user)
             db.session.commit()
             app.logger.info(f'User registered successfully: {email}')
+            
+            app.logger.info('Logging in new user...')
             login_user(new_user)
             flash('Account created successfully!')
             return redirect(url_for('dashboard'))
 
         except Exception as e:
             db.session.rollback()
-            app.logger.error(f'Error during registration: {str(e)}')
+            app.logger.error('Registration error:')
+            app.logger.error(f'Error type: {type(e).__name__}')
+            app.logger.error(f'Error message: {str(e)}')
+            app.logger.error('Traceback:')
             app.logger.error(traceback.format_exc())
             flash('Error creating account. Please try again.')
             return redirect(url_for('register'))
