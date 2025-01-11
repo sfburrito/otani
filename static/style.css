@@ -452,105 +452,124 @@ p {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
-    align-items: center;
-    justify-content: center;
-    backdrop-filter: blur(4px);
+    z-index: 1050;
 }
 
-.modal-content {
+.modal.active {
+    display: block;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+}
+
+.modal-container {
+    position: relative;
+    width: 90%;
+    max-width: 1200px;
+    max-height: 90vh;
+    margin: 5vh auto;
     background: var(--white);
     border-radius: 8px;
-    width: 90%;
-    max-width: 800px;
-    max-height: 90vh;
-    overflow-y: auto;
-    position: relative;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+    animation: modalSlideIn 0.3s ease;
 }
 
 .modal-header {
-    padding: 1.5rem 2rem;
-    border-bottom: 1px solid var(--gray);
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    position: sticky;
-    top: 0;
-    background: var(--white);
-    z-index: 1;
+    justify-content: space-between;
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--light-gray);
 }
 
-.add-company-form {
-    padding: 2rem;
+.modal-header h2 {
+    margin: 0;
+    color: var(--navy);
+    font-size: 1.5rem;
+    font-weight: 600;
 }
 
-.form-grid {
+.modal-close {
+    background: none;
+    border: none;
+    color: var(--gray);
+    font-size: 1.25rem;
+    padding: 0.5rem;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.modal-close:hover {
+    color: var(--navy);
+}
+
+.modal-content {
+    padding: 1.5rem;
+    overflow-y: auto;
+    max-height: calc(90vh - 80px);
+}
+
+body.modal-open {
+    overflow: hidden;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Company Details Grid */
+.company-details-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 1.5rem;
-    margin-bottom: 1.5rem;
 }
 
-.form-group {
-    margin-bottom: 1.5rem;
-}
-
-.form-label {
-    display: block;
-    margin-bottom: 0.5rem;
-    color: var(--navy);
-    font-weight: 500;
-}
-
-.form-input {
-    width: 100%;
-    padding: 0.75rem 1rem;
-    border: 1px solid var(--gray);
-    border-radius: 6px;
-    font-size: 0.95rem;
-    transition: var(--transition);
-}
-
-.form-input:focus {
-    outline: none;
-    border-color: var(--teal);
-    box-shadow: 0 0 0 3px rgba(100, 255, 218, 0.1);
-}
-
-textarea.form-input {
-    min-height: 100px;
-    resize: vertical;
-}
-
-.modal-footer {
-    padding: 1.5rem 2rem;
-    border-top: 1px solid var(--gray);
-    display: flex;
-    justify-content: flex-end;
-    gap: 1rem;
-    position: sticky;
-    bottom: 0;
+.detail-section {
     background: var(--white);
-    z-index: 1;
+    border-radius: 6px;
+    padding: 1.5rem;
+    border: 1px solid var(--light-gray);
 }
 
+.detail-section.full-width {
+    grid-column: 1 / -1;
+}
+
+.detail-section h3 {
+    margin: 0 0 1rem;
+    color: var(--navy);
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+/* Responsive Design */
 @media (max-width: 768px) {
-    .form-grid {
+    .modal-container {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        max-height: 100vh;
+        border-radius: 0;
+    }
+
+    .company-details-grid {
         grid-template-columns: 1fr;
-        gap: 1rem;
-    }
-
-    .modal-content {
-        width: 95%;
-        margin: 1rem;
-        max-height: 85vh;
-    }
-
-    .modal-header,
-    .add-company-form,
-    .modal-footer {
-        padding: 1rem;
     }
 }
 
@@ -840,7 +859,7 @@ textarea.form-input {
     margin-top: 8px;
     border: none;
     border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
 .select2-container--custom .select2-results__option {
@@ -1374,5 +1393,87 @@ textarea.form-input {
     
     .read-more-btn {
         display: none !important;
+    }
+}
+
+/* Company Details Modal */
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+.info-item {
+    margin-bottom: 1rem;
+}
+
+.info-item label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--navy);
+    font-weight: 500;
+}
+
+.team-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.market-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.risks-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.risk-tag {
+    background: var(--light-gray);
+    color: var(--navy);
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.875rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.risk-tag button {
+    background: none;
+    border: none;
+    color: var(--gray);
+    padding: 0;
+    cursor: pointer;
+    font-size: 0.75rem;
+}
+
+.risk-tag button:hover {
+    color: var(--navy);
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .info-grid,
+    .market-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .team-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     }
 }
