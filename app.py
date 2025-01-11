@@ -56,6 +56,7 @@ except Exception as e:
     raise
 
 class User(UserMixin, db.Model):
+    __tablename__ = 'users'  # Explicitly set table name
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(128))
@@ -68,6 +69,7 @@ class User(UserMixin, db.Model):
         return check_password_hash(self.password_hash, password)
 
 class Company(db.Model):
+    __tablename__ = 'companies'  # Explicitly set table name
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     industry = db.Column(db.String(100))
@@ -77,7 +79,7 @@ class Company(db.Model):
     contact_email = db.Column(db.String(120))
     notes = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)  # Updated to match new table name
 
 @login_manager.user_loader
 def load_user(id):
