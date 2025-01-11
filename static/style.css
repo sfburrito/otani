@@ -1193,6 +1193,23 @@ textarea.form-input {
     text-align: center;
 }
 
+/* Icons */
+.companies-table a {
+    color: #6c757d;
+    font-size: 1rem;
+    transition: color 0.2s ease;
+}
+
+.companies-table a:hover {
+    color: var(--teal);
+}
+
+.icon-cell {
+    text-align: center;
+    width: 80px;
+    min-width: 80px;
+}
+
 /* Rating Column */
 .rating-col {
     width: 90px;
@@ -1264,17 +1281,6 @@ textarea.form-input {
 
 .read-more-btn:hover {
     text-decoration: underline;
-}
-
-/* Icons */
-.companies-table a {
-    color: #6c757d;
-    font-size: 1rem;
-    transition: color 0.2s ease;
-}
-
-.companies-table a:hover {
-    color: var(--teal);
 }
 
 /* Pagination */

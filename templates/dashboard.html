@@ -189,8 +189,8 @@
                             <span>Stage</span>
                             <i class="fas fa-sort"></i>
                         </th>
-                        <th scope="col">Website</th>
-                        <th scope="col">Email</th>
+                        <th scope="col" class="icon-cell">Website</th>
+                        <th scope="col" class="icon-cell">Email</th>
                         <th scope="col" class="description-col">Description</th>
                     </tr>
                 </thead>
@@ -405,14 +405,14 @@ function renderCompanies(companies) {
             <td data-label="Company Name">${company.name}</td>
             <td data-label="Industry">${company.industry}</td>
             <td class="text-center" data-label="Stage">${company.stage}</td>
-            <td data-label="Website">
+            <td class="icon-cell" data-label="Website">
                 ${company.website ? `
                     <a href="${company.website}" target="_blank" rel="noopener noreferrer" aria-label="Visit ${company.name} website">
                         <i class="fas fa-globe"></i>
                     </a>
                 ` : ''}
             </td>
-            <td data-label="Email">
+            <td class="icon-cell" data-label="Email">
                 ${company.email ? `
                     <a href="mailto:${company.email}" aria-label="Email ${company.name}">
                         <i class="fas fa-envelope"></i>
