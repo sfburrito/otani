@@ -1,90 +1,115 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="row mb-4">
-    <div class="col">
-        <h2>Your Companies</h2>
-    </div>
-    <div class="col text-end">
-        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCompanyModal">
-            Add Company
-        </button>
-    </div>
+<div class="dashboard-header">
+    <h2>Your Portfolio</h2>
+    <button class="btn btn-primary" onclick="document.getElementById('addCompanyModal').style.display='flex'">
+        <i class="fas fa-plus"></i> Add Company
+    </button>
 </div>
 
-<div class="row">
+<div class="company-grid">
     {% for company in companies %}
-    <div class="col-md-6 mb-4">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">{{ company.name }}</h5>
-                <h6 class="card-subtitle mb-2 text-muted">{{ company.industry }}</h6>
-                <p class="card-text">{{ company.description }}</p>
-                <div class="mb-2">
-                    <span class="badge bg-info">{{ company.stage }}</span>
-                </div>
-                <a href="{{ company.website }}" class="card-link" target="_blank">Website</a>
-                <a href="mailto:{{ company.contact_email }}" class="card-link">Contact</a>
-            </div>
-            <div class="card-footer text-muted">
-                Added on {{ company.created_at.strftime('%Y-%m-%d') }}
-            </div>
+    <div class="company-card" data-aos="fade-up" data-aos-delay="{{ loop.index * 100 }}">
+        <div class="company-header">
+            <h3 class="company-name">{{ company.name }}</h3>
+            <span class="company-stage">{{ company.stage }}</span>
         </div>
+        <div class="company-industry">{{ company.industry }}</div>
+        <p class="company-description">{{ company.description }}</p>
+        <div class="company-links">
+            {% if company.website %}
+            <a href="{{ company.website }}" class="company-link" target="_blank">
+                <i class="fas fa-globe"></i> Website
+            </a>
+            {% endif %}
+            {% if company.contact_email %}
+            <a href="mailto:{{ company.contact_email }}" class="company-link">
+                <i class="fas fa-envelope"></i> Contact
+            </a>
+            {% endif %}
+        </div>
+        <div class="company-meta">
+            <span><i class="fas fa-calendar"></i> {{ company.created_at.strftime('%Y-%m-%d') }}</span>
+        </div>
+    </div>
+    {% else %}
+    <div class="empty-state" data-aos="fade-up">
+        <i class="fas fa-folder-open"></i>
+        <h3>No Companies Yet</h3>
+        <p>Start building your portfolio by adding your first company.</p>
     </div>
     {% endfor %}
 </div>
 
 <!-- Add Company Modal -->
-<div class="modal fade" id="addCompanyModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Add New Company</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+<div id="addCompanyModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Add New Company</h3>
+            <button type="button" class="close-modal" onclick="this.closest('.modal').style.display='none'">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <form class="add-company-form" method="POST" action="{{ url_for('add_company') }}">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label" for="name">Company Name</label>
+                    <input type="text" class="form-input" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="industry">Industry</label>
+                    <input type="text" class="form-input" id="industry" name="industry">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="stage">Stage</label>
+                    <select class="form-input" id="stage" name="stage">
+                        <option value="Seed">Seed</option>
+                        <option value="Series A">Series A</option>
+                        <option value="Series B">Series B</option>
+                        <option value="Series C">Series C</option>
+                        <option value="Growth">Growth</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="website">Website</label>
+                    <input type="url" class="form-input" id="website" name="website">
+                </div>
             </div>
-            <div class="modal-body">
-                <form id="addCompanyForm" method="POST" action="{{ url_for('add_company') }}">
-                    <div class="mb-3">
-                        <label for="name" class="form-label">Company Name</label>
-                        <input type="text" class="form-control" id="name" name="name" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="industry" class="form-label">Industry</label>
-                        <input type="text" class="form-control" id="industry" name="industry">
-                    </div>
-                    <div class="mb-3">
-                        <label for="description" class="form-label">Description</label>
-                        <textarea class="form-control" id="description" name="description" rows="3"></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label for="stage" class="form-label">Investment Stage</label>
-                        <select class="form-control" id="stage" name="stage">
-                            <option value="Seed">Seed</option>
-                            <option value="Series A">Series A</option>
-                            <option value="Series B">Series B</option>
-                            <option value="Series C">Series C</option>
-                            <option value="Late Stage">Late Stage</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="website" class="form-label">Website</label>
-                        <input type="url" class="form-control" id="website" name="website">
-                    </div>
-                    <div class="mb-3">
-                        <label for="contact_email" class="form-label">Contact Email</label>
-                        <input type="email" class="form-control" id="contact_email" name="contact_email">
-                    </div>
-                    <div class="mb-3">
-                        <label for="notes" class="form-label">Notes</label>
-                        <textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
-                    </div>
-                </form>
+            <div class="form-group">
+                <label class="form-label" for="description">Description</label>
+                <textarea class="form-input" id="description" name="description" rows="3"></textarea>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="contact_email">Contact Email</label>
+                <input type="email" class="form-input" id="contact_email" name="contact_email">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="notes">Notes</label>
+                <textarea class="form-input" id="notes" name="notes" rows="3"></textarea>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="submit" form="addCompanyForm" class="btn btn-primary">Add Company</button>
+                <button type="button" class="btn btn-outline" onclick="this.closest('.modal').style.display='none'">Cancel</button>
+                <button type="submit" class="btn btn-primary">Add Company</button>
             </div>
-        </div>
+        </form>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Modal handling
+    window.onclick = function(event) {
+        if (event.target.classList.contains('modal')) {
+            event.target.style.display = 'none';
+        }
+    }
+
+    // Initialize AOS
+    AOS.init({
+        duration: 800,
+        once: true
+    });
+});
+</script>
 {% endblock %}
