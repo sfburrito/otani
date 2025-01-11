@@ -65,6 +65,41 @@ def login():
         flash('Invalid email or password')
     return render_template('login.html')
 
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        email = request.form.get('email')
+        password = request.form.get('password')
+        confirm_password = request.form.get('confirm_password')
+
+        # Check if user already exists
+        user_exists = User.query.filter_by(email=email).first()
+        if user_exists:
+            flash('Email already registered')
+            return redirect(url_for('register'))
+
+        # Validate password match
+        if password != confirm_password:
+            flash('Passwords do not match')
+            return redirect(url_for('register'))
+
+        # Create new user
+        new_user = User(email=email)
+        new_user.set_password(password)
+        
+        try:
+            db.session.add(new_user)
+            db.session.commit()
+            login_user(new_user)
+            flash('Account created successfully!')
+            return redirect(url_for('dashboard'))
+        except Exception as e:
+            db.session.rollback()
+            flash('Error creating account. Please try again.')
+            return redirect(url_for('register'))
+
+    return render_template('register.html')
+
 @app.route('/logout')
 @login_required
 def logout():
