@@ -103,12 +103,53 @@ def index():
 @login_required
 def dashboard():
     try:
+        app.logger.info(f'User {current_user.email} accessing dashboard')
         companies = Company.query.filter_by(user_id=current_user.id).order_by(Company.created_at.desc()).all()
+        app.logger.info(f'Retrieved {len(companies)} companies for user {current_user.email}')
         return render_template('dashboard.html', companies=companies)
     except Exception as e:
-        app.logger.error(f'Error rendering dashboard page: {str(e)}')
+        app.logger.error(f'Error accessing dashboard for user {current_user.email}: {str(e)}')
         app.logger.error(traceback.format_exc())
-        return 'An unexpected error occurred. Please try again.'
+        flash('Error loading dashboard. Please try again.')
+        return redirect(url_for('index'))
+
+@app.route('/add_company', methods=['POST'])
+@login_required
+def add_company():
+    try:
+        app.logger.info(f'User {current_user.email} attempting to add new company')
+        name = request.form.get('name')
+        industry = request.form.get('industry')
+        description = request.form.get('description')
+        stage = request.form.get('stage')
+        website = request.form.get('website')
+        contact_email = request.form.get('contact_email')
+        notes = request.form.get('notes')
+
+        app.logger.debug(f'New company details - Name: {name}, Industry: {industry}, Stage: {stage}')
+
+        company = Company(
+            name=name,
+            industry=industry,
+            description=description,
+            stage=stage,
+            website=website,
+            contact_email=contact_email,
+            notes=notes,
+            user_id=current_user.id
+        )
+
+        db.session.add(company)
+        db.session.commit()
+        app.logger.info(f'Successfully added new company {name} for user {current_user.email}')
+        flash('Company added successfully!')
+        return redirect(url_for('dashboard'))
+    except Exception as e:
+        db.session.rollback()
+        app.logger.error(f'Error adding company for user {current_user.email}: {str(e)}')
+        app.logger.error(traceback.format_exc())
+        flash('Error adding company. Please try again.')
+        return redirect(url_for('dashboard'))
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -191,6 +232,18 @@ def logout():
         app.logger.error(traceback.format_exc())
         flash('An unexpected error occurred. Please try again.')
         return redirect(url_for('index'))
+
+@app.errorhandler(404)
+def not_found_error(error):
+    app.logger.error(f'Page not found: {request.url}')
+    return render_template('404.html'), 404
+
+@app.errorhandler(500)
+def internal_error(error):
+    db.session.rollback()
+    app.logger.error(f'Server Error: {error}')
+    app.logger.error(traceback.format_exc())
+    return render_template('500.html'), 500
 
 if __name__ == '__main__':
     app.run(debug=True)
