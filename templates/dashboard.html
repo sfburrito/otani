@@ -326,25 +326,31 @@ document.addEventListener('DOMContentLoaded', function() {
                 const checkboxes = select.querySelectorAll('input[type="checkbox"]');
                 
                 // Toggle options list
-                trigger?.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    customSelects.forEach(otherSelect => {
-                        if (otherSelect !== select) {
-                            otherSelect.classList.remove('active');
-                            const otherOptions = otherSelect.querySelector('.custom-options');
-                            if (otherOptions) otherOptions.style.display = 'none';
+                if (trigger) {
+                    trigger.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        customSelects.forEach(otherSelect => {
+                            if (otherSelect !== select) {
+                                otherSelect.classList.remove('active');
+                                const otherOptions = otherSelect.querySelector('.custom-options');
+                                if (otherOptions) otherOptions.style.display = 'none';
+                            }
+                        });
+                        select.classList.toggle('active');
+                        if (options) {
+                            options.style.display = select.classList.contains('active') ? 'block' : 'none';
                         }
                     });
-                    select.classList.toggle('active');
-                    if (options) {
-                        options.style.display = select.classList.contains('active') ? 'block' : 'none';
-                    }
-                });
+                }
 
                 // Handle checkbox changes
-                checkboxes?.forEach(checkbox => {
-                    checkbox.addEventListener('change', () => updateSelectedText(select));
-                });
+                if (checkboxes) {
+                    checkboxes.forEach(checkbox => {
+                        if (checkbox) {
+                            checkbox.addEventListener('change', () => updateSelectedText(select));
+                        }
+                    });
+                }
             } catch (error) {
                 console.error('Error initializing select:', error);
             }
