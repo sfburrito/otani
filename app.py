@@ -54,8 +54,6 @@ class UserPreferences(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
-    user = db.relationship('User', backref=db.backref('preferences', uselist=False))
-
 class Company(db.Model):
     __tablename__ = 'companies'
     id = db.Column(db.Integer, primary_key=True)
@@ -267,5 +265,15 @@ def internal_error(error):
 
 if __name__ == '__main__':
     with app.app_context():
+        # Drop all tables and recreate them
+        db.drop_all()
         db.create_all()
+        
+        # Create a test user if none exists
+        if not User.query.filter_by(email='test@example.com').first():
+            user = User(email='test@example.com')
+            user.set_password('password')
+            db.session.add(user)
+            db.session.commit()
+            
     app.run(debug=True)
