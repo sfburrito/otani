@@ -441,8 +441,8 @@ def create_dummy_companies():
             db.session.rollback()
             app.logger.error(f'Error adding dummy companies: {str(e)}')
 
-@app.before_first_request
-def initialize_data():
+# Initialize database and create dummy companies
+with app.app_context():
     db.create_all()
     create_dummy_companies()
 
