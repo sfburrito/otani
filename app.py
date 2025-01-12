@@ -78,17 +78,17 @@ class UserPreferences(db.Model):
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
 class Company(db.Model):
-    __tablename__ = 'companies'
     id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     name = db.Column(db.String(100), nullable=False)
-    industry = db.Column(db.String(100))
-    description = db.Column(db.Text)
+    industry = db.Column(db.String(50))
     stage = db.Column(db.String(50))
     website = db.Column(db.String(200))
-    contact_email = db.Column(db.String(120))
-    notes = db.Column(db.Text)
+    email = db.Column(db.String(120))
+    description = db.Column(db.Text)
+    rating = db.Column(db.String(1))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
 @login_manager.user_loader
 def load_user(id):
@@ -421,16 +421,24 @@ def create_dummy_companies():
             }
         ]
         
+        # Get the first user or create one if none exists
+        user = User.query.first()
+        if not user:
+            app.logger.error('No users found in database')
+            return
+            
+        app.logger.info(f'Creating dummy companies for user {user.id}')
+        
         for company_data in companies:
             company = Company(
-                user_id=1,  # Assuming the first user
+                user_id=user.id,
                 name=company_data['name'],
                 industry=company_data['industry'],
                 stage=company_data['stage'],
                 website=company_data['website'],
-                contact_email=company_data['email'],
+                email=company_data['email'],
                 description=company_data['description'],
-                notes=company_data['rating']
+                rating=company_data['rating']
             )
             db.session.add(company)
         
