@@ -24,7 +24,7 @@ body {
     font-family: 'Inter', sans-serif;
     color: var(--text-dark);
     line-height: 1.6;
-    background-color: #FFE4E1;  /* Misty Rose - a very noticeable pink color */
+    background-color: var(--white);
 }
 
 /* Typography */
