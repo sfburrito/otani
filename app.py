@@ -47,9 +47,9 @@ class User(UserMixin, db.Model):
 class UserPreferences(db.Model):
     __tablename__ = 'user_preferences'
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    investment_stages = db.Column(db.String(500))  # Stored as JSON string
-    geographic_focus = db.Column(db.String(500))  # Stored as JSON string
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, unique=True)
+    investment_stages = db.Column(db.String(500))
+    geographic_focus = db.Column(db.String(500))
     additional_preferences = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
