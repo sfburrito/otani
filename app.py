@@ -152,14 +152,25 @@ def login():
 @app.route('/dashboard')
 @login_required
 def dashboard():
-    try:
-        companies = Company.query.filter_by(user_id=current_user.id).order_by(Company.created_at.desc()).all()
-        return render_template('dashboard.html', companies=companies)
-    except Exception as e:
-        app.logger.error(f'Error in dashboard: {str(e)}')
-        app.logger.error(traceback.format_exc())
-        flash('Error loading dashboard')
-        return redirect(url_for('index'))
+    app.logger.info(f'User {current_user.email} accessed dashboard')
+    companies = Company.query.filter_by(user_id=current_user.id).all()
+    
+    # Get user preferences
+    preferences = current_user.preferences
+    if preferences:
+        investment_stages = preferences.investment_stages.split(',') if preferences.investment_stages else []
+        geographic_focus = preferences.geographic_focus.split(',') if preferences.geographic_focus else []
+        additional_preferences = preferences.additional_preferences or ''
+    else:
+        investment_stages = []
+        geographic_focus = []
+        additional_preferences = ''
+    
+    return render_template('dashboard.html', 
+                         companies=companies,
+                         investment_stages=investment_stages,
+                         geographic_focus=geographic_focus,
+                         additional_preferences=additional_preferences)
 
 @app.route('/logout')
 @login_required

@@ -299,115 +299,62 @@
 <script src="{{ url_for('static', filename='js/add_company.js') }}"></script>
 
 <script>
+const serverPreferences = {
+    investment_stages: {{ investment_stages|tojson }},
+    geographic_focus: {{ geographic_focus|tojson }},
+    additional_preferences: {{ additional_preferences|tojson }}
+};
+
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize custom dropdowns
     const customSelects = document.querySelectorAll('.custom-select');
     
     customSelects.forEach(select => {
         const trigger = select.querySelector('.select-trigger');
-        const selectedText = select.querySelector('.selected-text');
-        const options = select.querySelectorAll('.option-item input');
-        const placeholder = select.dataset.placeholder;
+        const optionsList = select.querySelector('.options-list');
+        const selectedText = trigger.querySelector('.selected-text');
         
-        // Handle click outside
-        document.addEventListener('click', (e) => {
-            if (!select.contains(e.target)) {
-                select.classList.remove('open');
-            }
-        });
-        
-        // Toggle dropdown
         trigger.addEventListener('click', (e) => {
             e.stopPropagation();
-            const isOpen = select.classList.contains('open');
-            
-            // Close all other dropdowns
-            customSelects.forEach(s => s.classList.remove('open'));
-            
-            // Toggle current dropdown
-            select.classList.toggle('open', !isOpen);
-        });
-        
-        // Handle option selection
-        options.forEach(option => {
-            option.addEventListener('change', () => {
-                const selectedOptions = Array.from(options)
-                    .filter(opt => opt.checked)
-                    .map(opt => opt.parentElement.textContent.trim());
-                
-                if (selectedOptions.length > 0) {
-                    selectedText.textContent = selectedOptions.join(', ');
-                } else {
-                    selectedText.textContent = placeholder;
+            customSelects.forEach(otherSelect => {
+                if (otherSelect !== select) {
+                    otherSelect.classList.remove('active');
                 }
             });
+            select.classList.toggle('active');
         });
         
-        // Handle keyboard navigation
-        select.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                select.classList.toggle('open');
-            } else if (e.key === 'Escape') {
-                select.classList.remove('open');
-            }
-        });
-    });
-
-    // Initialize auto-expanding textarea
-    const textarea = document.getElementById('additionalPrefs');
-    textarea.addEventListener('input', function() {
-        this.style.height = 'auto';
-        this.style.height = (this.scrollHeight) + 'px';
+        if (select.getAttribute('data-placeholder') === 'Select stages') {
+            select.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                if (serverPreferences.investment_stages.includes(checkbox.value)) {
+                    checkbox.checked = true;
+                }
+            });
+            updateSelectedText(select);
+        } else if (select.getAttribute('data-placeholder') === 'Select regions') {
+            select.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                if (serverPreferences.geographic_focus.includes(checkbox.value)) {
+                    checkbox.checked = true;
+                }
+            });
+            updateSelectedText(select);
+        }
+        
+        const additionalPrefs = document.getElementById('additionalPrefs');
+        if (additionalPrefs && serverPreferences.additional_preferences) {
+            additionalPrefs.value = serverPreferences.additional_preferences;
+        }
     });
     
-    // Initialize AOS
-    AOS.init({
-        duration: 800,
-        once: true
-    });
-
-    // Table sorting functionality
-    const sortableHeaders = document.querySelectorAll('.sortable');
-    sortableHeaders.forEach(header => {
-        header.addEventListener('click', () => {
-            const currentSort = header.getAttribute('aria-sort');
-            
-            // Reset all other headers
-            sortableHeaders.forEach(h => {
-                h.setAttribute('aria-sort', 'none');
-                h.querySelector('i').className = 'fas fa-sort';
-            });
-            
-            // Set new sort direction
-            let newSort = 'ascending';
-            if (currentSort === 'ascending') {
-                newSort = 'descending';
-            }
-            
-            header.setAttribute('aria-sort', newSort);
-            header.querySelector('i').className = `fas fa-sort-${newSort === 'ascending' ? 'up' : 'down'}`;
-            
-            sortTable(header.dataset.sort, newSort === 'ascending');
+    document.addEventListener('click', () => {
+        customSelects.forEach(select => {
+            select.classList.remove('active');
         });
     });
-
-    // Search functionality
-    const searchInput = document.getElementById('companySearch');
-    let searchTimeout;
-    searchInput.addEventListener('input', () => {
-        clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(() => {
-            filterCompanies(searchInput.value.toLowerCase());
-        }, 300);
-    });
-
-    // Initialize table data
+    
     loadCompanies();
 });
 
 function loadCompanies() {
-    // Sample data - replace with actual API call
     const companies = [
         {
             name: 'TechCorp',
@@ -461,7 +408,6 @@ function renderCompanies(companies) {
             </td>
         `;
         
-        // Add read more functionality
         const readMoreBtn = row.querySelector('.read-more-btn');
         const descriptionText = row.querySelector('.description-text');
         
@@ -481,69 +427,37 @@ function renderCompanies(companies) {
     });
 }
 
-function sortTable(column, ascending) {
-    const tbody = document.getElementById('companiesTableBody');
-    const rows = Array.from(tbody.querySelectorAll('tr'));
-    
-    rows.sort((a, b) => {
-        const aValue = a.children[getColumnIndex(column)].textContent;
-        const bValue = b.children[getColumnIndex(column)].textContent;
-        return ascending ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
-    });
-    
-    tbody.innerHTML = '';
-    rows.forEach(row => tbody.appendChild(row));
-}
-
-function getColumnIndex(column) {
-    const columns = {
-        'rating': 0,
-        'name': 1,
-        'industry': 2,
-        'stage': 3
-    };
-    return columns[column];
-}
-
-function filterCompanies(query) {
-    const rows = document.querySelectorAll('#companiesTableBody tr');
-    rows.forEach(row => {
-        const text = row.textContent.toLowerCase();
-        row.style.display = text.includes(query) ? '' : 'none';
-    });
+function updateSelectedText(select) {
+    const selectedOptions = Array.from(select.querySelectorAll('input[type="checkbox"]:checked')).map(option => option.parentElement.textContent.trim());
+    const selectedText = select.querySelector('.selected-text');
+    selectedText.textContent = selectedOptions.length > 0 ? selectedOptions.join(', ') : select.getAttribute('data-placeholder');
 }
 
 function savePreferences() {
     const investmentStages = [];
     const geographicFocus = [];
     
-    // Get selected investment stages
     document.querySelectorAll('.custom-select[data-placeholder="Select stages"] input:checked').forEach(checkbox => {
         investmentStages.push(checkbox.value);
     });
     
-    // Get selected geographic regions
     document.querySelectorAll('.custom-select[data-placeholder="Select regions"] input:checked').forEach(checkbox => {
         geographicFocus.push(checkbox.value);
     });
     
-    // Get additional preferences
     const additionalPrefs = document.getElementById('additionalPrefs').value;
     
-    // Prepare data for API
     const data = {
         investment_stages: investmentStages,
         geographic_focus: geographicFocus,
         additional_preferences: additionalPrefs
     };
     
-    // Show loading state
     const saveButton = document.querySelector('button.btn-primary');
     const originalText = saveButton.innerHTML;
     saveButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
     saveButton.disabled = true;
     
-    // Save preferences via API
     fetch('/api/preferences', {
         method: 'POST',
         headers: {
@@ -556,33 +470,28 @@ function savePreferences() {
         if (data.error) {
             throw new Error(data.error);
         }
-        // Show success message
         const flashContainer = document.querySelector('.flash-messages');
         const flashMessage = document.createElement('div');
         flashMessage.className = 'flash-message success';
         flashMessage.textContent = 'Preferences saved successfully';
         flashContainer.appendChild(flashMessage);
         
-        // Remove message after 3 seconds
         setTimeout(() => {
             flashMessage.remove();
         }, 3000);
     })
     .catch(error => {
-        // Show error message
         const flashContainer = document.querySelector('.flash-messages');
         const flashMessage = document.createElement('div');
         flashMessage.className = 'flash-message error';
         flashMessage.textContent = 'Failed to save preferences';
         flashContainer.appendChild(flashMessage);
         
-        // Remove message after 3 seconds
         setTimeout(() => {
             flashMessage.remove();
         }, 3000);
     })
     .finally(() => {
-        // Restore button state
         saveButton.innerHTML = originalText;
         saveButton.disabled = false;
     });
@@ -592,25 +501,20 @@ function loadPreferences() {
     fetch('/api/preferences')
         .then(response => response.json())
         .then(data => {
-            // Set investment stages
-            data.investment_stages.forEach(stage => {
-                const checkbox = document.querySelector(`.custom-select[data-placeholder="Select stages"] input[value="${stage}"]`);
-                if (checkbox) {
+            document.querySelectorAll('.custom-select[data-placeholder="Select stages"] input[type="checkbox"]').forEach(checkbox => {
+                if (data.investment_stages.includes(checkbox.value)) {
                     checkbox.checked = true;
-                    updateSelectedText(checkbox.closest('.custom-select'));
                 }
             });
+            updateSelectedText(document.querySelector('.custom-select[data-placeholder="Select stages"]'));
             
-            // Set geographic focus
-            data.geographic_focus.forEach(region => {
-                const checkbox = document.querySelector(`.custom-select[data-placeholder="Select regions"] input[value="${region}"]`);
-                if (checkbox) {
+            document.querySelectorAll('.custom-select[data-placeholder="Select regions"] input[type="checkbox"]').forEach(checkbox => {
+                if (data.geographic_focus.includes(checkbox.value)) {
                     checkbox.checked = true;
-                    updateSelectedText(checkbox.closest('.custom-select'));
                 }
             });
+            updateSelectedText(document.querySelector('.custom-select[data-placeholder="Select regions"]'));
             
-            // Set additional preferences
             if (data.additional_preferences) {
                 document.getElementById('additionalPrefs').value = data.additional_preferences;
             }
@@ -620,7 +524,6 @@ function loadPreferences() {
         });
 }
 
-// Call loadPreferences when the page loads
 document.addEventListener('DOMContentLoaded', function() {
     loadPreferences();
 });
@@ -631,7 +534,7 @@ function resetPreferences() {
         const options = select.querySelectorAll('input');
         
         options.forEach(option => option.checked = false);
-        selectedText.textContent = select.dataset.placeholder;
+        selectedText.textContent = select.getAttribute('data-placeholder');
     });
 
     const textarea = document.getElementById('additionalPrefs');
@@ -649,11 +552,9 @@ function closeModal() {
     const modal = document.getElementById('addCompanyModal');
     modal.style.display = 'none';
     document.body.style.overflow = 'auto';
-    // Reset form
     document.getElementById('addCompanyForm').reset();
 }
 
-// Close modal when clicking outside
 document.addEventListener('click', function(event) {
     const modal = document.getElementById('addCompanyModal');
     if (event.target.classList.contains('modal-overlay')) {
