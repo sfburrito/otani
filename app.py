@@ -7,6 +7,7 @@ import os
 import logging
 import sys
 import traceback
+from sqlalchemy import text
 
 # Configure logging
 logging.basicConfig(
@@ -321,48 +322,42 @@ def save_preferences():
                 app.logger.error(f'Field {field} must be a list, got {type(data[field])}')
                 return {'error': f'Field {field} must be a list'}, 400
         
-        preferences = current_user.preferences
-        app.logger.info(f'Current preferences before update: {preferences.__dict__ if preferences else None}')
-        
-        if not preferences:
-            app.logger.info('Creating new preferences object')
-            preferences = UserPreferences(user_id=current_user.id)
-            db.session.add(preferences)
-        
-        # Log each field being updated
-        app.logger.info('=== Updating Fields ===')
-        for field in required_fields:
-            old_value = getattr(preferences, field, None)
-            new_value = ','.join(data.get(field, []))
-            app.logger.info(f'{field}:')
-            app.logger.info(f'  Old: {old_value}')
-            app.logger.info(f'  New: {new_value}')
-            setattr(preferences, field, new_value)
-        
-        # Handle additional preferences
-        old_additional = getattr(preferences, 'additional_preferences', None)
-        new_additional = data.get('additional_preferences', '')
-        app.logger.info('additional_preferences:')
-        app.logger.info(f'  Old: {old_additional}')
-        app.logger.info(f'  New: {new_additional}')
-        preferences.additional_preferences = new_additional
-        
-        app.logger.info('=== Updated Object ===')
-        app.logger.info(f'Updated preferences: {preferences.__dict__}')
-        
-        # Commit changes
-        try:
+        # Delete existing preferences
+        if current_user.preferences:
+            app.logger.info('Deleting existing preferences')
+            db.session.delete(current_user.preferences)
             db.session.commit()
-            app.logger.info('Successfully committed to database')
-        except Exception as commit_error:
-            app.logger.error(f'Error during commit: {str(commit_error)}')
-            db.session.rollback()
-            raise
+        
+        # Create new preferences
+        app.logger.info('Creating new preferences object')
+        preferences = UserPreferences(
+            user_id=current_user.id,
+            investment_stages=','.join(data['investment_stages']),
+            industry_sectors=','.join(data['industry_sectors']),
+            geographic_focus=','.join(data['geographic_focus']),
+            investment_sizes=','.join(data['investment_sizes']),
+            additional_preferences=data.get('additional_preferences', '')
+        )
+        
+        app.logger.info('=== New Preferences Object ===')
+        app.logger.info(f'Object dict: {preferences.__dict__}')
+        
+        # Add and commit
+        db.session.add(preferences)
+        db.session.commit()
+        app.logger.info('Successfully committed to database')
         
         # Verify the changes were saved
         db.session.refresh(preferences)
         app.logger.info('=== Verification ===')
         app.logger.info(f'Preferences after refresh: {preferences.__dict__}')
+        
+        # Query the database directly to verify
+        with db.engine.connect() as conn:
+            result = conn.execute(text(f"SELECT * FROM user_preferences WHERE user_id = {current_user.id}"))
+            row = result.fetchone()
+            app.logger.info('=== Database Query Verification ===')
+            app.logger.info(f'Raw database row: {dict(row) if row else None}')
         
         return {'message': 'Preferences saved successfully'}, 200
         
