@@ -6,8 +6,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let activeModal = null;
 
     window.openCompanyDetails = function(companyName) {
-        document.body.classList.add('modal-open');
-        companyDetailsModal.classList.add('active');
+        companyDetailsModal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
         activeModal = companyDetailsModal;
         
         // Set modal title
@@ -22,8 +22,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.closeModal = function() {
         if (activeModal) {
-            document.body.classList.remove('modal-open');
-            activeModal.classList.remove('active');
+            activeModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
             activeModal = null;
         }
     };
