@@ -114,16 +114,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Format ARR input
     const arrInput = document.getElementById('companyARR');
-
-    arrInput.addEventListener('input', (e) => {
-        let value = e.target.value.replace(/[^0-9.]/g, '');
-        if (value) {
-            value = parseFloat(value);
-            if (!isNaN(value)) {
-                e.target.value = formatCurrency(value);
+    if (arrInput) {
+        arrInput.addEventListener('input', (e) => {
+            let value = e.target.value.replace(/[^0-9.]/g, '');
+            if (value) {
+                value = parseFloat(value);
+                if (!isNaN(value)) {
+                    e.target.value = formatCurrency(value);
+                }
             }
-        }
-    });
+        });
+    }
 
     function formatCurrency(value) {
         if (value >= 1000000) {

@@ -290,27 +290,39 @@ def get_preferences():
 @app.route('/api/preferences', methods=['POST'])
 @login_required
 def save_preferences():
-    data = request.get_json()
-    app.logger.info(f'Received preferences data: {data}')
-    
-    preferences = current_user.preferences
-    if not preferences:
-        preferences = UserPreferences(user_id=current_user.id)
-        db.session.add(preferences)
-    
-    preferences.investment_stages = ','.join(data.get('investment_stages', []))
-    preferences.industry_sectors = ','.join(data.get('industry_sectors', []))
-    preferences.geographic_focus = ','.join(data.get('geographic_focus', []))
-    preferences.investment_sizes = ','.join(data.get('investment_sizes', []))
-    preferences.additional_preferences = data.get('additional_preferences', '')
-    
     try:
+        data = request.get_json()
+        app.logger.info(f'Received preferences data: {data}')
+        
+        preferences = current_user.preferences
+        app.logger.info(f'Current preferences before update: {preferences.__dict__ if preferences else None}')
+        
+        if not preferences:
+            app.logger.info('Creating new preferences object')
+            preferences = UserPreferences(user_id=current_user.id)
+            db.session.add(preferences)
+        
+        # Log each field being updated
+        app.logger.info(f'Updating investment_stages: {data.get("investment_stages", [])}')
+        app.logger.info(f'Updating industry_sectors: {data.get("industry_sectors", [])}')
+        app.logger.info(f'Updating geographic_focus: {data.get("geographic_focus", [])}')
+        app.logger.info(f'Updating investment_sizes: {data.get("investment_sizes", [])}')
+        
+        preferences.investment_stages = ','.join(data.get('investment_stages', []))
+        preferences.industry_sectors = ','.join(data.get('industry_sectors', []))
+        preferences.geographic_focus = ','.join(data.get('geographic_focus', []))
+        preferences.investment_sizes = ','.join(data.get('investment_sizes', []))
+        preferences.additional_preferences = data.get('additional_preferences', '')
+        
+        app.logger.info(f'Updated preferences object: {preferences.__dict__}')
+        
         db.session.commit()
         app.logger.info('Preferences saved successfully')
         return {'message': 'Preferences saved successfully'}, 200
     except Exception as e:
         db.session.rollback()
         app.logger.error(f'Error saving preferences: {str(e)}')
+        app.logger.error(f'Traceback: {traceback.format_exc()}')
         return {'error': 'Failed to save preferences'}, 500
 
 @app.route('/static/<path:filename>')

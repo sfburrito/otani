@@ -81,7 +81,7 @@ async function loadPreferences() {
         }
         
         const preferences = await response.json();
-        console.log('Loaded preferences:', preferences);
+        console.log('Server preferences:', preferences);
         
         // Set investment stages
         setSelectedOptions('Select stages', preferences.investment_stages);
@@ -129,32 +129,23 @@ function setSelectedOptions(placeholder, values) {
 }
 
 function savePreferences() {
-    // Get values from each dropdown
-    const investmentStages = getSelectedValues('Select stages');
-    const industrySectors = getSelectedValues('Select industries');
-    const geographicFocus = getSelectedValues('Select regions');
-    const investmentSizes = getSelectedValues('Select investment sizes');
-    const additionalPrefs = document.getElementById('additionalPrefs')?.value || '';
-
-    // Log values before saving
-    console.log('Investment Stages:', investmentStages);
-    console.log('Industry Sectors:', industrySectors);
-    console.log('Geographic Focus:', geographicFocus);
-    console.log('Investment Sizes:', investmentSizes);
-    console.log('Additional Preferences:', additionalPrefs);
-
     const preferences = {
-        investment_stages: investmentStages,
-        industry_sectors: industrySectors,
-        geographic_focus: geographicFocus,
-        investment_sizes: investmentSizes,
-        additional_preferences: additionalPrefs
+        investment_stages: getSelectedValues('Select stages'),
+        industry_sectors: getSelectedValues('Select industries'),
+        geographic_focus: getSelectedValues('Select regions'),
+        investment_sizes: getSelectedValues('Select investment sizes'),
+        additional_preferences: document.getElementById('additionalPrefs')?.value || ''
     };
     
     console.log('Saving preferences:', preferences);
     
     // Show loading state
     const saveButton = document.querySelector('button[onclick="savePreferences()"]');
+    if (!saveButton) {
+        console.error('Save button not found');
+        return;
+    }
+    
     const originalText = saveButton.innerHTML;
     saveButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
     saveButton.disabled = true;
@@ -167,7 +158,7 @@ function savePreferences() {
         body: JSON.stringify(preferences)
     })
     .then(response => {
-        console.log('Save response status:', response.status);
+        console.log('Save response:', response);
         if (!response.ok) throw new Error('Failed to save preferences');
         return response.json();
     })
@@ -189,22 +180,16 @@ function getSelectedValues(placeholder) {
     // Find the select container by its placeholder
     const select = Array.from(document.querySelectorAll('.custom-select'))
         .find(el => el.dataset.placeholder === placeholder);
-    
-    // Log the select element and placeholder
-    console.log('Getting values for:', placeholder);
-    console.log('Found select element:', select);
-    
     if (!select) {
         console.warn('No select found for placeholder:', placeholder);
         return [];
     }
     
-    // Get checked checkboxes
+    // Get checked checkboxes and their values
     const values = Array.from(select.querySelectorAll('input[type="checkbox"]:checked'))
         .map(checkbox => checkbox.value || checkbox.parentElement.textContent.trim());
     
-    // Log the selected values
-    console.log('Selected values:', values);
+    console.log(`Selected values for ${placeholder}:`, values);
     return values;
 }
 
@@ -242,6 +227,8 @@ function resetPreferences() {
     });
 
     const textarea = document.getElementById('additionalPrefs');
-    textarea.value = '';
-    textarea.style.height = 'auto';
+    if (textarea) {
+        textarea.value = '';
+        textarea.style.height = 'auto';
+    }
 }
