@@ -388,5 +388,63 @@ def internal_error(error):
     db.session.rollback()
     return render_template('500.html'), 500
 
+def create_dummy_companies():
+    # Only create dummy companies if none exist
+    if Company.query.count() == 0:
+        companies = [
+            {
+                'name': 'TechFlow AI',
+                'industry': 'AI/Machine Learning',
+                'stage': 'Series A',
+                'website': 'https://techflow.ai',
+                'email': 'contact@techflow.ai',
+                'description': 'TechFlow AI is revolutionizing enterprise workflow automation with their cutting-edge AI platform. Their solution has shown a 40% improvement in process efficiency across Fortune 500 clients.',
+                'rating': 'A'
+            },
+            {
+                'name': 'GreenScape',
+                'industry': 'Cleantech',
+                'stage': 'Seed',
+                'website': 'https://greenscape.eco',
+                'email': 'hello@greenscape.eco',
+                'description': 'GreenScape is developing breakthrough carbon capture technology using novel biomaterials. Early tests show 3x more efficient carbon sequestration compared to traditional methods.',
+                'rating': 'B'
+            },
+            {
+                'name': 'FinSecure',
+                'industry': 'Fintech',
+                'stage': 'Series B',
+                'website': 'https://finsecure.com',
+                'email': 'info@finsecure.com',
+                'description': 'FinSecure provides enterprise-grade blockchain security solutions for financial institutions. Already securing over $2B in digital assets for major banks.',
+                'rating': 'A'
+            }
+        ]
+        
+        for company_data in companies:
+            company = Company(
+                user_id=1,  # Assuming the first user
+                name=company_data['name'],
+                industry=company_data['industry'],
+                stage=company_data['stage'],
+                website=company_data['website'],
+                contact_email=company_data['email'],
+                description=company_data['description'],
+                notes=company_data['rating']
+            )
+            db.session.add(company)
+        
+        try:
+            db.session.commit()
+            app.logger.info('Added dummy companies successfully')
+        except Exception as e:
+            db.session.rollback()
+            app.logger.error(f'Error adding dummy companies: {str(e)}')
+
+@app.before_first_request
+def initialize_data():
+    db.create_all()
+    create_dummy_companies()
+
 if __name__ == '__main__':
     app.run(debug=True)
