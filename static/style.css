@@ -1615,3 +1615,33 @@ textarea.form-input:focus {
         grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     }
 }
+/* Additional Preferences */
+.additional-preferences {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.additional-preferences textarea {
+    width: 100%;
+    min-height: 100px;
+    padding: 10px;
+    border: 1px solid #666;
+    border-radius: 4px;
+    resize: vertical;
+    font-family: inherit;
+    background-color: var(--white);
+    color: var(--text-dark);
+}
+
+.additional-preferences textarea:focus {
+    border-color: var(--teal);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0, 167, 181, 0.2);
+}
+
+/* Footer */
+.footer-text {
+    font-family: 'Inter', sans-serif;
+    color: var(--text-dark);
+    font-size: 0.9rem;
+}
