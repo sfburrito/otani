@@ -29,6 +29,26 @@ db = SQLAlchemy(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 
+# Initialize database tables
+with app.app_context():
+    app.logger.info("Creating database tables...")
+    try:
+        db.create_all()
+        app.logger.info("Database tables created successfully!")
+        
+        # Verify tables exist
+        engine = db.get_engine()
+        inspector = db.inspect(engine)
+        tables = inspector.get_table_names()
+        app.logger.info(f"Found tables: {tables}")
+        
+        if 'user_preferences' not in tables:
+            app.logger.error("user_preferences table was not created!")
+        
+    except Exception as e:
+        app.logger.error(f"Error creating database tables: {str(e)}")
+        app.logger.error(traceback.format_exc())
+
 # Define models
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
@@ -300,14 +320,4 @@ def internal_error(error):
     return render_template('500.html'), 500
 
 if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()
-        
-        # Create test user if it doesn't exist
-        if not User.query.filter_by(email='test@example.com').first():
-            user = User(email='test@example.com')
-            user.set_password('password')
-            db.session.add(user)
-            db.session.commit()
-            
-        app.run(debug=True)
+    app.run(debug=True)
