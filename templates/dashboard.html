@@ -305,16 +305,6 @@
 <script src="{{ url_for('static', filename='js/add_company.js') }}"></script>
 
 <script>
-// Safely parse server data with fallbacks
-function safeJSONParse(data, defaultValue) {
-    try {
-        return JSON.parse(data) || defaultValue;
-    } catch (e) {
-        console.error('Error parsing JSON:', e);
-        return defaultValue;
-    }
-}
-
 document.addEventListener('DOMContentLoaded', function() {
     try {
         // Initialize preferences from server data with safe defaults
@@ -327,7 +317,49 @@ document.addEventListener('DOMContentLoaded', function() {
         };
         console.log('Server preferences:', serverPreferences);
 
-        // Set each type of preference
+        // Initialize dropdowns
+        const customSelects = document.querySelectorAll('.custom-select');
+        customSelects.forEach(select => {
+            try {
+                const trigger = select.querySelector('.select-trigger');
+                const options = select.querySelector('.custom-options');
+                const checkboxes = select.querySelectorAll('input[type="checkbox"]');
+                
+                // Toggle options list
+                trigger?.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    customSelects.forEach(otherSelect => {
+                        if (otherSelect !== select) {
+                            otherSelect.classList.remove('active');
+                            const otherOptions = otherSelect.querySelector('.custom-options');
+                            if (otherOptions) otherOptions.style.display = 'none';
+                        }
+                    });
+                    select.classList.toggle('active');
+                    if (options) {
+                        options.style.display = select.classList.contains('active') ? 'block' : 'none';
+                    }
+                });
+
+                // Handle checkbox changes
+                checkboxes?.forEach(checkbox => {
+                    checkbox.addEventListener('change', () => updateSelectedText(select));
+                });
+            } catch (error) {
+                console.error('Error initializing select:', error);
+            }
+        });
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', () => {
+            customSelects.forEach(select => {
+                select.classList.remove('active');
+                const options = select.querySelector('.custom-options');
+                if (options) options.style.display = 'none';
+            });
+        });
+
+        // Set initial preferences
         setSelectedOptions('Select stages', serverPreferences.investment_stages);
         setSelectedOptions('Select industries', serverPreferences.industry_sectors);
         setSelectedOptions('Select regions', serverPreferences.geographic_focus);
@@ -341,71 +373,72 @@ document.addEventListener('DOMContentLoaded', function() {
     } catch (error) {
         console.error('Error initializing preferences:', error);
     }
-
-    try {
-        // Initialize dropdowns
-        const customSelects = document.querySelectorAll('.custom-select');
-        customSelects.forEach(select => {
-            try {
-                const trigger = select.querySelector('.select-trigger');
-                if (!trigger) {
-                    console.error('Missing trigger element in select:', select);
-                    return;
-                }
-                
-                trigger.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    customSelects.forEach(otherSelect => {
-                        if (otherSelect !== select) {
-                            otherSelect.classList.remove('active');
-                        }
-                    });
-                    select.classList.toggle('active');
-                });
-
-                // Set initial values from server data
-                if (select.getAttribute('data-placeholder') === 'Select stages') {
-                    select.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
-                        checkbox.checked = Array.isArray(serverPreferences.investment_stages) && 
-                                        serverPreferences.investment_stages.includes(checkbox.value);
-                    });
-                    updateSelectedText(select);
-                } else if (select.getAttribute('data-placeholder') === 'Select regions') {
-                    select.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
-                        checkbox.checked = Array.isArray(serverPreferences.geographic_focus) && 
-                                        serverPreferences.geographic_focus.includes(checkbox.value);
-                    });
-                    updateSelectedText(select);
-                }
-            } catch (e) {
-                console.error('Error initializing select:', e);
-            }
-        });
-
-        // Close dropdowns when clicking outside
-        document.addEventListener('click', () => {
-            customSelects.forEach(select => select.classList.remove('active'));
-        });
-
-        // Initialize companies table
-        loadCompanies();
-    } catch (e) {
-        console.error('Error in initialization:', e);
-        const flashContainer = document.querySelector('.flash-messages');
-        if (flashContainer) {
-            const flashMessage = document.createElement('div');
-            flashMessage.className = 'flash-message error';
-            flashMessage.textContent = 'Error initializing dashboard. Please refresh the page.';
-            flashContainer.appendChild(flashMessage);
-        }
-    }
 });
 
 function updateSelectedText(select) {
     const selectedOptions = Array.from(select.querySelectorAll('input[type="checkbox"]:checked'))
         .map(checkbox => checkbox.parentElement.textContent.trim());
     const selectedText = select.querySelector('.selected-text');
-    selectedText.textContent = selectedOptions.length > 0 ? selectedOptions.join(', ') : select.getAttribute('data-placeholder');
+    const placeholder = select.dataset.placeholder;
+    
+    if (selectedText) {
+        selectedText.textContent = selectedOptions.length > 0 ? selectedOptions.join(', ') : placeholder;
+    }
+}
+
+function setSelectedOptions(selectPlaceholder, selectedValues) {
+    if (!selectedValues) return;
+    
+    const select = document.querySelector(`.custom-select[data-placeholder="${selectPlaceholder}"]`);
+    if (select) {
+        select.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+            checkbox.checked = selectedValues.includes(checkbox.value);
+        });
+        updateSelectedText(select);
+    }
+}
+
+function savePreferences() {
+    const stages = getSelectedValues('Select stages');
+    const sectors = getSelectedValues('Select industries');
+    const regions = getSelectedValues('Select regions');
+    const sizes = getSelectedValues('Select investment sizes');
+    const additional = document.getElementById('additionalPrefs')?.value || '';
+
+    const preferences = {
+        investment_stages: stages,
+        industry_sectors: sectors,
+        geographic_focus: regions,
+        investment_sizes: sizes,
+        additional_preferences: additional
+    };
+    
+    console.log('Saving preferences:', preferences);
+    
+    fetch('/api/preferences', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(preferences)
+    })
+    .then(response => response.json())
+    .then(data => {
+        showSuccess('Preferences saved successfully');
+        loadPreferences(); // Reload to verify
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showError('Failed to save preferences');
+    });
+}
+
+function getSelectedValues(placeholder) {
+    const select = document.querySelector(`.custom-select[data-placeholder="${placeholder}"]`);
+    if (!select) return [];
+    
+    return Array.from(select.querySelectorAll('input[type="checkbox"]:checked'))
+        .map(checkbox => checkbox.value);
 }
 
 function loadCompanies() {
@@ -481,78 +514,6 @@ function renderCompanies(companies) {
     });
 }
 
-function savePreferences() {
-    const data = {
-        investment_stages: Array.from(document.querySelectorAll('.custom-select[data-placeholder="Select stages"] input:checked')).map(cb => cb.value),
-        industry_sectors: Array.from(document.querySelectorAll('.custom-select[data-placeholder="Select industries"] input:checked')).map(cb => cb.value),
-        geographic_focus: Array.from(document.querySelectorAll('.custom-select[data-placeholder="Select regions"] input:checked')).map(cb => cb.value),
-        investment_sizes: Array.from(document.querySelectorAll('.custom-select[data-placeholder="Select investment sizes"] input:checked')).map(cb => cb.value),
-        additional_preferences: document.getElementById('additionalPrefs').value
-    };
-    
-    console.log('Saving preferences:', data);
-    
-    fetch('/api/preferences', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-    })
-    .then(response => response.json())
-    .then(data => {
-        showSuccess('Preferences saved successfully');
-        loadPreferences();
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        showError('Failed to save preferences');
-    });
-}
-
-function loadPreferences() {
-    fetch('/api/preferences')
-        .then(response => response.json())
-        .then(data => {
-            document.querySelectorAll('.custom-select[data-placeholder="Select stages"] input[type="checkbox"]').forEach(checkbox => {
-                if (data.investment_stages.includes(checkbox.value)) {
-                    checkbox.checked = true;
-                }
-            });
-            updateSelectedText(document.querySelector('.custom-select[data-placeholder="Select stages"]'));
-            
-            document.querySelectorAll('.custom-select[data-placeholder="Select regions"] input[type="checkbox"]').forEach(checkbox => {
-                if (data.geographic_focus.includes(checkbox.value)) {
-                    checkbox.checked = true;
-                }
-            });
-            updateSelectedText(document.querySelector('.custom-select[data-placeholder="Select regions"]'));
-            
-            if (data.additional_preferences) {
-                document.getElementById('additionalPrefs').value = data.additional_preferences;
-            }
-        })
-        .catch(error => {
-            console.error('Error loading preferences:', error);
-        });
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-    loadPreferences();
-});
-
-function resetPreferences() {
-    document.querySelectorAll('.custom-select').forEach(select => {
-        const selectedText = select.querySelector('.selected-text');
-        const options = select.querySelectorAll('input');
-        
-        options.forEach(option => option.checked = false);
-        selectedText.textContent = select.getAttribute('data-placeholder');
-    });
-
-    const textarea = document.getElementById('additionalPrefs');
-    textarea.value = '';
-    textarea.style.height = 'auto';
-}
-
 function openModal() {
     const modal = document.getElementById('addCompanyModal');
     modal.style.display = 'flex';
@@ -579,14 +540,18 @@ window.onclick = function(event) {
     }
 }
 
-function setSelectedOptions(selectPlaceholder, selectedValues) {
-    const select = document.querySelector(`.custom-select[data-placeholder="${selectPlaceholder}"]`);
-    if (select) {
-        select.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
-            checkbox.checked = selectedValues.includes(checkbox.value);
-        });
-        updateSelectedText(select);
-    }
+function resetPreferences() {
+    document.querySelectorAll('.custom-select').forEach(select => {
+        const selectedText = select.querySelector('.selected-text');
+        const options = select.querySelectorAll('input');
+        
+        options.forEach(option => option.checked = false);
+        selectedText.textContent = select.getAttribute('data-placeholder');
+    });
+
+    const textarea = document.getElementById('additionalPrefs');
+    textarea.value = '';
+    textarea.style.height = 'auto';
 }
 </script>
 {% endblock %}
