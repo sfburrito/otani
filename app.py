@@ -451,7 +451,13 @@ def create_dummy_companies():
 
 # Initialize database and create dummy companies
 with app.app_context():
-    db.drop_all()  # Drop all tables first
+    # Drop all tables with cascade
+    for table in reversed(db.metadata.sorted_tables):
+        try:
+            table.drop(db.engine, checkfirst=True)
+        except Exception as e:
+            app.logger.error(f'Error dropping table {table}: {str(e)}')
+    
     db.create_all()  # Create new tables
     
     # Create a test user if none exists
