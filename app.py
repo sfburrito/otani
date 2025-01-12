@@ -269,8 +269,14 @@ def add_company():
 @app.route('/api/preferences', methods=['GET'])
 @login_required
 def get_preferences():
+    app.logger.info('=== Getting Preferences ===')
+    app.logger.info(f'User ID: {current_user.id}')
+    
     preferences = current_user.preferences
+    app.logger.info(f'Raw preferences object: {preferences.__dict__ if preferences else None}')
+    
     if not preferences:
+        app.logger.info('No preferences found, returning defaults')
         return {
             'investment_stages': [],
             'industry_sectors': [],
@@ -279,20 +285,27 @@ def get_preferences():
             'additional_preferences': ''
         }
     
-    return {
+    result = {
         'investment_stages': preferences.investment_stages.split(',') if preferences.investment_stages else [],
         'industry_sectors': preferences.industry_sectors.split(',') if preferences.industry_sectors else [],
         'geographic_focus': preferences.geographic_focus.split(',') if preferences.geographic_focus else [],
         'investment_sizes': preferences.investment_sizes.split(',') if preferences.investment_sizes else [],
         'additional_preferences': preferences.additional_preferences or ''
     }
+    
+    app.logger.info('=== Returning Preferences ===')
+    app.logger.info(f'Result: {result}')
+    return result
 
 @app.route('/api/preferences', methods=['POST'])
 @login_required
 def save_preferences():
     try:
+        app.logger.info('=== Saving Preferences ===')
+        app.logger.info(f'User ID: {current_user.id}')
+        
         data = request.get_json()
-        app.logger.info(f'Received preferences data: {data}')
+        app.logger.info(f'Received data: {data}')
         
         preferences = current_user.preferences
         app.logger.info(f'Current preferences before update: {preferences.__dict__ if preferences else None}')
@@ -303,10 +316,12 @@ def save_preferences():
             db.session.add(preferences)
         
         # Log each field being updated
-        app.logger.info(f'Updating investment_stages: {data.get("investment_stages", [])}')
-        app.logger.info(f'Updating industry_sectors: {data.get("industry_sectors", [])}')
-        app.logger.info(f'Updating geographic_focus: {data.get("geographic_focus", [])}')
-        app.logger.info(f'Updating investment_sizes: {data.get("investment_sizes", [])}')
+        app.logger.info('=== Updating Fields ===')
+        app.logger.info(f'investment_stages: {data.get("investment_stages", [])}')
+        app.logger.info(f'industry_sectors: {data.get("industry_sectors", [])}')
+        app.logger.info(f'geographic_focus: {data.get("geographic_focus", [])}')
+        app.logger.info(f'investment_sizes: {data.get("investment_sizes", [])}')
+        app.logger.info(f'additional_preferences: {data.get("additional_preferences", "")}')
         
         preferences.investment_stages = ','.join(data.get('investment_stages', []))
         preferences.industry_sectors = ','.join(data.get('industry_sectors', []))
@@ -314,14 +329,18 @@ def save_preferences():
         preferences.investment_sizes = ','.join(data.get('investment_sizes', []))
         preferences.additional_preferences = data.get('additional_preferences', '')
         
-        app.logger.info(f'Updated preferences object: {preferences.__dict__}')
+        app.logger.info('=== Updated Object ===')
+        app.logger.info(f'Updated preferences: {preferences.__dict__}')
         
         db.session.commit()
-        app.logger.info('Preferences saved successfully')
+        app.logger.info('Successfully committed to database')
+        
         return {'message': 'Preferences saved successfully'}, 200
     except Exception as e:
         db.session.rollback()
-        app.logger.error(f'Error saving preferences: {str(e)}')
+        app.logger.error('=== Error Saving Preferences ===')
+        app.logger.error(f'Error type: {type(e).__name__}')
+        app.logger.error(f'Error message: {str(e)}')
         app.logger.error(f'Traceback: {traceback.format_exc()}')
         return {'error': 'Failed to save preferences'}, 500
 

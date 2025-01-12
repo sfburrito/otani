@@ -75,29 +75,35 @@ function updateSelectedText(select) {
 
 async function loadPreferences() {
     try {
+        console.log('Loading preferences...');
         const response = await fetch('/api/preferences');
+        
+        console.log('Load response status:', response.status);
         if (!response.ok) {
             throw new Error('Failed to load preferences');
         }
         
         const preferences = await response.json();
-        console.log('Server preferences:', preferences);
+        console.log('=== Loaded Preferences ===');
+        console.log(JSON.stringify(preferences, null, 2));
         
-        // Set investment stages
+        // Set each type of preference
+        console.log('Setting investment stages:', preferences.investment_stages);
         setSelectedOptions('Select stages', preferences.investment_stages);
         
-        // Set industry sectors
+        console.log('Setting industry sectors:', preferences.industry_sectors);
         setSelectedOptions('Select industries', preferences.industry_sectors);
         
-        // Set geographic focus
+        console.log('Setting geographic focus:', preferences.geographic_focus);
         setSelectedOptions('Select regions', preferences.geographic_focus);
         
-        // Set investment sizes
+        console.log('Setting investment sizes:', preferences.investment_sizes);
         setSelectedOptions('Select investment sizes', preferences.investment_sizes);
         
         // Set additional preferences
         const additionalPrefs = document.getElementById('additionalPrefs');
         if (additionalPrefs && preferences.additional_preferences) {
+            console.log('Setting additional preferences:', preferences.additional_preferences);
             additionalPrefs.value = preferences.additional_preferences;
         }
         
@@ -108,19 +114,32 @@ async function loadPreferences() {
 }
 
 function setSelectedOptions(placeholder, values) {
-    if (!values) return;
+    if (!values) {
+        console.log(`No values to set for "${placeholder}"`);
+        return;
+    }
     
-    // Find the select container by its placeholder
+    // Find the select container
     const select = Array.from(document.querySelectorAll('.custom-select'))
         .find(el => el.dataset.placeholder === placeholder);
-    if (!select) return;
+    
+    if (!select) {
+        console.warn(`No select found for placeholder: "${placeholder}"`);
+        return;
+    }
+    
+    console.log(`Setting values for "${placeholder}":`, values);
     
     // Find and check the checkboxes
     values.forEach(value => {
         const checkbox = Array.from(select.querySelectorAll('input[type="checkbox"]'))
             .find(cb => cb.value === value || cb.parentElement.textContent.trim() === value);
+        
         if (checkbox) {
+            console.log(`Found checkbox for value "${value}"`);
             checkbox.checked = true;
+        } else {
+            console.warn(`No checkbox found for value "${value}"`);
         }
     });
     
@@ -129,15 +148,30 @@ function setSelectedOptions(placeholder, values) {
 }
 
 function savePreferences() {
+    // Get and log each value separately
+    const stages = getSelectedValues('Select stages');
+    const sectors = getSelectedValues('Select industries');
+    const regions = getSelectedValues('Select regions');
+    const sizes = getSelectedValues('Select investment sizes');
+    const additional = document.getElementById('additionalPrefs')?.value || '';
+
+    console.log('=== Selected Values ===');
+    console.log('Stages:', stages);
+    console.log('Sectors:', sectors);
+    console.log('Regions:', regions);
+    console.log('Sizes:', sizes);
+    console.log('Additional:', additional);
+
     const preferences = {
-        investment_stages: getSelectedValues('Select stages'),
-        industry_sectors: getSelectedValues('Select industries'),
-        geographic_focus: getSelectedValues('Select regions'),
-        investment_sizes: getSelectedValues('Select investment sizes'),
-        additional_preferences: document.getElementById('additionalPrefs')?.value || ''
+        investment_stages: stages,
+        industry_sectors: sectors,
+        geographic_focus: regions,
+        investment_sizes: sizes,
+        additional_preferences: additional
     };
     
-    console.log('Saving preferences:', preferences);
+    console.log('=== Full Preferences Object ===');
+    console.log(JSON.stringify(preferences, null, 2));
     
     // Show loading state
     const saveButton = document.querySelector('button[onclick="savePreferences()"]');
@@ -157,14 +191,26 @@ function savePreferences() {
         },
         body: JSON.stringify(preferences)
     })
-    .then(response => {
-        console.log('Save response:', response);
-        if (!response.ok) throw new Error('Failed to save preferences');
-        return response.json();
+    .then(async response => {
+        console.log('=== Response Details ===');
+        console.log('Status:', response.status);
+        console.log('Status Text:', response.statusText);
+        console.log('Headers:', Object.fromEntries([...response.headers]));
+        
+        const responseData = await response.json();
+        console.log('Response Data:', responseData);
+        
+        if (!response.ok) {
+            throw new Error(`Failed to save preferences: ${response.status} ${response.statusText}`);
+        }
+        return responseData;
     })
     .then(data => {
-        console.log('Save response data:', data);
+        console.log('Save successful:', data);
         showSuccess('Preferences saved successfully!');
+        
+        // Verify saved data by reloading
+        loadPreferences();
     })
     .catch(error => {
         console.error('Error saving preferences:', error);
@@ -177,19 +223,31 @@ function savePreferences() {
 }
 
 function getSelectedValues(placeholder) {
-    // Find the select container by its placeholder
+    console.log(`Getting values for "${placeholder}"`);
+    
+    // Find the select container
     const select = Array.from(document.querySelectorAll('.custom-select'))
         .find(el => el.dataset.placeholder === placeholder);
+    
     if (!select) {
-        console.warn('No select found for placeholder:', placeholder);
+        console.warn(`No select found for placeholder: "${placeholder}"`);
         return [];
     }
     
-    // Get checked checkboxes and their values
-    const values = Array.from(select.querySelectorAll('input[type="checkbox"]:checked'))
-        .map(checkbox => checkbox.value || checkbox.parentElement.textContent.trim());
+    console.log('Found select element:', select);
     
-    console.log(`Selected values for ${placeholder}:`, values);
+    // Get checked checkboxes
+    const checkboxes = select.querySelectorAll('input[type="checkbox"]:checked');
+    console.log('Checked checkboxes:', checkboxes);
+    
+    const values = Array.from(checkboxes)
+        .map(checkbox => {
+            const value = checkbox.value || checkbox.parentElement.textContent.trim();
+            console.log('Checkbox value:', value);
+            return value;
+        });
+    
+    console.log(`Final values for "${placeholder}":`, values);
     return values;
 }
 
