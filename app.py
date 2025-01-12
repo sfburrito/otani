@@ -451,8 +451,21 @@ def create_dummy_companies():
 
 # Initialize database and create dummy companies
 with app.app_context():
-    db.create_all()
-    create_dummy_companies()
+    db.drop_all()  # Drop all tables first
+    db.create_all()  # Create new tables
+    
+    # Create a test user if none exists
+    if not User.query.first():
+        test_user = User(
+            email='ttanaka@translinkcapital.com',
+            name='Tyler Tanaka'
+        )
+        test_user.set_password('password')
+        db.session.add(test_user)
+        db.session.commit()
+        app.logger.info('Created test user')
+    
+    create_dummy_companies()  # Create dummy companies
 
 if __name__ == '__main__':
     app.run(debug=True)
