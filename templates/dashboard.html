@@ -2,14 +2,20 @@
 
 {% block content %}
 <div class="dashboard-container">
+    <div class="flash-messages"></div>
+    
     <div class="preferences-panel" data-aos="fade-up">
         <div class="section-header">
             <div class="header-title">
                 <h3>Investment Preferences</h3>
             </div>
             <div class="header-actions">
-                <button class="btn btn-outline" onclick="resetPreferences()">Reset</button>
-                <button class="btn btn-primary" onclick="savePreferences()">Save Preferences</button>
+                <button class="btn btn-primary" onclick="savePreferences()">
+                    <i class="fas fa-save"></i> Save Preferences
+                </button>
+                <button class="btn btn-secondary" onclick="resetPreferences()">
+                    <i class="fas fa-undo"></i> Reset
+                </button>
             </div>
         </div>
         
@@ -299,19 +305,18 @@
 <script src="{{ url_for('static', filename='js/add_company.js') }}"></script>
 
 <script>
-const serverPreferences = {
-    investment_stages: {{ investment_stages|tojson }},
-    geographic_focus: {{ geographic_focus|tojson }},
-    additional_preferences: {{ additional_preferences|tojson }}
-};
-
 document.addEventListener('DOMContentLoaded', function() {
+    // Initialize preferences from server data
+    const serverPreferences = {
+        investment_stages: {{ investment_stages|default([])|tojson|safe }},
+        geographic_focus: {{ geographic_focus|default([])|tojson|safe }},
+        additional_preferences: {{ additional_preferences|default('')|tojson|safe }}
+    };
+
+    // Initialize dropdowns
     const customSelects = document.querySelectorAll('.custom-select');
-    
     customSelects.forEach(select => {
         const trigger = select.querySelector('.select-trigger');
-        const optionsList = select.querySelector('.options-list');
-        const selectedText = trigger.querySelector('.selected-text');
         
         trigger.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -322,37 +327,42 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             select.classList.toggle('active');
         });
-        
+
+        // Set initial values from server data
         if (select.getAttribute('data-placeholder') === 'Select stages') {
             select.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
-                if (serverPreferences.investment_stages.includes(checkbox.value)) {
-                    checkbox.checked = true;
-                }
+                checkbox.checked = serverPreferences.investment_stages.includes(checkbox.value);
             });
             updateSelectedText(select);
         } else if (select.getAttribute('data-placeholder') === 'Select regions') {
             select.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
-                if (serverPreferences.geographic_focus.includes(checkbox.value)) {
-                    checkbox.checked = true;
-                }
+                checkbox.checked = serverPreferences.geographic_focus.includes(checkbox.value);
             });
             updateSelectedText(select);
         }
-        
-        const additionalPrefs = document.getElementById('additionalPrefs');
-        if (additionalPrefs && serverPreferences.additional_preferences) {
-            additionalPrefs.value = serverPreferences.additional_preferences;
-        }
     });
-    
+
+    // Set additional preferences
+    const additionalPrefs = document.getElementById('additionalPrefs');
+    if (additionalPrefs && serverPreferences.additional_preferences) {
+        additionalPrefs.value = serverPreferences.additional_preferences;
+    }
+
+    // Close dropdowns when clicking outside
     document.addEventListener('click', () => {
-        customSelects.forEach(select => {
-            select.classList.remove('active');
-        });
+        customSelects.forEach(select => select.classList.remove('active'));
     });
-    
+
+    // Initialize companies table
     loadCompanies();
 });
+
+function updateSelectedText(select) {
+    const selectedOptions = Array.from(select.querySelectorAll('input[type="checkbox"]:checked'))
+        .map(checkbox => checkbox.parentElement.textContent.trim());
+    const selectedText = select.querySelector('.selected-text');
+    selectedText.textContent = selectedOptions.length > 0 ? selectedOptions.join(', ') : select.getAttribute('data-placeholder');
+}
 
 function loadCompanies() {
     const companies = [
@@ -425,12 +435,6 @@ function renderCompanies(companies) {
 
         tbody.appendChild(row);
     });
-}
-
-function updateSelectedText(select) {
-    const selectedOptions = Array.from(select.querySelectorAll('input[type="checkbox"]:checked')).map(option => option.parentElement.textContent.trim());
-    const selectedText = select.querySelector('.selected-text');
-    selectedText.textContent = selectedOptions.length > 0 ? selectedOptions.join(', ') : select.getAttribute('data-placeholder');
 }
 
 function savePreferences() {
