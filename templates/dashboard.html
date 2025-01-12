@@ -305,56 +305,89 @@
 <script src="{{ url_for('static', filename='js/add_company.js') }}"></script>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize preferences from server data
-    const serverPreferences = {
-        investment_stages: {{ investment_stages|default([])|tojson|safe }},
-        geographic_focus: {{ geographic_focus|default([])|tojson|safe }},
-        additional_preferences: {{ additional_preferences|default('')|tojson|safe }}
-    };
+// Safely parse server data with fallbacks
+function safeJSONParse(data, defaultValue) {
+    try {
+        return JSON.parse(data) || defaultValue;
+    } catch (e) {
+        console.error('Error parsing JSON:', e);
+        return defaultValue;
+    }
+}
 
-    // Initialize dropdowns
-    const customSelects = document.querySelectorAll('.custom-select');
-    customSelects.forEach(select => {
-        const trigger = select.querySelector('.select-trigger');
-        
-        trigger.addEventListener('click', (e) => {
-            e.stopPropagation();
-            customSelects.forEach(otherSelect => {
-                if (otherSelect !== select) {
-                    otherSelect.classList.remove('active');
+document.addEventListener('DOMContentLoaded', function() {
+    try {
+        // Initialize preferences from server data with safe defaults
+        const serverPreferences = {
+            investment_stages: safeJSONParse('{{ investment_stages|default([])|tojson|safe }}', []),
+            geographic_focus: safeJSONParse('{{ geographic_focus|default([])|tojson|safe }}', []),
+            additional_preferences: safeJSONParse('{{ additional_preferences|default('')|tojson|safe }}', '')
+        };
+
+        console.log('Server preferences:', serverPreferences);
+
+        // Initialize dropdowns
+        const customSelects = document.querySelectorAll('.custom-select');
+        customSelects.forEach(select => {
+            try {
+                const trigger = select.querySelector('.select-trigger');
+                if (!trigger) {
+                    console.error('Missing trigger element in select:', select);
+                    return;
                 }
-            });
-            select.classList.toggle('active');
+                
+                trigger.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    customSelects.forEach(otherSelect => {
+                        if (otherSelect !== select) {
+                            otherSelect.classList.remove('active');
+                        }
+                    });
+                    select.classList.toggle('active');
+                });
+
+                // Set initial values from server data
+                if (select.getAttribute('data-placeholder') === 'Select stages') {
+                    select.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                        checkbox.checked = Array.isArray(serverPreferences.investment_stages) && 
+                                        serverPreferences.investment_stages.includes(checkbox.value);
+                    });
+                    updateSelectedText(select);
+                } else if (select.getAttribute('data-placeholder') === 'Select regions') {
+                    select.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                        checkbox.checked = Array.isArray(serverPreferences.geographic_focus) && 
+                                        serverPreferences.geographic_focus.includes(checkbox.value);
+                    });
+                    updateSelectedText(select);
+                }
+            } catch (e) {
+                console.error('Error initializing select:', e);
+            }
         });
 
-        // Set initial values from server data
-        if (select.getAttribute('data-placeholder') === 'Select stages') {
-            select.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
-                checkbox.checked = serverPreferences.investment_stages.includes(checkbox.value);
-            });
-            updateSelectedText(select);
-        } else if (select.getAttribute('data-placeholder') === 'Select regions') {
-            select.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
-                checkbox.checked = serverPreferences.geographic_focus.includes(checkbox.value);
-            });
-            updateSelectedText(select);
+        // Set additional preferences
+        const additionalPrefs = document.getElementById('additionalPrefs');
+        if (additionalPrefs && serverPreferences.additional_preferences) {
+            additionalPrefs.value = serverPreferences.additional_preferences;
         }
-    });
 
-    // Set additional preferences
-    const additionalPrefs = document.getElementById('additionalPrefs');
-    if (additionalPrefs && serverPreferences.additional_preferences) {
-        additionalPrefs.value = serverPreferences.additional_preferences;
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', () => {
+            customSelects.forEach(select => select.classList.remove('active'));
+        });
+
+        // Initialize companies table
+        loadCompanies();
+    } catch (e) {
+        console.error('Error in initialization:', e);
+        const flashContainer = document.querySelector('.flash-messages');
+        if (flashContainer) {
+            const flashMessage = document.createElement('div');
+            flashMessage.className = 'flash-message error';
+            flashMessage.textContent = 'Error initializing dashboard. Please refresh the page.';
+            flashContainer.appendChild(flashMessage);
+        }
     }
-
-    // Close dropdowns when clicking outside
-    document.addEventListener('click', () => {
-        customSelects.forEach(select => select.classList.remove('active'));
-    });
-
-    // Initialize companies table
-    loadCompanies();
 });
 
 function updateSelectedText(select) {

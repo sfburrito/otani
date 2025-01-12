@@ -154,26 +154,37 @@ def login():
 def dashboard():
     try:
         app.logger.info(f'User {current_user.email} accessed dashboard')
+        app.logger.debug('Fetching companies...')
         companies = Company.query.filter_by(user_id=current_user.id).all()
+        app.logger.debug(f'Found {len(companies)} companies')
         
         # Get user preferences
+        app.logger.debug('Fetching user preferences...')
         preferences = current_user.preferences
+        app.logger.debug(f'Preferences object: {preferences}')
+        
         if preferences:
+            app.logger.debug(f'Raw preferences data - stages: {preferences.investment_stages}, focus: {preferences.geographic_focus}, additional: {preferences.additional_preferences}')
             investment_stages = preferences.investment_stages.split(',') if preferences.investment_stages else []
             geographic_focus = preferences.geographic_focus.split(',') if preferences.geographic_focus else []
             additional_preferences = preferences.additional_preferences or ''
         else:
+            app.logger.debug('No preferences found, using defaults')
             investment_stages = []
             geographic_focus = []
             additional_preferences = ''
         
+        app.logger.debug(f'Processed preferences - stages: {investment_stages}, focus: {geographic_focus}, additional: {additional_preferences}')
+        
+        app.logger.debug('Rendering dashboard template...')
         return render_template('dashboard.html', 
                              companies=companies,
                              investment_stages=investment_stages,
                              geographic_focus=geographic_focus,
                              additional_preferences=additional_preferences)
     except Exception as e:
-        app.logger.error(f'Error in dashboard: {str(e)}')
+        app.logger.error(f'Error in dashboard route: {str(e)}')
+        app.logger.error('Full traceback:')
         app.logger.error(traceback.format_exc())
         return render_template('500.html'), 500
 
@@ -270,13 +281,22 @@ def serve_static(filename):
 @app.errorhandler(404)
 def not_found_error(error):
     app.logger.error(f'Page not found: {request.url}')
+    app.logger.error(f'Method: {request.method}')
+    app.logger.error(f'Headers: {dict(request.headers)}')
     return render_template('404.html'), 404
 
 @app.errorhandler(500)
 def internal_error(error):
-    db.session.rollback()
     app.logger.error(f'Server Error: {error}')
+    app.logger.error('Full error context:')
+    app.logger.error(f'URL: {request.url}')
+    app.logger.error(f'Method: {request.method}')
+    app.logger.error(f'Headers: {dict(request.headers)}')
+    if request.is_json:
+        app.logger.error(f'JSON Data: {request.get_json()}')
+    app.logger.error('Traceback:')
     app.logger.error(traceback.format_exc())
+    db.session.rollback()
     return render_template('500.html'), 500
 
 if __name__ == '__main__':
