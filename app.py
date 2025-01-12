@@ -354,10 +354,9 @@ def save_preferences():
         
         # Query the database directly to verify
         with db.engine.connect() as conn:
-            result = conn.execute(text(f"SELECT * FROM user_preferences WHERE user_id = {current_user.id}"))
-            row = result.fetchone()
+            result = conn.execute(text(f"SELECT * FROM user_preferences WHERE user_id = {current_user.id}")).mappings().first()
             app.logger.info('=== Database Query Verification ===')
-            app.logger.info(f'Raw database row: {dict(row) if row else None}')
+            app.logger.info(f'Raw database row: {dict(result) if result else None}')
         
         return {'message': 'Preferences saved successfully'}, 200
         
