@@ -302,15 +302,10 @@ p {
 
 /* Footer */
 .footer {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: var(--white);
-    border-top: 1px solid var(--gray);
-    padding: 0.75rem 0;
-    text-align: center;
-    z-index: 1000;
+    background-color: var(--navy);
+    color: var(--white);
+    padding: 2rem 0 1rem;
+    margin-top: 4rem;
 }
 
 .footer-content {
