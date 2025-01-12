@@ -269,6 +269,17 @@ p {
     background-color: #F8F9FA;
 }
 
+textarea.form-input {
+    border: 1px solid #CCCCCC;  
+    min-height: 100px;
+    resize: vertical;
+}
+
+textarea.form-input:focus {
+    border-color: var(--teal);
+    box-shadow: 0 0 0 2px rgba(52, 217, 201, 0.2);
+}
+
 /* Flash Messages */
 .flash-messages {
     position: fixed;
@@ -570,6 +581,12 @@ textarea.form-input {
     min-height: 100px;
     resize: vertical;
     line-height: 1.6;
+    border: 1px solid #CCCCCC;  
+}
+
+textarea.form-input:focus {
+    border-color: var(--teal);
+    box-shadow: 0 0 0 2px rgba(52, 217, 201, 0.2);
 }
 
 /* Info Grid */
