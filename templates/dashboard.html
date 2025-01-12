@@ -471,66 +471,29 @@ function renderCompanies(companies) {
 }
 
 function savePreferences() {
-    const investmentStages = [];
-    const geographicFocus = [];
-    
-    document.querySelectorAll('.custom-select[data-placeholder="Select stages"] input:checked').forEach(checkbox => {
-        investmentStages.push(checkbox.value);
-    });
-    
-    document.querySelectorAll('.custom-select[data-placeholder="Select regions"] input:checked').forEach(checkbox => {
-        geographicFocus.push(checkbox.value);
-    });
-    
-    const additionalPrefs = document.getElementById('additionalPrefs').value;
-    
     const data = {
-        investment_stages: investmentStages,
-        geographic_focus: geographicFocus,
-        additional_preferences: additionalPrefs
+        investment_stages: Array.from(document.querySelectorAll('.custom-select[data-placeholder="Select stages"] input:checked')).map(cb => cb.value),
+        industry_sectors: Array.from(document.querySelectorAll('.custom-select[data-placeholder="Select industries"] input:checked')).map(cb => cb.value),
+        geographic_focus: Array.from(document.querySelectorAll('.custom-select[data-placeholder="Select regions"] input:checked')).map(cb => cb.value),
+        investment_sizes: Array.from(document.querySelectorAll('.custom-select[data-placeholder="Select investment sizes"] input:checked')).map(cb => cb.value),
+        additional_preferences: document.getElementById('additionalPrefs').value
     };
     
-    const saveButton = document.querySelector('button.btn-primary');
-    const originalText = saveButton.innerHTML;
-    saveButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
-    saveButton.disabled = true;
+    console.log('Saving preferences:', data);
     
     fetch('/api/preferences', {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
     })
     .then(response => response.json())
     .then(data => {
-        if (data.error) {
-            throw new Error(data.error);
-        }
-        const flashContainer = document.querySelector('.flash-messages');
-        const flashMessage = document.createElement('div');
-        flashMessage.className = 'flash-message success';
-        flashMessage.textContent = 'Preferences saved successfully';
-        flashContainer.appendChild(flashMessage);
-        
-        setTimeout(() => {
-            flashMessage.remove();
-        }, 3000);
+        showSuccess('Preferences saved successfully');
+        loadPreferences();
     })
     .catch(error => {
-        const flashContainer = document.querySelector('.flash-messages');
-        const flashMessage = document.createElement('div');
-        flashMessage.className = 'flash-message error';
-        flashMessage.textContent = 'Failed to save preferences';
-        flashContainer.appendChild(flashMessage);
-        
-        setTimeout(() => {
-            flashMessage.remove();
-        }, 3000);
-    })
-    .finally(() => {
-        saveButton.innerHTML = originalText;
-        saveButton.disabled = false;
+        console.error('Error:', error);
+        showError('Failed to save preferences');
     });
 }
 
