@@ -301,11 +301,25 @@ def get_preferences():
 @login_required
 def save_preferences():
     try:
-        app.logger.info('=== Saving Preferences ===')
+        app.logger.info('\n=== Saving Preferences ===')
         app.logger.info(f'User ID: {current_user.id}')
         
+        # Log raw request data
+        app.logger.info(f'Raw request data: {request.data}')
+        app.logger.info(f'Request content type: {request.content_type}')
+        
         data = request.get_json()
-        app.logger.info(f'Received data: {data}')
+        app.logger.info(f'Parsed JSON data: {data}')
+        
+        # Validate data structure
+        required_fields = ['investment_stages', 'industry_sectors', 'geographic_focus', 'investment_sizes']
+        for field in required_fields:
+            if field not in data:
+                app.logger.error(f'Missing required field: {field}')
+                return {'error': f'Missing required field: {field}'}, 400
+            if not isinstance(data[field], list):
+                app.logger.error(f'Field {field} must be a list, got {type(data[field])}')
+                return {'error': f'Field {field} must be a list'}, 400
         
         preferences = current_user.preferences
         app.logger.info(f'Current preferences before update: {preferences.__dict__ if preferences else None}')
@@ -317,25 +331,41 @@ def save_preferences():
         
         # Log each field being updated
         app.logger.info('=== Updating Fields ===')
-        app.logger.info(f'investment_stages: {data.get("investment_stages", [])}')
-        app.logger.info(f'industry_sectors: {data.get("industry_sectors", [])}')
-        app.logger.info(f'geographic_focus: {data.get("geographic_focus", [])}')
-        app.logger.info(f'investment_sizes: {data.get("investment_sizes", [])}')
-        app.logger.info(f'additional_preferences: {data.get("additional_preferences", "")}')
+        for field in required_fields:
+            old_value = getattr(preferences, field, None)
+            new_value = ','.join(data.get(field, []))
+            app.logger.info(f'{field}:')
+            app.logger.info(f'  Old: {old_value}')
+            app.logger.info(f'  New: {new_value}')
+            setattr(preferences, field, new_value)
         
-        preferences.investment_stages = ','.join(data.get('investment_stages', []))
-        preferences.industry_sectors = ','.join(data.get('industry_sectors', []))
-        preferences.geographic_focus = ','.join(data.get('geographic_focus', []))
-        preferences.investment_sizes = ','.join(data.get('investment_sizes', []))
-        preferences.additional_preferences = data.get('additional_preferences', '')
+        # Handle additional preferences
+        old_additional = getattr(preferences, 'additional_preferences', None)
+        new_additional = data.get('additional_preferences', '')
+        app.logger.info('additional_preferences:')
+        app.logger.info(f'  Old: {old_additional}')
+        app.logger.info(f'  New: {new_additional}')
+        preferences.additional_preferences = new_additional
         
         app.logger.info('=== Updated Object ===')
         app.logger.info(f'Updated preferences: {preferences.__dict__}')
         
-        db.session.commit()
-        app.logger.info('Successfully committed to database')
+        # Commit changes
+        try:
+            db.session.commit()
+            app.logger.info('Successfully committed to database')
+        except Exception as commit_error:
+            app.logger.error(f'Error during commit: {str(commit_error)}')
+            db.session.rollback()
+            raise
+        
+        # Verify the changes were saved
+        db.session.refresh(preferences)
+        app.logger.info('=== Verification ===')
+        app.logger.info(f'Preferences after refresh: {preferences.__dict__}')
         
         return {'message': 'Preferences saved successfully'}, 200
+        
     except Exception as e:
         db.session.rollback()
         app.logger.error('=== Error Saving Preferences ===')
