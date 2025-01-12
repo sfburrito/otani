@@ -3,22 +3,16 @@ param(
     [string]$CommitMessage
 )
 
+# Add all changes
 git add .
-if ($LASTEXITCODE -ne 0) {
-    Write-Error "Git add failed"
-    exit 1
-}
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-git commit -m $CommitMessage
-if ($LASTEXITCODE -ne 0) {
-    Write-Error "Git commit failed"
-    exit 1
-}
+# Commit with message
+git commit -m "$CommitMessage"
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
+# Push to origin
 git push origin main
-if ($LASTEXITCODE -ne 0) {
-    Write-Error "Git push failed"
-    exit 1
-}
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
 Write-Host "Successfully pushed changes to GitHub!" -ForegroundColor Green
