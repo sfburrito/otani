@@ -403,7 +403,8 @@ function savePreferences() {
     const sectors = getSelectedValues('Select industries');
     const regions = getSelectedValues('Select regions');
     const sizes = getSelectedValues('Select investment sizes');
-    const additional = document.getElementById('additionalPrefs')?.value || '';
+    const additionalPrefs = document.getElementById('additionalPrefs');
+    const additional = additionalPrefs ? additionalPrefs.value : '';
 
     const preferences = {
         investment_stages: stages,
