@@ -36,12 +36,25 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(256))  # Increased from 128 to 256 for scrypt hashes
     companies = db.relationship('Company', backref='analyst', lazy=True)
+    preferences = db.relationship('UserPreferences', backref='owner', lazy=True, uselist=False)
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+class UserPreferences(db.Model):
+    __tablename__ = 'user_preferences'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    investment_stages = db.Column(db.String(500))  # Stored as JSON string
+    geographic_focus = db.Column(db.String(500))  # Stored as JSON string
+    additional_preferences = db.Column(db.Text)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    user = db.relationship('User', backref=db.backref('preferences', uselist=False))
 
 class Company(db.Model):
     __tablename__ = 'companies'
@@ -199,6 +212,41 @@ def add_company():
         app.logger.error(traceback.format_exc())
         flash('Error adding company. Please try again.')
         return redirect(url_for('dashboard'))
+
+@app.route('/api/preferences', methods=['GET'])
+@login_required
+def get_preferences():
+    preferences = current_user.preferences
+    if not preferences:
+        return {'investment_stages': [], 'geographic_focus': [], 'additional_preferences': ''}
+    
+    return {
+        'investment_stages': preferences.investment_stages.split(',') if preferences.investment_stages else [],
+        'geographic_focus': preferences.geographic_focus.split(',') if preferences.geographic_focus else [],
+        'additional_preferences': preferences.additional_preferences or ''
+    }
+
+@app.route('/api/preferences', methods=['POST'])
+@login_required
+def save_preferences():
+    data = request.get_json()
+    
+    preferences = current_user.preferences
+    if not preferences:
+        preferences = UserPreferences(user_id=current_user.id)
+        db.session.add(preferences)
+    
+    preferences.investment_stages = ','.join(data.get('investment_stages', []))
+    preferences.geographic_focus = ','.join(data.get('geographic_focus', []))
+    preferences.additional_preferences = data.get('additional_preferences', '')
+    
+    try:
+        db.session.commit()
+        return {'message': 'Preferences saved successfully'}, 200
+    except Exception as e:
+        db.session.rollback()
+        app.logger.error(f'Error saving preferences: {str(e)}')
+        return {'error': 'Failed to save preferences'}, 500
 
 @app.route('/static/<path:filename>')
 def serve_static(filename):

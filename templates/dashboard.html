@@ -514,29 +514,116 @@ function filterCompanies(query) {
 }
 
 function savePreferences() {
-    const preferences = {
-        categories: {},
-        additional: document.getElementById('additionalPrefs').value
-    };
-
-    document.querySelectorAll('.custom-select').forEach(select => {
-        const category = select.closest('.custom-select-container').querySelector('.preference-label').textContent;
-        const selectedOptions = Array.from(select.querySelectorAll('input:checked'))
-            .map(input => input.value);
-        preferences.categories[category] = selectedOptions;
+    const investmentStages = [];
+    const geographicFocus = [];
+    
+    // Get selected investment stages
+    document.querySelectorAll('.custom-select[data-placeholder="Select stages"] input:checked').forEach(checkbox => {
+        investmentStages.push(checkbox.value);
     });
     
-    console.log('Saved preferences:', preferences);
+    // Get selected geographic regions
+    document.querySelectorAll('.custom-select[data-placeholder="Select regions"] input:checked').forEach(checkbox => {
+        geographicFocus.push(checkbox.value);
+    });
     
-    const toast = document.createElement('div');
-    toast.className = 'toast success';
-    toast.textContent = 'Preferences saved successfully';
-    document.body.appendChild(toast);
+    // Get additional preferences
+    const additionalPrefs = document.getElementById('additionalPrefs').value;
     
-    setTimeout(() => {
-        toast.remove();
-    }, 3000);
+    // Prepare data for API
+    const data = {
+        investment_stages: investmentStages,
+        geographic_focus: geographicFocus,
+        additional_preferences: additionalPrefs
+    };
+    
+    // Show loading state
+    const saveButton = document.querySelector('button.btn-primary');
+    const originalText = saveButton.innerHTML;
+    saveButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+    saveButton.disabled = true;
+    
+    // Save preferences via API
+    fetch('/api/preferences', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            throw new Error(data.error);
+        }
+        // Show success message
+        const flashContainer = document.querySelector('.flash-messages');
+        const flashMessage = document.createElement('div');
+        flashMessage.className = 'flash-message success';
+        flashMessage.textContent = 'Preferences saved successfully';
+        flashContainer.appendChild(flashMessage);
+        
+        // Remove message after 3 seconds
+        setTimeout(() => {
+            flashMessage.remove();
+        }, 3000);
+    })
+    .catch(error => {
+        // Show error message
+        const flashContainer = document.querySelector('.flash-messages');
+        const flashMessage = document.createElement('div');
+        flashMessage.className = 'flash-message error';
+        flashMessage.textContent = 'Failed to save preferences';
+        flashContainer.appendChild(flashMessage);
+        
+        // Remove message after 3 seconds
+        setTimeout(() => {
+            flashMessage.remove();
+        }, 3000);
+    })
+    .finally(() => {
+        // Restore button state
+        saveButton.innerHTML = originalText;
+        saveButton.disabled = false;
+    });
 }
+
+function loadPreferences() {
+    fetch('/api/preferences')
+        .then(response => response.json())
+        .then(data => {
+            // Set investment stages
+            data.investment_stages.forEach(stage => {
+                const checkbox = document.querySelector(`.custom-select[data-placeholder="Select stages"] input[value="${stage}"]`);
+                if (checkbox) {
+                    checkbox.checked = true;
+                    updateSelectedText(checkbox.closest('.custom-select'));
+                }
+            });
+            
+            // Set geographic focus
+            data.geographic_focus.forEach(region => {
+                const checkbox = document.querySelector(`.custom-select[data-placeholder="Select regions"] input[value="${region}"]`);
+                if (checkbox) {
+                    checkbox.checked = true;
+                    updateSelectedText(checkbox.closest('.custom-select'));
+                }
+            });
+            
+            // Set additional preferences
+            if (data.additional_preferences) {
+                document.getElementById('additionalPrefs').value = data.additional_preferences;
+            }
+        })
+        .catch(error => {
+            console.error('Error loading preferences:', error);
+        });
+}
+
+// Call loadPreferences when the page loads
+document.addEventListener('DOMContentLoaded', function() {
+    loadPreferences();
+});
 
 function resetPreferences() {
     document.querySelectorAll('.custom-select').forEach(select => {
