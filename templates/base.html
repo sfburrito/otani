@@ -21,6 +21,11 @@
     
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    
+    <!-- Custom JavaScript -->
+    {% if request.endpoint == 'dashboard' %}
+    <script src="{{ url_for('static', filename='js/preferences.js') }}"></script>
+    {% endif %}
 </head>
 <body>
     <nav class="navbar">
