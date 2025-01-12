@@ -319,13 +319,30 @@ document.addEventListener('DOMContentLoaded', function() {
     try {
         // Initialize preferences from server data with safe defaults
         const serverPreferences = {
-            investment_stages: safeJSONParse('{{ investment_stages|default([])|tojson|safe }}', []),
-            geographic_focus: safeJSONParse('{{ geographic_focus|default([])|tojson|safe }}', []),
-            additional_preferences: safeJSONParse('{{ additional_preferences|default('')|tojson|safe }}', '')
+            investment_stages: {{ preferences.investment_stages|tojson|safe if preferences.investment_stages else '[]' }},
+            industry_sectors: {{ preferences.industry_sectors|tojson|safe if preferences.industry_sectors else '[]' }},
+            geographic_focus: {{ preferences.geographic_focus|tojson|safe if preferences.geographic_focus else '[]' }},
+            investment_sizes: {{ preferences.investment_sizes|tojson|safe if preferences.investment_sizes else '[]' }},
+            additional_preferences: {{ preferences.additional_preferences|tojson|safe if preferences.additional_preferences else '""' }}
         };
-
         console.log('Server preferences:', serverPreferences);
 
+        // Set each type of preference
+        setSelectedOptions('Select stages', serverPreferences.investment_stages);
+        setSelectedOptions('Select industries', serverPreferences.industry_sectors);
+        setSelectedOptions('Select regions', serverPreferences.geographic_focus);
+        setSelectedOptions('Select investment sizes', serverPreferences.investment_sizes);
+        
+        // Set additional preferences
+        const additionalPrefs = document.getElementById('additionalPrefs');
+        if (additionalPrefs && serverPreferences.additional_preferences) {
+            additionalPrefs.value = serverPreferences.additional_preferences;
+        }
+    } catch (error) {
+        console.error('Error initializing preferences:', error);
+    }
+
+    try {
         // Initialize dropdowns
         const customSelects = document.querySelectorAll('.custom-select');
         customSelects.forEach(select => {
@@ -364,12 +381,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.error('Error initializing select:', e);
             }
         });
-
-        // Set additional preferences
-        const additionalPrefs = document.getElementById('additionalPrefs');
-        if (additionalPrefs && serverPreferences.additional_preferences) {
-            additionalPrefs.value = serverPreferences.additional_preferences;
-        }
 
         // Close dropdowns when clicking outside
         document.addEventListener('click', () => {
@@ -565,6 +576,16 @@ document.addEventListener('click', function(event) {
 window.onclick = function(event) {
     if (event.target.classList.contains('modal')) {
         closeModal();
+    }
+}
+
+function setSelectedOptions(selectPlaceholder, selectedValues) {
+    const select = document.querySelector(`.custom-select[data-placeholder="${selectPlaceholder}"]`);
+    if (select) {
+        select.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+            checkbox.checked = selectedValues.includes(checkbox.value);
+        });
+        updateSelectedText(select);
     }
 }
 </script>
