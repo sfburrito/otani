@@ -16,6 +16,7 @@ logging.basicConfig(
 
 # Create Flask app
 app = Flask(__name__)
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0  # Disable caching for development
 app.logger.setLevel(logging.INFO)
 
 # Configure app

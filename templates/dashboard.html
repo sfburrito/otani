@@ -214,61 +214,89 @@
 
 <!-- Add Company Modal -->
 <div id="addCompanyModal" class="modal">
-    <div class="modal-content">
+    <div class="modal-overlay"></div>
+    <div class="modal-container">
         <div class="modal-header">
-            <h3>Add New Company</h3>
-            <button type="button" class="close-modal" onclick="closeModal()">
+            <h2>Add New Company</h2>
+            <button class="modal-close" onclick="closeModal()">
                 <i class="fas fa-times"></i>
             </button>
         </div>
-        <form class="add-company-form" method="POST" action="{{ url_for('add_company') }}">
-            <div class="form-grid">
-                <div class="form-group">
-                    <label class="form-label" for="name">Company Name</label>
-                    <input type="text" class="form-input" id="name" name="name" required>
+        <div class="modal-content">
+            <form id="addCompanyForm" class="add-company-form">
+                <div class="company-details-grid">
+                    <!-- Basic Information -->
+                    <div class="detail-section">
+                        <h3>Basic Information</h3>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <label>Company Name *</label>
+                                <input type="text" class="form-input" id="name" name="name" required>
+                            </div>
+                            <div class="info-item">
+                                <label>Industry *</label>
+                                <select class="form-input" id="industry" name="industry" required>
+                                    <option value="">Select Industry</option>
+                                    <option value="Software">Software</option>
+                                    <option value="Hardware">Hardware</option>
+                                    <option value="AI/ML">AI/ML</option>
+                                    <option value="Fintech">Fintech</option>
+                                    <option value="Healthcare">Healthcare</option>
+                                    <option value="E-commerce">E-commerce</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div class="info-item">
+                                <label>Stage *</label>
+                                <select class="form-input" id="stage" name="stage" required>
+                                    <option value="">Select Stage</option>
+                                    <option value="Seed">Seed</option>
+                                    <option value="Series A">Series A</option>
+                                    <option value="Series B">Series B</option>
+                                    <option value="Series C">Series C</option>
+                                    <option value="Series D+">Series D+</option>
+                                </select>
+                            </div>
+                            <div class="info-item">
+                                <label>Investment Amount *</label>
+                                <input type="number" class="form-input" id="investment_amount" name="investment_amount" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Additional Details -->
+                    <div class="detail-section">
+                        <h3>Additional Details</h3>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <label>Website</label>
+                                <input type="url" class="form-input" id="website" name="website">
+                            </div>
+                            <div class="info-item">
+                                <label>Location</label>
+                                <input type="text" class="form-input" id="location" name="location">
+                            </div>
+                            <div class="info-item full-width">
+                                <label>Description</label>
+                                <textarea class="form-input" id="description" name="description" rows="3"></textarea>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label class="form-label" for="industry">Industry</label>
-                    <input type="text" class="form-input" id="industry" name="industry">
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add Company</button>
                 </div>
-                <div class="form-group">
-                    <label class="form-label" for="stage">Stage</label>
-                    <select class="form-input" id="stage" name="stage">
-                        <option value="Seed">Seed</option>
-                        <option value="Series A">Series A</option>
-                        <option value="Series B">Series B</option>
-                        <option value="Series C">Series C+</option>
-                        <option value="Growth">Growth</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="website">Website</label>
-                    <input type="url" class="form-input" id="website" name="website">
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="form-label" for="description">Description</label>
-                <textarea class="form-input" id="description" name="description" rows="3"></textarea>
-            </div>
-            <div class="form-group">
-                <label class="form-label" for="contact_email">Contact Email</label>
-                <input type="email" class="form-input" id="contact_email" name="contact_email">
-            </div>
-            <div class="form-group">
-                <label class="form-label" for="notes">Notes</label>
-                <textarea class="form-input" id="notes" name="notes" rows="3"></textarea>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-outline" onclick="closeModal()">Cancel</button>
-                <button type="submit" class="btn btn-primary">Add Company</button>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
 </div>
 
 {% include 'company_details_modal.html' %}
 
 <script src="{{ url_for('static', filename='js/company_details.js') }}"></script>
+<script src="{{ url_for('static', filename='js/add_company.js') }}"></script>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -525,14 +553,26 @@ function resetPreferences() {
 }
 
 function openModal() {
-    document.getElementById('addCompanyModal').style.display = 'flex';
+    const modal = document.getElementById('addCompanyModal');
+    modal.style.display = 'flex';
     document.body.style.overflow = 'hidden';
 }
 
 function closeModal() {
-    document.getElementById('addCompanyModal').style.display = 'none';
+    const modal = document.getElementById('addCompanyModal');
+    modal.style.display = 'none';
     document.body.style.overflow = 'auto';
+    // Reset form
+    document.getElementById('addCompanyForm').reset();
 }
+
+// Close modal when clicking outside
+document.addEventListener('click', function(event) {
+    const modal = document.getElementById('addCompanyModal');
+    if (event.target.classList.contains('modal-overlay')) {
+        closeModal();
+    }
+});
 
 window.onclick = function(event) {
     if (event.target.classList.contains('modal')) {
