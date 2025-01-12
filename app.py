@@ -69,7 +69,9 @@ class UserPreferences(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, unique=True)
     investment_stages = db.Column(db.String(500))
+    industry_sectors = db.Column(db.String(500))
     geographic_focus = db.Column(db.String(500))
+    investment_sizes = db.Column(db.String(500))
     additional_preferences = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -186,12 +188,16 @@ def dashboard():
         if preferences:
             app.logger.debug(f'Raw preferences data - stages: {preferences.investment_stages}, focus: {preferences.geographic_focus}, additional: {preferences.additional_preferences}')
             investment_stages = preferences.investment_stages.split(',') if preferences.investment_stages else []
+            industry_sectors = preferences.industry_sectors.split(',') if preferences.industry_sectors else []
             geographic_focus = preferences.geographic_focus.split(',') if preferences.geographic_focus else []
+            investment_sizes = preferences.investment_sizes.split(',') if preferences.investment_sizes else []
             additional_preferences = preferences.additional_preferences or ''
         else:
             app.logger.debug('No preferences found, using defaults')
             investment_stages = []
+            industry_sectors = []
             geographic_focus = []
+            investment_sizes = []
             additional_preferences = ''
         
         app.logger.debug(f'Processed preferences - stages: {investment_stages}, focus: {geographic_focus}, additional: {additional_preferences}')
@@ -200,7 +206,9 @@ def dashboard():
         return render_template('dashboard.html', 
                              companies=companies,
                              investment_stages=investment_stages,
+                             industry_sectors=industry_sectors,
                              geographic_focus=geographic_focus,
+                             investment_sizes=investment_sizes,
                              additional_preferences=additional_preferences)
     except Exception as e:
         app.logger.error(f'Error in dashboard route: {str(e)}')
@@ -263,11 +271,19 @@ def add_company():
 def get_preferences():
     preferences = current_user.preferences
     if not preferences:
-        return {'investment_stages': [], 'geographic_focus': [], 'additional_preferences': ''}
+        return {
+            'investment_stages': [],
+            'industry_sectors': [],
+            'geographic_focus': [],
+            'investment_sizes': [],
+            'additional_preferences': ''
+        }
     
     return {
         'investment_stages': preferences.investment_stages.split(',') if preferences.investment_stages else [],
+        'industry_sectors': preferences.industry_sectors.split(',') if preferences.industry_sectors else [],
         'geographic_focus': preferences.geographic_focus.split(',') if preferences.geographic_focus else [],
+        'investment_sizes': preferences.investment_sizes.split(',') if preferences.investment_sizes else [],
         'additional_preferences': preferences.additional_preferences or ''
     }
 
@@ -275,6 +291,7 @@ def get_preferences():
 @login_required
 def save_preferences():
     data = request.get_json()
+    app.logger.info(f'Received preferences data: {data}')
     
     preferences = current_user.preferences
     if not preferences:
@@ -282,11 +299,14 @@ def save_preferences():
         db.session.add(preferences)
     
     preferences.investment_stages = ','.join(data.get('investment_stages', []))
+    preferences.industry_sectors = ','.join(data.get('industry_sectors', []))
     preferences.geographic_focus = ','.join(data.get('geographic_focus', []))
+    preferences.investment_sizes = ','.join(data.get('investment_sizes', []))
     preferences.additional_preferences = data.get('additional_preferences', '')
     
     try:
         db.session.commit()
+        app.logger.info('Preferences saved successfully')
         return {'message': 'Preferences saved successfully'}, 200
     except Exception as e:
         db.session.rollback()

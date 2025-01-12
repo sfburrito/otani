@@ -129,12 +129,26 @@ function setSelectedOptions(placeholder, values) {
 }
 
 function savePreferences() {
+    // Get values from each dropdown
+    const investmentStages = getSelectedValues('Select stages');
+    const industrySectors = getSelectedValues('Select industries');
+    const geographicFocus = getSelectedValues('Select regions');
+    const investmentSizes = getSelectedValues('Select investment sizes');
+    const additionalPrefs = document.getElementById('additionalPrefs')?.value || '';
+
+    // Log values before saving
+    console.log('Investment Stages:', investmentStages);
+    console.log('Industry Sectors:', industrySectors);
+    console.log('Geographic Focus:', geographicFocus);
+    console.log('Investment Sizes:', investmentSizes);
+    console.log('Additional Preferences:', additionalPrefs);
+
     const preferences = {
-        investment_stages: getSelectedValues('Select stages'),
-        industry_sectors: getSelectedValues('Select industries'),
-        geographic_focus: getSelectedValues('Select regions'),
-        investment_sizes: getSelectedValues('Select investment sizes'),
-        additional_preferences: document.getElementById('additionalPrefs')?.value || ''
+        investment_stages: investmentStages,
+        industry_sectors: industrySectors,
+        geographic_focus: geographicFocus,
+        investment_sizes: investmentSizes,
+        additional_preferences: additionalPrefs
     };
     
     console.log('Saving preferences:', preferences);
@@ -153,10 +167,12 @@ function savePreferences() {
         body: JSON.stringify(preferences)
     })
     .then(response => {
+        console.log('Save response status:', response.status);
         if (!response.ok) throw new Error('Failed to save preferences');
         return response.json();
     })
-    .then(() => {
+    .then(data => {
+        console.log('Save response data:', data);
         showSuccess('Preferences saved successfully!');
     })
     .catch(error => {
@@ -173,11 +189,23 @@ function getSelectedValues(placeholder) {
     // Find the select container by its placeholder
     const select = Array.from(document.querySelectorAll('.custom-select'))
         .find(el => el.dataset.placeholder === placeholder);
-    if (!select) return [];
+    
+    // Log the select element and placeholder
+    console.log('Getting values for:', placeholder);
+    console.log('Found select element:', select);
+    
+    if (!select) {
+        console.warn('No select found for placeholder:', placeholder);
+        return [];
+    }
     
     // Get checked checkboxes
-    return Array.from(select.querySelectorAll('input[type="checkbox"]:checked'))
+    const values = Array.from(select.querySelectorAll('input[type="checkbox"]:checked'))
         .map(checkbox => checkbox.value || checkbox.parentElement.textContent.trim());
+    
+    // Log the selected values
+    console.log('Selected values:', values);
+    return values;
 }
 
 function showSuccess(message) {
