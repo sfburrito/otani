@@ -177,45 +177,39 @@ def login():
 def dashboard():
     try:
         app.logger.info(f'User {current_user.email} accessed dashboard')
-        app.logger.debug('Fetching companies...')
-        companies = Company.query.filter_by(user_id=current_user.id).all()
-        app.logger.debug(f'Found {len(companies)} companies')
         
         # Get user preferences
-        app.logger.debug('Fetching user preferences...')
         preferences = current_user.preferences
-        app.logger.debug(f'Preferences object: {preferences}')
-        
         if preferences:
-            app.logger.debug(f'Raw preferences data - stages: {preferences.investment_stages}, focus: {preferences.geographic_focus}, additional: {preferences.additional_preferences}')
-            investment_stages = preferences.investment_stages.split(',') if preferences.investment_stages else []
-            industry_sectors = preferences.industry_sectors.split(',') if preferences.industry_sectors else []
-            geographic_focus = preferences.geographic_focus.split(',') if preferences.geographic_focus else []
-            investment_sizes = preferences.investment_sizes.split(',') if preferences.investment_sizes else []
-            additional_preferences = preferences.additional_preferences or ''
+            preferences_dict = {
+                'investment_stages': preferences.investment_stages.split(',') if preferences.investment_stages else [],
+                'industry_sectors': preferences.industry_sectors.split(',') if preferences.industry_sectors else [],
+                'geographic_focus': preferences.geographic_focus.split(',') if preferences.geographic_focus else [],
+                'investment_sizes': preferences.investment_sizes.split(',') if preferences.investment_sizes else [],
+                'additional_preferences': preferences.additional_preferences or ''
+            }
         else:
-            app.logger.debug('No preferences found, using defaults')
-            investment_stages = []
-            industry_sectors = []
-            geographic_focus = []
-            investment_sizes = []
-            additional_preferences = ''
+            preferences_dict = {
+                'investment_stages': [],
+                'industry_sectors': [],
+                'geographic_focus': [],
+                'investment_sizes': [],
+                'additional_preferences': ''
+            }
         
-        app.logger.debug(f'Processed preferences - stages: {investment_stages}, focus: {geographic_focus}, additional: {additional_preferences}')
+        # Get user's companies
+        companies = Company.query.filter_by(user_id=current_user.id).all()
         
-        app.logger.debug('Rendering dashboard template...')
-        return render_template('dashboard.html', 
-                             companies=companies,
-                             investment_stages=investment_stages,
-                             industry_sectors=industry_sectors,
-                             geographic_focus=geographic_focus,
-                             investment_sizes=investment_sizes,
-                             additional_preferences=additional_preferences)
+        return render_template('dashboard.html',
+            user=current_user,
+            companies=companies,
+            preferences=preferences_dict
+        )
     except Exception as e:
         app.logger.error(f'Error in dashboard route: {str(e)}')
         app.logger.error('Full traceback:')
         app.logger.error(traceback.format_exc())
-        return render_template('500.html'), 500
+        return render_template('error.html', error=str(e)), 500
 
 @app.route('/logout')
 @login_required
