@@ -78,6 +78,7 @@ class UserPreferences(db.Model):
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
 class Company(db.Model):
+    __tablename__ = 'companies'  # Explicitly set table name
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     name = db.Column(db.String(100), nullable=False)
@@ -89,6 +90,20 @@ class Company(db.Model):
     rating = db.Column(db.String(1))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'industry': self.industry,
+            'stage': self.stage,
+            'website': self.website,
+            'email': self.email,
+            'description': self.description,
+            'rating': self.rating,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+            'updated_at': self.updated_at.isoformat() if self.updated_at else None
+        }
 
 @login_manager.user_loader
 def load_user(id):
@@ -244,8 +259,8 @@ def add_company():
             description=description,
             stage=stage,
             website=website,
-            contact_email=contact_email,
-            notes=notes,
+            email=contact_email,
+            rating=notes,
             user_id=current_user.id
         )
 
@@ -452,11 +467,11 @@ def create_dummy_companies():
 # Initialize database and create dummy companies
 with app.app_context():
     # Drop all tables with cascade
-    for table in reversed(db.metadata.sorted_tables):
-        try:
-            table.drop(db.engine, checkfirst=True)
-        except Exception as e:
-            app.logger.error(f'Error dropping table {table}: {str(e)}')
+    db.session.execute(text('DROP TABLE IF EXISTS companies CASCADE'))
+    db.session.execute(text('DROP TABLE IF EXISTS company CASCADE'))
+    db.session.execute(text('DROP TABLE IF EXISTS user_preferences CASCADE'))
+    db.session.execute(text('DROP TABLE IF EXISTS users CASCADE'))
+    db.session.commit()
     
     db.create_all()  # Create new tables
     
