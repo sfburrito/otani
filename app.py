@@ -301,15 +301,13 @@ def internal_error(error):
 
 if __name__ == '__main__':
     with app.app_context():
-        # Drop all tables and recreate them
-        db.drop_all()
         db.create_all()
         
-        # Create a test user if none exists
+        # Create test user if it doesn't exist
         if not User.query.filter_by(email='test@example.com').first():
             user = User(email='test@example.com')
             user.set_password('password')
             db.session.add(user)
             db.session.commit()
             
-    app.run(debug=True)
+        app.run(debug=True)
