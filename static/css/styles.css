@@ -1,0 +1,113 @@
+/* Rating Badges */
+.rating-badge {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 14px;
+    color: white;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease;
+}
+
+.rating-badge:hover {
+    transform: scale(1.1);
+}
+
+/* Rating Colors */
+.rating-badge.a {
+    background: linear-gradient(135deg, #4CAF50, #45a049);
+    border: 1px solid #45a049;
+}
+
+.rating-badge.b {
+    background: linear-gradient(135deg, #2196F3, #1e88e5);
+    border: 1px solid #1e88e5;
+}
+
+.rating-badge.c {
+    background: linear-gradient(135deg, #FFC107, #ffb300);
+    border: 1px solid #ffb300;
+}
+
+.rating-badge.d {
+    background: linear-gradient(135deg, #FF9800, #fb8c00);
+    border: 1px solid #fb8c00;
+}
+
+.rating-badge.f {
+    background: linear-gradient(135deg, #f44336, #e53935);
+    border: 1px solid #e53935;
+}
+
+/* Table Styles */
+.companies-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.companies-table th,
+.companies-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+.companies-table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    color: #495057;
+}
+
+.companies-table tr:last-child td {
+    border-bottom: none;
+}
+
+.companies-table tr:hover {
+    background-color: #f8f9fa;
+}
+
+/* Rating Column */
+.rating-col {
+    width: 60px;
+    text-align: center !important;
+}
+
+/* Description Column */
+.description-col {
+    max-width: 300px;
+}
+
+.description-content {
+    max-height: 3.6em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+/* Icon Cells */
+.icon-cell {
+    width: 50px;
+    text-align: center !important;
+}
+
+.icon-cell a {
+    color: #6c757d;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.icon-cell a:hover {
+    color: #007bff;
+}
