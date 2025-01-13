@@ -30,10 +30,10 @@ document.addEventListener('DOMContentLoaded', () => {
     
     addCompanyForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        console.log('Form submitted');
+        console.log('Form submission started');
         
         if (!addCompanyForm.checkValidity()) {
-            console.log('Form invalid');
+            console.log('Form validation failed');
             showFormErrors();
             return;
         }
@@ -48,21 +48,40 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Get form data
             const formData = new FormData(addCompanyForm);
-            const data = Object.fromEntries(formData.entries());
-            console.log('Form data:', data);
+            const data = {};
+            
+            // Log each form field
+            for (let [key, value] of formData.entries()) {
+                console.log(`Form field - ${key}: ${value}`);
+                data[key] = value;
+            }
+            
+            console.log('Sending data to server:', JSON.stringify(data, null, 2));
 
             // Send request to server
             const response = await fetch('/add_company', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Accept': 'application/json'
                 },
                 body: JSON.stringify(data)
             });
 
-            console.log('Response:', response);
-            const result = await response.json();
-            console.log('Result:', result);
+            console.log('Response status:', response.status);
+            console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+            
+            const responseText = await response.text();
+            console.log('Raw response:', responseText);
+            
+            let result;
+            try {
+                result = JSON.parse(responseText);
+                console.log('Parsed response:', result);
+            } catch (parseError) {
+                console.error('Failed to parse response:', parseError);
+                throw new Error('Invalid response format from server');
+            }
 
             if (!response.ok) {
                 throw new Error(result.error || 'Failed to add company');
@@ -75,14 +94,14 @@ document.addEventListener('DOMContentLoaded', () => {
             addCompanyForm.reset();
             closeAddCompanyModal();
             
-            // Reload page to show new company
-            location.reload();
+            // Refresh the page to show new company
+            window.location.href = '/dashboard';
 
         } catch (error) {
-            console.error('Error:', error);
+            console.error('Error adding company:', error);
             showErrorMessage(error.message || 'Failed to add company. Please try again.');
         } finally {
-            // Restore button state
+            // Reset button state
             submitButton.disabled = false;
             submitButton.textContent = originalText;
         }
@@ -91,7 +110,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // Show form validation errors
     function showFormErrors() {
         const invalidInputs = document.querySelectorAll(':invalid');
-        console.log('Invalid inputs:', invalidInputs);
+        console.log('Invalid inputs:', Array.from(invalidInputs).map(input => ({
+            id: input.id,
+            name: input.name,
+            value: input.value,
+            validationMessage: input.validationMessage
+        })));
+        
         invalidInputs.forEach(input => {
             input.classList.add('invalid');
             const errorMessage = input.nextElementSibling;
@@ -104,6 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Show success message
     function showSuccessMessage(message) {
+        console.log('Success:', message);
         const successMessage = document.createElement('div');
         successMessage.className = 'success-message';
         successMessage.textContent = message;
@@ -113,6 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Show error message
     function showErrorMessage(message) {
+        console.error('Error:', message);
         const errorMessage = document.createElement('div');
         errorMessage.className = 'error-message';
         errorMessage.textContent = message;
@@ -123,6 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Clear form errors when input changes
     addCompanyForm.querySelectorAll('input, textarea, select').forEach(input => {
         input.addEventListener('input', () => {
+            console.log(`Input changed - ${input.name}: ${input.value}`);
             input.classList.remove('invalid');
             const errorMessage = input.nextElementSibling;
             if (errorMessage && errorMessage.classList.contains('error-message')) {

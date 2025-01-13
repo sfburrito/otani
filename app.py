@@ -8,6 +8,8 @@ import logging
 import sys
 import traceback
 from sqlalchemy import text
+from sqlalchemy.exc import SQLAlchemyError
+import json
 
 # Configure logging
 logging.basicConfig(
@@ -249,32 +251,62 @@ def logout():
 @app.route('/add_company', methods=['POST'])
 @login_required
 def add_company():
+    app.logger.info(f"User {current_user.email} attempting to add new company")
     try:
-        app.logger.info(f'User {current_user.email} attempting to add new company')
-        data = request.get_json()  # Get JSON data from request
+        # Log raw request data
+        app.logger.debug(f"Raw request data: {request.get_data()}")
+        app.logger.debug(f"Request headers: {dict(request.headers)}")
         
-        app.logger.debug(f'Received data: {data}')
+        # Get JSON data
+        data = request.get_json()
+        app.logger.info(f"Parsed request data: {data}")
         
-        company = Company(
-            name=data.get('name'),
-            industry=data.get('industry'),
-            description=data.get('description'),
-            stage=data.get('stage'),
-            website=data.get('website'),
-            email=data.get('email'),
-            rating=data.get('rating'),
+        if not data:
+            app.logger.error("No JSON data received")
+            return jsonify({"error": "No data provided"}), 400
+
+        # Validate required fields
+        required_fields = ['name', 'industry', 'stage']
+        for field in required_fields:
+            if not data.get(field):
+                app.logger.error(f"Missing required field: {field}")
+                return jsonify({"error": f"Missing required field: {field}"}), 400
+
+        # Create new company
+        new_company = Company(
+            name=data['name'],
+            industry=data['industry'],
+            stage=data['stage'],
+            website=data.get('website', ''),
+            email=data.get('email', ''),
+            description=data.get('description', ''),
+            rating=data.get('rating', ''),
             user_id=current_user.id
         )
 
-        db.session.add(company)
+        # Add to database
+        db.session.add(new_company)
         db.session.commit()
-        app.logger.info(f'Successfully added new company {data.get("name")} for user {current_user.email}')
-        return {'message': 'Company added successfully'}, 200
-    except Exception as e:
+        
+        app.logger.info(f"Successfully added new company {data['name']} for user {current_user.email}")
+        
+        # Return success response with company data
+        return jsonify({
+            "message": "Company added successfully",
+            "company": new_company.to_dict()
+        }), 200
+
+    except json.JSONDecodeError as e:
+        app.logger.error(f"JSON decode error: {str(e)}")
+        return jsonify({"error": "Invalid JSON format"}), 400
+    except SQLAlchemyError as e:
+        app.logger.error(f"Database error: {str(e)}")
         db.session.rollback()
-        app.logger.error(f'Error adding company for user {current_user.email}: {str(e)}')
-        app.logger.error(traceback.format_exc())
-        return {'error': 'Failed to add company'}, 500
+        return jsonify({"error": "Database error occurred"}), 500
+    except Exception as e:
+        app.logger.error(f"Unexpected error: {str(e)}")
+        db.session.rollback()
+        return jsonify({"error": "An unexpected error occurred"}), 500
 
 @app.route('/api/preferences', methods=['GET'])
 @login_required

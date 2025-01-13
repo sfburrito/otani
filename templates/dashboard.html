@@ -312,18 +312,16 @@
 document.addEventListener('DOMContentLoaded', function() {
     try {
         // Initialize preferences from server data with safe defaults
-        const serverPreferences = {
-            investment_stages: {{ preferences.investment_stages|tojson|safe if preferences.investment_stages else '[]' }},
-            industry_sectors: {{ preferences.industry_sectors|tojson|safe if preferences.industry_sectors else '[]' }},
-            geographic_focus: {{ preferences.geographic_focus|tojson|safe if preferences.geographic_focus else '[]' }},
-            investment_sizes: {{ preferences.investment_sizes|tojson|safe if preferences.investment_sizes else '[]' }},
-            additional_preferences: {{ preferences.additional_preferences|tojson|safe if preferences.additional_preferences else '""' }}
-        };
+        const serverPreferences = {{ preferences|tojson|safe if preferences else '{"investment_stages": [], "industry_sectors": [], "geographic_focus": [], "investment_sizes": [], "additional_preferences": ""}' }};
 
         // Initialize companies list
-        const companies = {{ companies|tojson|safe }};
+        const companies = {{ companies|tojson|safe if companies else '[]' }};
         console.log('Companies:', companies);
-        renderCompanies(companies);
+        if (companies) {
+            renderCompanies(companies);
+        } else {
+            renderCompanies([]);
+        }
 
         // Set initial values for each preference
         setSelectedOptions('Select stages', serverPreferences.investment_stages);
@@ -342,7 +340,11 @@ document.addEventListener('DOMContentLoaded', function() {
 // Render companies in the table
 function renderCompanies(companies) {
     console.log('Rendering companies:', companies);
-    const tbody = document.getElementById('companiesTableBody');
+    const tbody = document.querySelector('#companiesTableBody');
+    if (!tbody) {
+        console.error('Companies table body not found');
+        return;
+    }
     tbody.innerHTML = '';
 
     if (!companies || companies.length === 0) {
@@ -350,7 +352,6 @@ function renderCompanies(companies) {
         tr.innerHTML = `
             <td colspan="7" class="text-center">
                 <div class="empty-state">
-                    <i class="fas fa-folder-open"></i>
                     <p>No companies added yet</p>
                 </div>
             </td>
@@ -362,28 +363,26 @@ function renderCompanies(companies) {
     companies.forEach(company => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
-            <td class="text-center">
-                <span class="rating-badge rating-${company.rating?.toLowerCase() || 'none'}">${company.rating || '-'}</span>
+            <td class="rating-col text-center">
+                <span class="rating-badge ${company.rating.toLowerCase()}">${company.rating}</span>
             </td>
-            <td class="text-center">${company.name || '-'}</td>
-            <td class="text-center">${company.industry || '-'}</td>
-            <td class="text-center">${company.stage || '-'}</td>
-            <td class="text-center">
-                ${company.website ? `
-                    <a href="${company.website}" target="_blank" rel="noopener noreferrer" class="icon-link">
-                        <i class="fas fa-globe"></i>
-                    </a>
-                ` : '-'}
+            <td class="text-center">${company.name}</td>
+            <td class="text-center">${company.industry}</td>
+            <td class="text-center">${company.stage}</td>
+            <td class="icon-cell">
+                <a href="${company.website}" target="_blank" rel="noopener noreferrer">
+                    <i class="fas fa-external-link-alt"></i>
+                </a>
             </td>
-            <td class="text-center">
-                ${company.email ? `
-                    <a href="mailto:${company.email}" class="icon-link">
-                        <i class="fas fa-envelope"></i>
-                    </a>
-                ` : '-'}
+            <td class="icon-cell">
+                <a href="mailto:${company.email}">
+                    <i class="fas fa-envelope"></i>
+                </a>
             </td>
-            <td class="description-cell">
-                ${company.description || '-'}
+            <td class="description-col">
+                <div class="description-content">
+                    ${company.description}
+                </div>
             </td>
         `;
         tbody.appendChild(tr);
