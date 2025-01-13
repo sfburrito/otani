@@ -462,27 +462,83 @@ def create_dummy_companies():
 
 # Initialize database and create dummy companies
 with app.app_context():
-    # Drop all tables with cascade
-    db.session.execute(text('DROP TABLE IF EXISTS companies CASCADE'))
-    db.session.execute(text('DROP TABLE IF EXISTS company CASCADE'))
-    db.session.execute(text('DROP TABLE IF EXISTS user_preferences CASCADE'))
-    db.session.execute(text('DROP TABLE IF EXISTS users CASCADE'))
-    db.session.commit()
-    
-    db.create_all()  # Create new tables
-    
-    # Create a test user if none exists
-    if not User.query.first():
-        test_user = User(
-            email='ttanaka@translinkcapital.com',
-            username='Tyler Tanaka'
-        )
-        test_user.set_password('password')
-        db.session.add(test_user)
-        db.session.commit()
-        app.logger.info('Created test user')
-    
-    create_dummy_companies()  # Create dummy companies
+    try:
+        # Create tables
+        db.create_all()
+        app.logger.info("Database tables created successfully!")
+        
+        # Verify tables exist
+        engine = db.get_engine()
+        inspector = db.inspect(engine)
+        tables = inspector.get_table_names()
+        app.logger.info(f"Found tables: {tables}")
+        
+        # Create test user if it doesn't exist
+        test_user = User.query.filter_by(email='test@example.com').first()
+        if not test_user:
+            test_user = User(
+                email='test@example.com',
+                username='test_user'
+            )
+            test_user.set_password('password')
+            db.session.add(test_user)
+            db.session.commit()
+            app.logger.info("Test user created successfully!")
+            
+            # Create test preferences
+            test_preferences = UserPreferences(
+                user_id=test_user.id,
+                investment_stages='["Seed", "Series A"]',
+                industry_sectors='["AI/ML", "Fintech"]',
+                geographic_focus='["North America", "Europe"]',
+                investment_sizes='["$1M-$5M", "$5M-$10M"]',
+                additional_preferences='Looking for strong founding teams with technical expertise.'
+            )
+            db.session.add(test_preferences)
+            db.session.commit()
+            app.logger.info("Test preferences created successfully!")
+            
+            # Create test companies
+            companies = [
+                {
+                    'name': 'TechCorp AI',
+                    'industry': 'AI/ML',
+                    'stage': 'Series A',
+                    'website': 'https://techcorp.ai',
+                    'email': 'contact@techcorp.ai',
+                    'description': 'Building next-gen AI solutions',
+                    'rating': 'A'
+                },
+                {
+                    'name': 'FinTech Solutions',
+                    'industry': 'Fintech',
+                    'stage': 'Seed',
+                    'website': 'https://fintech.solutions',
+                    'email': 'info@fintech.solutions',
+                    'description': 'Revolutionizing financial services',
+                    'rating': 'B'
+                },
+                {
+                    'name': 'Health Analytics',
+                    'industry': 'Healthcare',
+                    'stage': 'Series B',
+                    'website': 'https://health-analytics.com',
+                    'email': 'contact@health-analytics.com',
+                    'description': 'AI-powered healthcare analytics',
+                    'rating': 'A'
+                }
+            ]
+            
+            for company_data in companies:
+                company = Company(user_id=test_user.id, **company_data)
+                db.session.add(company)
+            
+            db.session.commit()
+            app.logger.info("Test companies created successfully!")
+            
+    except Exception as e:
+        app.logger.error(f"Error during database initialization: {str(e)}")
+        app.logger.error(traceback.format_exc())
 
 if __name__ == '__main__':
     app.run(debug=True)
