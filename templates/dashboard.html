@@ -320,67 +320,16 @@ document.addEventListener('DOMContentLoaded', function() {
             investment_sizes: {{ preferences.investment_sizes|tojson|safe if preferences.investment_sizes else '[]' }},
             additional_preferences: {{ preferences.additional_preferences|tojson|safe if preferences.additional_preferences else '""' }}
         };
-        console.log('Server preferences:', serverPreferences);
 
-        // Initialize dropdowns
-        const customSelects = document.querySelectorAll('.custom-select');
-        customSelects.forEach(select => {
-            try {
-                const trigger = select.querySelector('.select-trigger');
-                const options = select.querySelector('.custom-options');
-                const checkboxes = select.querySelectorAll('input[type="checkbox"]');
-                
-                // Toggle options list
-                if (trigger) {
-                    trigger.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        customSelects.forEach(otherSelect => {
-                            if (otherSelect !== select) {
-                                otherSelect.classList.remove('active');
-                                const otherOptions = otherSelect.querySelector('.custom-options');
-                                if (otherOptions) otherOptions.style.display = 'none';
-                            }
-                        });
-                        select.classList.toggle('active');
-                        if (options) {
-                            options.style.display = select.classList.contains('active') ? 'block' : 'none';
-                        }
-                    });
-                }
-
-                // Handle checkbox changes
-                if (checkboxes) {
-                    checkboxes.forEach(checkbox => {
-                        if (checkbox) {
-                            checkbox.addEventListener('change', () => updateSelectedText(select));
-                        }
-                    });
-                }
-            } catch (error) {
-                console.error('Error initializing select:', error);
-            }
-        });
-
-        // Close dropdowns when clicking outside
-        document.addEventListener('click', () => {
-            customSelects.forEach(select => {
-                select.classList.remove('active');
-                const options = select.querySelector('.custom-options');
-                if (options) options.style.display = 'none';
-            });
-        });
-
-        // Set initial preferences
+        // Set initial values for each preference
         setSelectedOptions('Select stages', serverPreferences.investment_stages);
         setSelectedOptions('Select industries', serverPreferences.industry_sectors);
         setSelectedOptions('Select regions', serverPreferences.geographic_focus);
         setSelectedOptions('Select investment sizes', serverPreferences.investment_sizes);
         
         // Set additional preferences
-        const additionalPrefs = document.getElementById('additionalPrefs');
-        if (additionalPrefs && serverPreferences.additional_preferences) {
-            additionalPrefs.value = serverPreferences.additional_preferences;
-        }
+        document.getElementById('additionalPrefs').value = serverPreferences.additional_preferences;
+
     } catch (error) {
         console.error('Error initializing preferences:', error);
     }
@@ -537,19 +486,6 @@ function closeAddCompanyModal() {
     modal.style.display = 'none';
     document.body.style.overflow = 'auto';
 }
-
-// Close modal when clicking outside
-document.addEventListener('click', function(event) {
-    const modal = document.getElementById('addCompanyModal');
-    if (event.target.classList.contains('modal-overlay')) {
-        closeAddCompanyModal();
-    }
-});
-
-// Close modal when clicking close button
-document.querySelector('.close-modal').addEventListener('click', function() {
-    closeAddCompanyModal();
-});
 
 function resetPreferences() {
     document.querySelectorAll('.custom-select').forEach(select => {

@@ -1,4 +1,30 @@
+// Modal functions
+function openAddCompanyModal() {
+    const modal = document.getElementById('addCompanyModal');
+    modal.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+}
+
+function closeAddCompanyModal() {
+    const modal = document.getElementById('addCompanyModal');
+    modal.style.display = 'none';
+    document.body.style.overflow = 'auto';
+}
+
+// Close modal when clicking outside
+document.addEventListener('click', function(event) {
+    const modal = document.getElementById('addCompanyModal');
+    if (event.target.classList.contains('modal-overlay')) {
+        closeAddCompanyModal();
+    }
+});
+
 document.addEventListener('DOMContentLoaded', () => {
+    // Close modal when clicking close button
+    document.querySelector('.close-modal').addEventListener('click', () => {
+        closeAddCompanyModal();
+    });
+
     const addCompanyForm = document.getElementById('addCompanyForm');
     
     addCompanyForm.addEventListener('submit', async (e) => {
