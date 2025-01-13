@@ -9,7 +9,9 @@ function closeAddCompanyModal() {
     const modal = document.getElementById('addCompanyModal');
     modal.style.display = 'none';
     document.body.style.overflow = 'auto';
-    document.getElementById('addCompanyForm').reset();
+    // Get the form either by original ID or the cloned one
+    const form = document.getElementById('addCompanyForm');
+    if (form) form.reset();
 }
 
 // Close modal when clicking outside
@@ -56,7 +58,20 @@ function initializeForm() {
     
     // Remove any existing event listeners by cloning the form
     const newForm = addCompanyForm.cloneNode(true);
+    newForm.id = 'addCompanyForm'; // Ensure ID is preserved
     addCompanyForm.parentNode.replaceChild(newForm, addCompanyForm);
+    
+    // Add event listeners for form validation
+    newForm.querySelectorAll('input, textarea, select').forEach(input => {
+        input.addEventListener('input', () => {
+            console.log(`Input changed - ${input.name}: ${input.value}`);
+            input.classList.remove('invalid');
+            const errorSpan = document.getElementById(`${input.id}-error`);
+            if (errorSpan) {
+                errorSpan.textContent = '';
+            }
+        });
+    });
     
     newForm.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -140,86 +155,57 @@ function initializeForm() {
 
 // Initialize form when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    // Close modal when clicking close button
-    document.querySelector('.close-modal')?.addEventListener('click', () => {
-        closeAddCompanyModal();
-    });
+    // Initialize close button
+    const closeButton = document.querySelector('.close-modal');
+    if (closeButton) {
+        closeButton.addEventListener('click', closeAddCompanyModal);
+    }
     
     // Initialize the form
     initializeForm();
-
-    // Show form validation errors
-    function showFormErrors() {
-        const invalidInputs = document.querySelectorAll(':invalid');
-        console.log('Invalid inputs:', Array.from(invalidInputs).map(input => ({
-            id: input.id,
-            name: input.name,
-            value: input.value,
-            validationMessage: input.validationMessage
-        })));
-        
-        invalidInputs.forEach(input => {
-            input.classList.add('invalid');
-            const errorMessage = input.nextElementSibling;
-            if (errorMessage && errorMessage.classList.contains('error-message')) {
-                errorMessage.textContent = input.validationMessage;
-                errorMessage.style.display = 'block';
-            }
-        });
-    }
-
-    // Show success message
-    function showSuccessMessage(message) {
-        console.log('Success:', message);
-        const successMessage = document.createElement('div');
-        successMessage.className = 'success-message';
-        successMessage.textContent = message;
-        document.body.appendChild(successMessage);
-        setTimeout(() => successMessage.remove(), 3000);
-    }
-
-    // Show error message
-    function showErrorMessage(message) {
-        console.error('Error:', message);
-        const errorMessage = document.createElement('div');
-        errorMessage.className = 'error-message';
-        errorMessage.textContent = message;
-        document.body.appendChild(errorMessage);
-        setTimeout(() => errorMessage.remove(), 3000);
-    }
-
-    // Clear form errors when input changes
-    document.getElementById('addCompanyForm').querySelectorAll('input, textarea, select').forEach(input => {
-        input.addEventListener('input', () => {
-            console.log(`Input changed - ${input.name}: ${input.value}`);
-            input.classList.remove('invalid');
-            const errorMessage = input.nextElementSibling;
-            if (errorMessage && errorMessage.classList.contains('error-message')) {
-                errorMessage.style.display = 'none';
-            }
-        });
-    });
-
-    // Format ARR input
-    const arrInput = document.getElementById('companyARR');
-    if (arrInput) {
-        arrInput.addEventListener('input', (e) => {
-            let value = e.target.value.replace(/[^0-9.]/g, '');
-            if (value) {
-                value = parseFloat(value);
-                if (!isNaN(value)) {
-                    e.target.value = formatCurrency(value);
-                }
-            }
-        });
-    }
-
-    function formatCurrency(value) {
-        if (value >= 1000000) {
-            return `$${(value / 1000000).toFixed(1)}M`;
-        } else if (value >= 1000) {
-            return `$${(value / 1000).toFixed(1)}K`;
-        }
-        return `$${value.toFixed(2)}`;
-    }
 });
+
+// Show form validation errors
+function showFormErrors() {
+    const form = document.getElementById('addCompanyForm');
+    const inputs = form.querySelectorAll('input, textarea, select');
+    
+    inputs.forEach(input => {
+        if (!input.validity.valid) {
+            input.classList.add('invalid');
+            const errorSpan = document.getElementById(`${input.id}-error`);
+            if (errorSpan) {
+                errorSpan.textContent = input.validationMessage;
+            }
+        }
+    });
+}
+
+// Show success message
+function showSuccessMessage(message) {
+    const flashMessages = document.querySelector('.flash-messages');
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'alert alert-success';
+    messageDiv.textContent = message;
+    flashMessages.appendChild(messageDiv);
+    setTimeout(() => messageDiv.remove(), 5000);
+}
+
+// Show error message
+function showErrorMessage(message) {
+    const flashMessages = document.querySelector('.flash-messages');
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'alert alert-error';
+    messageDiv.textContent = message;
+    flashMessages.appendChild(messageDiv);
+    setTimeout(() => messageDiv.remove(), 5000);
+}
+
+// Format currency input
+function formatCurrency(value) {
+    if (!value) return '';
+    value = value.replace(/[^\d.]/g, '');
+    const parts = value.split('.');
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    return '$' + parts.join('.');
+}
