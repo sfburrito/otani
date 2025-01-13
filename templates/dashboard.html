@@ -207,7 +207,29 @@
                     </tr>
                 </thead>
                 <tbody id="companiesTableBody">
-                    <!-- Table rows will be dynamically populated -->
+                    {% for company in companies %}
+                    <tr>
+                        <td class="rating-col text-center">
+                            <span class="rating-badge {{ company.rating.lower() }}">{{ company.rating }}</span>
+                        </td>
+                        <td class="text-center">{{ company.name }}</td>
+                        <td class="text-center">{{ company.industry }}</td>
+                        <td class="text-center">{{ company.stage }}</td>
+                        <td class="icon-cell">
+                            <a href="{{ company.website }}" target="_blank" rel="noopener noreferrer">
+                                <i class="fas fa-external-link-alt"></i>
+                            </a>
+                        </td>
+                        <td class="icon-cell">
+                            <a href="mailto:{{ company.email }}">
+                                <i class="fas fa-envelope"></i>
+                            </a>
+                        </td>
+                        <td class="description-col">
+                            <div class="description-content">{{ company.description }}</div>
+                        </td>
+                    </tr>
+                    {% endfor %}
                 </tbody>
             </table>
         </div>
@@ -386,9 +408,7 @@ function renderCompanies(companies) {
                 </a>
             </td>
             <td class="description-col">
-                <div class="description-content">
-                    ${company.description}
-                </div>
+                <div class="description-content">${company.description}</div>
             </td>
         `;
         tbody.appendChild(tr);
