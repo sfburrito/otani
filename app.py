@@ -55,7 +55,10 @@ class User(UserMixin, db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
+    username = db.Column(db.String(80), unique=True, nullable=False)
     password_hash = db.Column(db.String(256))  # Increased from 128 to 256 for scrypt hashes
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     companies = db.relationship('Company', backref='analyst', lazy=True)
     preferences = db.relationship('UserPreferences', backref='owner', lazy=True, uselist=False)
 
@@ -121,6 +124,7 @@ def register():
     if request.method == 'POST':
         try:
             email = request.form.get('email')
+            username = request.form.get('username')
             password = request.form.get('password')
             confirm_password = request.form.get('confirm_password')
 
@@ -141,7 +145,7 @@ def register():
 
             # Create new user
             app.logger.info('Creating new user...')
-            new_user = User(email=email)
+            new_user = User(email=email, username=username)
             new_user.set_password(password)
             
             app.logger.info('Adding user to database...')
@@ -479,7 +483,7 @@ with app.app_context():
     if not User.query.first():
         test_user = User(
             email='ttanaka@translinkcapital.com',
-            name='Tyler Tanaka'
+            username='Tyler Tanaka'
         )
         test_user.set_password('password')
         db.session.add(test_user)
