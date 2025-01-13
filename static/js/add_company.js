@@ -22,26 +22,28 @@ document.addEventListener('click', function(event) {
 
 // Function to add a new company row to the table
 function addCompanyToTable(company) {
-    const table = document.querySelector('.companies-table tbody');
+    const tbody = document.querySelector('.companies-table tbody');
     const newRow = document.createElement('tr');
     
     newRow.innerHTML = `
-        <td>${company.name}</td>
-        <td>${company.industry}</td>
-        <td>${company.stage}</td>
-        <td class="rating-col">
+        <td class="rating-col text-center">
             <span class="rating-badge ${company.rating.toLowerCase()}">${company.rating}</span>
+        </td>
+        <td class="text-center">${company.name}</td>
+        <td class="text-center">${company.industry}</td>
+        <td class="text-center">${company.stage}</td>
+        <td class="icon-cell">
+            ${company.website ? `<a href="${company.website}" target="_blank" rel="noopener noreferrer"><i class="fas fa-external-link-alt"></i></a>` : ''}
+        </td>
+        <td class="icon-cell">
+            ${company.email ? `<a href="mailto:${company.email}"><i class="fas fa-envelope"></i></a>` : ''}
         </td>
         <td class="description-col">
             <div class="description-content">${company.description || ''}</div>
         </td>
-        <td class="icon-cell">
-            ${company.website ? `<a href="${company.website}" target="_blank" class="action-icon"><i class="fas fa-globe"></i></a>` : ''}
-            ${company.email ? `<a href="mailto:${company.email}" class="action-icon"><i class="fas fa-envelope"></i></a>` : ''}
-        </td>
     `;
     
-    table.appendChild(newRow);
+    tbody.appendChild(newRow);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
