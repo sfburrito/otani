@@ -247,38 +247,30 @@ def logout():
 def add_company():
     try:
         app.logger.info(f'User {current_user.email} attempting to add new company')
-        name = request.form.get('name')
-        industry = request.form.get('industry')
-        description = request.form.get('description')
-        stage = request.form.get('stage')
-        website = request.form.get('website')
-        contact_email = request.form.get('contact_email')
-        notes = request.form.get('notes')
-
-        app.logger.debug(f'New company details - Name: {name}, Industry: {industry}, Stage: {stage}')
-
+        data = request.get_json()  # Get JSON data from request
+        
+        app.logger.debug(f'Received data: {data}')
+        
         company = Company(
-            name=name,
-            industry=industry,
-            description=description,
-            stage=stage,
-            website=website,
-            email=contact_email,
-            rating=notes,
+            name=data.get('name'),
+            industry=data.get('industry'),
+            description=data.get('description'),
+            stage=data.get('stage'),
+            website=data.get('website'),
+            email=data.get('email'),
+            rating=data.get('rating'),
             user_id=current_user.id
         )
 
         db.session.add(company)
         db.session.commit()
-        app.logger.info(f'Successfully added new company {name} for user {current_user.email}')
-        flash('Company added successfully!')
-        return redirect(url_for('dashboard'))
+        app.logger.info(f'Successfully added new company {data.get("name")} for user {current_user.email}')
+        return {'message': 'Company added successfully'}, 200
     except Exception as e:
         db.session.rollback()
         app.logger.error(f'Error adding company for user {current_user.email}: {str(e)}')
         app.logger.error(traceback.format_exc())
-        flash('Error adding company. Please try again.')
-        return redirect(url_for('dashboard'))
+        return {'error': 'Failed to add company'}, 500
 
 @app.route('/api/preferences', methods=['GET'])
 @login_required

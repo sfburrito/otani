@@ -9,6 +9,7 @@ function closeAddCompanyModal() {
     const modal = document.getElementById('addCompanyModal');
     modal.style.display = 'none';
     document.body.style.overflow = 'auto';
+    document.getElementById('addCompanyForm').reset();
 }
 
 // Close modal when clicking outside
@@ -56,8 +57,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: JSON.stringify(data)
             });
 
+            const result = await response.json();
+
             if (!response.ok) {
-                throw new Error('Failed to add company');
+                throw new Error(result.error || 'Failed to add company');
             }
 
             // Show success message
@@ -67,12 +70,12 @@ document.addEventListener('DOMContentLoaded', () => {
             addCompanyForm.reset();
             closeAddCompanyModal();
             
-            // Reload companies list
+            // Reload page to show new company
             location.reload();
 
         } catch (error) {
             console.error('Error:', error);
-            showErrorMessage('Failed to add company. Please try again.');
+            showErrorMessage(error.message || 'Failed to add company. Please try again.');
         } finally {
             // Restore button state
             submitButton.disabled = false;
@@ -82,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Show form validation errors
     function showFormErrors() {
-        const invalidInputs = addCompanyForm.querySelectorAll(':invalid');
+        const invalidInputs = document.querySelectorAll(':invalid');
         invalidInputs.forEach(input => {
             input.classList.add('invalid');
             const errorMessage = input.nextElementSibling;
@@ -112,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Clear form errors when input changes
-    addCompanyForm.querySelectorAll('input, textarea').forEach(input => {
+    addCompanyForm.querySelectorAll('input, textarea, select').forEach(input => {
         input.addEventListener('input', () => {
             input.classList.remove('invalid');
             const errorMessage = input.nextElementSibling;
