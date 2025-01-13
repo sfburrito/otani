@@ -1950,3 +1950,68 @@ textarea.form-input:focus {
     gap: 1rem;
     background: var(--white);
 }
+/* Empty State */
+.empty-state {
+    padding: 2rem;
+    text-align: center;
+    color: var(--text-light);
+}
+
+.empty-state i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.empty-state p {
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+/* Rating Badge */
+.rating-badge {
+    display: inline-block;
+    width: 2rem;
+    height: 2rem;
+    line-height: 2rem;
+    border-radius: 50%;
+    font-weight: bold;
+    color: white;
+}
+
+.rating-A {
+    background-color: var(--green);
+}
+
+.rating-B {
+    background-color: var(--blue);
+}
+
+.rating-C {
+    background-color: var(--orange);
+}
+
+.rating-D {
+    background-color: var(--red);
+}
+
+.rating-none {
+    background-color: var(--text-light);
+}
+
+/* Icon Links */
+.icon-link {
+    color: var(--text-dark);
+    transition: color 0.2s;
+}
+
+.icon-link:hover {
+    color: var(--primary);
+}
+
+/* Description Cell */
+.description-cell {
+    max-width: 300px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

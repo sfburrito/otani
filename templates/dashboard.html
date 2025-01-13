@@ -330,10 +330,64 @@ document.addEventListener('DOMContentLoaded', function() {
         // Set additional preferences
         document.getElementById('additionalPrefs').value = serverPreferences.additional_preferences;
 
+        // Initialize companies list
+        const companies = {{ companies|tojson|safe }};
+        renderCompanies(companies);
+
     } catch (error) {
-        console.error('Error initializing preferences:', error);
+        console.error('Error initializing dashboard:', error);
     }
 });
+
+// Render companies in the table
+function renderCompanies(companies) {
+    const tbody = document.getElementById('companiesTableBody');
+    tbody.innerHTML = '';
+
+    if (!companies || companies.length === 0) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td colspan="7" class="text-center">
+                <div class="empty-state">
+                    <i class="fas fa-folder-open"></i>
+                    <p>No companies added yet</p>
+                </div>
+            </td>
+        `;
+        tbody.appendChild(tr);
+        return;
+    }
+
+    companies.forEach(company => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td class="text-center">
+                <span class="rating-badge rating-${company.rating || 'none'}">${company.rating || '-'}</span>
+            </td>
+            <td class="text-center">${company.name}</td>
+            <td class="text-center">${company.industry || '-'}</td>
+            <td class="text-center">${company.stage || '-'}</td>
+            <td class="text-center">
+                ${company.website ? `
+                    <a href="${company.website}" target="_blank" rel="noopener noreferrer" class="icon-link">
+                        <i class="fas fa-globe"></i>
+                    </a>
+                ` : '-'}
+            </td>
+            <td class="text-center">
+                ${company.email ? `
+                    <a href="mailto:${company.email}" class="icon-link">
+                        <i class="fas fa-envelope"></i>
+                    </a>
+                ` : '-'}
+            </td>
+            <td class="description-cell">
+                ${company.description || '-'}
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
 
 function updateSelectedText(select) {
     const selectedOptions = Array.from(select.querySelectorAll('input[type="checkbox"]:checked'))
@@ -400,79 +454,6 @@ function getSelectedValues(placeholder) {
     
     return Array.from(select.querySelectorAll('input[type="checkbox"]:checked'))
         .map(checkbox => checkbox.value);
-}
-
-function loadCompanies() {
-    const companies = [
-        {
-            name: 'TechCorp',
-            industry: 'Software',
-            stage: 'Series A',
-            website: 'https://techcorp.com',
-            email: 'contact@techcorp.com',
-            description: 'Leading provider of enterprise software solutions...',
-            rating: 'A'
-        },
-        // Add more sample data
-    ];
-
-    renderCompanies(companies);
-}
-
-function renderCompanies(companies) {
-    const tbody = document.getElementById('companiesTableBody');
-    tbody.innerHTML = '';
-
-    companies.forEach(company => {
-        const row = document.createElement('tr');
-        row.style.cursor = 'pointer';
-        row.addEventListener('click', () => openCompanyDetails(company.name));
-        row.innerHTML = `
-            <td class="rating-col text-center" data-label="Rating">
-                ${company.rating ? `<span class="rating-badge rating-${company.rating.toLowerCase()}">${company.rating}</span>` : ''}
-            </td>
-            <td class="text-center" data-label="Company Name">${company.name}</td>
-            <td class="text-center" data-label="Industry">${company.industry}</td>
-            <td class="text-center" data-label="Stage">${company.stage}</td>
-            <td class="icon-cell" data-label="Website">
-                ${company.website ? `
-                    <a href="${company.website}" target="_blank" rel="noopener noreferrer" aria-label="Visit ${company.name} website">
-                        <i class="fas fa-globe"></i>
-                    </a>
-                ` : ''}
-            </td>
-            <td class="icon-cell" data-label="Email">
-                ${company.email ? `
-                    <a href="mailto:${company.email}" aria-label="Email ${company.name}">
-                        <i class="fas fa-envelope"></i>
-                    </a>
-                ` : ''}
-            </td>
-            <td class="description-cell" data-label="Description">
-                <div class="description-content">
-                    <span class="description-text">${company.description}</span>
-                    <button class="read-more-btn" aria-expanded="false">Read More</button>
-                </div>
-            </td>
-        `;
-        
-        const readMoreBtn = row.querySelector('.read-more-btn');
-        const descriptionText = row.querySelector('.description-text');
-        
-        if (descriptionText.scrollHeight > descriptionText.clientHeight) {
-            readMoreBtn.style.display = 'inline-block';
-            readMoreBtn.addEventListener('click', () => {
-                const isExpanded = readMoreBtn.getAttribute('aria-expanded') === 'true';
-                descriptionText.style.maxHeight = isExpanded ? null : descriptionText.scrollHeight + 'px';
-                readMoreBtn.textContent = isExpanded ? 'Read More' : 'Show Less';
-                readMoreBtn.setAttribute('aria-expanded', !isExpanded);
-            });
-        } else {
-            readMoreBtn.style.display = 'none';
-        }
-
-        tbody.appendChild(row);
-    });
 }
 
 function openAddCompanyModal() {

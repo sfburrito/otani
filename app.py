@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for, flash, request, send_from_directory
+from flask import Flask, render_template, redirect, url_for, flash, request, send_from_directory, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -199,36 +199,35 @@ def dashboard():
         
         # Get user preferences
         preferences = current_user.preferences
-        if preferences:
-            preferences_dict = {
-                'investment_stages': preferences.investment_stages.split(',') if preferences.investment_stages else [],
-                'industry_sectors': preferences.industry_sectors.split(',') if preferences.industry_sectors else [],
-                'geographic_focus': preferences.geographic_focus.split(',') if preferences.geographic_focus else [],
-                'investment_sizes': preferences.investment_sizes.split(',') if preferences.investment_sizes else [],
-                'additional_preferences': preferences.additional_preferences or ''
-            }
-        else:
-            preferences_dict = {
-                'investment_stages': [],
-                'industry_sectors': [],
-                'geographic_focus': [],
-                'investment_sizes': [],
-                'additional_preferences': ''
-            }
+        if not preferences:
+            preferences = UserPreferences(user_id=current_user.id)
+            db.session.add(preferences)
+            db.session.commit()
         
-        # Get user's companies
+        # Get user companies
         companies = Company.query.filter_by(user_id=current_user.id).all()
+        companies_list = [company.to_dict() for company in companies]
         
-        return render_template('dashboard.html',
-            user=current_user,
-            companies=companies,
-            preferences=preferences_dict
-        )
+        app.logger.info(f'Found {len(companies_list)} companies for user {current_user.email}')
+        
+        return render_template('dashboard.html', 
+                             preferences=preferences, 
+                             companies=companies_list)
     except Exception as e:
-        app.logger.error(f'Error in dashboard route: {str(e)}')
-        app.logger.error('Full traceback:')
+        app.logger.error(f'Error accessing dashboard: {str(e)}')
         app.logger.error(traceback.format_exc())
-        return render_template('error.html', error=str(e)), 500
+        flash('Error loading dashboard')
+        return redirect(url_for('index'))
+
+@app.route('/api/companies', methods=['GET'])
+@login_required
+def get_companies():
+    try:
+        companies = Company.query.filter_by(user_id=current_user.id).all()
+        return jsonify([company.to_dict() for company in companies]), 200
+    except Exception as e:
+        app.logger.error(f'Error getting companies: {str(e)}')
+        return jsonify({'error': 'Failed to get companies'}), 500
 
 @app.route('/logout')
 @login_required
