@@ -4,8 +4,7 @@
     align-items: center;
     justify-content: center;
     width: 70px;
-    height: 100%;
-    min-height: 32px;
+    height: 28px;
     border-radius: 4px;
     padding: 4px 8px;
     font-weight: 600;
@@ -65,16 +64,17 @@
 
 .companies-table th,
 .companies-table td {
-    padding: 12px 15px;
-    text-align: left;
+    padding: 8px 12px;
     border-bottom: 1px solid #eee;
     vertical-align: middle;
+    line-height: 1.4;
 }
 
 .companies-table th {
     background-color: #f8f9fa;
     font-weight: 600;
     color: #495057;
+    text-align: left;
 }
 
 .companies-table tr:last-child td {
@@ -97,7 +97,7 @@
 }
 
 .description-content {
-    max-height: 3.6em;
+    max-height: 2.8em;
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
@@ -107,7 +107,7 @@
 
 /* Icon Cells */
 .icon-cell {
-    width: 60px;
+    width: 40px;
     text-align: center !important;
     white-space: nowrap;
 }
@@ -115,12 +115,25 @@
 .icon-cell a {
     color: #6c757d;
     text-decoration: none;
-    margin: 0 4px;
     transition: color 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
 }
 
 .icon-cell a:hover {
     color: #0056b3;
+}
+
+/* Text alignment classes */
+.text-left {
+    text-align: left !important;
+}
+
+.text-center {
+    text-align: center !important;
 }
 
 .flash-messages {

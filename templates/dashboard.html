@@ -176,50 +176,42 @@
         </div>
 
         <div class="table-responsive">
-            <table class="companies-table" aria-label="Companies List">
+            <table class="companies-table">
                 <thead>
                     <tr>
-                        <th scope="col" class="sortable rating-col text-center" data-sort="rating" aria-sort="none">
-                            <span>Rating</span>
-                            <i class="fas fa-sort"></i>
-                        </th>
-                        <th scope="col" class="sortable text-center" data-sort="name" aria-sort="none">
-                            <span>Company Name</span>
-                            <i class="fas fa-sort"></i>
-                        </th>
-                        <th scope="col" class="sortable text-center" data-sort="industry" aria-sort="none">
-                            <span>Industry</span>
-                            <i class="fas fa-sort"></i>
-                        </th>
-                        <th scope="col" class="sortable text-center" data-sort="stage" aria-sort="none">
-                            <span>Stage</span>
-                            <i class="fas fa-sort"></i>
-                        </th>
-                        <th scope="col" class="icon-cell">Website</th>
-                        <th scope="col" class="icon-cell">Email</th>
-                        <th scope="col" class="description-col">Description</th>
+                        <th class="rating-col text-left">Rating</th>
+                        <th class="text-left">Company</th>
+                        <th class="text-left">Industry</th>
+                        <th class="text-left">Stage</th>
+                        <th class="icon-cell">Website</th>
+                        <th class="icon-cell">Email</th>
+                        <th class="description-col text-left">Description</th>
                     </tr>
                 </thead>
                 <tbody id="companiesTableBody">
                     {% for company in companies %}
                     <tr>
-                        <td class="rating-col text-center">
+                        <td class="rating-col text-left">
                             <span class="rating-badge {{ company.rating.lower() }}">{{ company.rating }}</span>
                         </td>
-                        <td class="text-center">{{ company.name }}</td>
-                        <td class="text-center">{{ company.industry }}</td>
-                        <td class="text-center">{{ company.stage }}</td>
+                        <td class="text-left">{{ company.name }}</td>
+                        <td class="text-left">{{ company.industry }}</td>
+                        <td class="text-left">{{ company.stage }}</td>
                         <td class="icon-cell">
+                            {% if company.website %}
                             <a href="{{ company.website }}" target="_blank" rel="noopener noreferrer">
                                 <i class="fas fa-external-link-alt"></i>
                             </a>
+                            {% endif %}
                         </td>
                         <td class="icon-cell">
+                            {% if company.email %}
                             <a href="mailto:{{ company.email }}">
                                 <i class="fas fa-envelope"></i>
                             </a>
+                            {% endif %}
                         </td>
-                        <td class="description-col">
+                        <td class="description-col text-left">
                             <div class="description-content">{{ company.description }}</div>
                         </td>
                     </tr>
@@ -385,12 +377,12 @@ function renderCompanies(companies) {
     companies.forEach(company => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
-            <td class="rating-col text-center">
+            <td class="rating-col text-left">
                 <span class="rating-badge ${company.rating.toLowerCase()}">${company.rating}</span>
             </td>
-            <td class="text-center">${company.name}</td>
-            <td class="text-center">${company.industry}</td>
-            <td class="text-center">${company.stage}</td>
+            <td class="text-left">${company.name}</td>
+            <td class="text-left">${company.industry}</td>
+            <td class="text-left">${company.stage}</td>
             <td class="icon-cell">
                 <a href="${company.website}" target="_blank" rel="noopener noreferrer">
                     <i class="fas fa-external-link-alt"></i>
@@ -401,7 +393,7 @@ function renderCompanies(companies) {
                     <i class="fas fa-envelope"></i>
                 </a>
             </td>
-            <td class="description-col">
+            <td class="description-col text-left">
                 <div class="description-content">${company.description}</div>
             </td>
         `;

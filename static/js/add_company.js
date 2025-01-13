@@ -28,19 +28,19 @@ function addCompanyToTable(company) {
     const newRow = document.createElement('tr');
     
     newRow.innerHTML = `
-        <td class="rating-col text-center">
+        <td class="rating-col text-left">
             <span class="rating-badge ${company.rating.toLowerCase()}">${company.rating}</span>
         </td>
-        <td class="text-center">${company.name}</td>
-        <td class="text-center">${company.industry}</td>
-        <td class="text-center">${company.stage}</td>
+        <td class="text-left">${company.name}</td>
+        <td class="text-left">${company.industry}</td>
+        <td class="text-left">${company.stage}</td>
         <td class="icon-cell">
             ${company.website ? `<a href="${company.website}" target="_blank" rel="noopener noreferrer"><i class="fas fa-external-link-alt"></i></a>` : ''}
         </td>
         <td class="icon-cell">
             ${company.email ? `<a href="mailto:${company.email}"><i class="fas fa-envelope"></i></a>` : ''}
         </td>
-        <td class="description-col">
+        <td class="description-col text-left">
             <div class="description-content">${company.description || ''}</div>
         </td>
     `;
