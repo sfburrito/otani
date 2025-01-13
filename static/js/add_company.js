@@ -46,19 +46,30 @@ function addCompanyToTable(company) {
     tbody.appendChild(newRow);
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    // Close modal when clicking close button
-    document.querySelector('.close-modal').addEventListener('click', () => {
-        closeAddCompanyModal();
-    });
+// Prevent multiple form submissions
+let isSubmitting = false;
 
+// Initialize form once DOM is loaded
+function initializeForm() {
     const addCompanyForm = document.getElementById('addCompanyForm');
+    if (!addCompanyForm) return; // Exit if form doesn't exist
     
-    addCompanyForm.addEventListener('submit', async (e) => {
+    // Remove any existing event listeners by cloning the form
+    const newForm = addCompanyForm.cloneNode(true);
+    addCompanyForm.parentNode.replaceChild(newForm, addCompanyForm);
+    
+    newForm.addEventListener('submit', async (e) => {
         e.preventDefault();
+        
+        // Prevent double submission
+        if (isSubmitting) {
+            console.log('Form is already being submitted');
+            return;
+        }
+        
         console.log('Form submission started');
         
-        if (!addCompanyForm.checkValidity()) {
+        if (!newForm.checkValidity()) {
             console.log('Form validation failed');
             showFormErrors();
             return;
@@ -68,12 +79,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const originalText = submitButton.textContent;
         
         try {
+            isSubmitting = true;
+            
             // Show loading state
             submitButton.disabled = true;
             submitButton.innerHTML = '<span class="loading-spinner"></span>Adding...';
 
             // Get form data
-            const formData = new FormData(addCompanyForm);
+            const formData = new FormData(newForm);
             const data = {};
             
             // Log each form field
@@ -110,18 +123,30 @@ document.addEventListener('DOMContentLoaded', () => {
             showSuccessMessage('Company added successfully!');
             
             // Reset form and close modal
-            addCompanyForm.reset();
+            newForm.reset();
             closeAddCompanyModal();
 
         } catch (error) {
             console.error('Error adding company:', error);
             showErrorMessage(error.message || 'Failed to add company');
         } finally {
-            // Restore button state
+            // Reset submission flag and button state
+            isSubmitting = false;
             submitButton.disabled = false;
             submitButton.textContent = originalText;
         }
     });
+}
+
+// Initialize form when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    // Close modal when clicking close button
+    document.querySelector('.close-modal')?.addEventListener('click', () => {
+        closeAddCompanyModal();
+    });
+    
+    // Initialize the form
+    initializeForm();
 
     // Show form validation errors
     function showFormErrors() {
@@ -164,7 +189,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Clear form errors when input changes
-    addCompanyForm.querySelectorAll('input, textarea, select').forEach(input => {
+    document.getElementById('addCompanyForm').querySelectorAll('input, textarea, select').forEach(input => {
         input.addEventListener('input', () => {
             console.log(`Input changed - ${input.name}: ${input.value}`);
             input.classList.remove('invalid');
