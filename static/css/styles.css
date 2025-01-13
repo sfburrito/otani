@@ -1,10 +1,7 @@
 /* Rating Badges */
 .rating-badge {
     display: inline-block;
-    width: 30px;
-    height: 30px;
-    line-height: 30px;
-    text-align: center;
+    padding: 4px 8px;
     border-radius: 4px;
     font-weight: bold;
     font-size: 14px;
@@ -21,30 +18,31 @@
 /* Rating Colors */
 .rating-badge.a {
     background: linear-gradient(135deg, #4CAF50, #45a049);
-    border: 1px solid #45a049;
 }
 
 .rating-badge.b {
     background: linear-gradient(135deg, #2196F3, #1e88e5);
-    border: 1px solid #1e88e5;
 }
 
 .rating-badge.c {
     background: linear-gradient(135deg, #FFC107, #ffb300);
-    border: 1px solid #ffb300;
 }
 
 .rating-badge.d {
     background: linear-gradient(135deg, #FF9800, #fb8c00);
-    border: 1px solid #fb8c00;
 }
 
 .rating-badge.f {
     background: linear-gradient(135deg, #f44336, #e53935);
-    border: 1px solid #e53935;
 }
 
 /* Table Styles */
+.dashboard-container {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
 .companies-table {
     width: 100%;
     border-collapse: collapse;
@@ -78,7 +76,7 @@
 
 /* Rating Column */
 .rating-col {
-    width: 60px;
+    width: 80px;
     text-align: center !important;
 }
 
@@ -98,11 +96,14 @@
 
 /* Icon Cells */
 .icon-cell {
-    width: 50px;
+    width: 100px;
     text-align: center !important;
+    white-space: nowrap;
 }
 
 .icon-cell a {
+    display: inline-block;
+    padding: 4px 8px;
     color: #6c757d;
     text-decoration: none;
     transition: color 0.2s ease;
@@ -110,4 +111,8 @@
 
 .icon-cell a:hover {
     color: #007bff;
+}
+
+.flash-messages {
+    margin-bottom: 20px;
 }

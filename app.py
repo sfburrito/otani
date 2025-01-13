@@ -197,9 +197,9 @@ def login():
 @login_required
 def dashboard():
     try:
-        app.logger.info(f'User {current_user.email} accessed dashboard')
+        app.logger.info(f'Dashboard access: {current_user.email}')
         
-        # Get user preferences
+        # Get or create user preferences
         preferences = current_user.preferences
         if not preferences:
             preferences = UserPreferences(user_id=current_user.id)
@@ -217,21 +217,15 @@ def dashboard():
         
         # Get user companies
         companies = Company.query.filter_by(user_id=current_user.id).all()
-        companies_list = []
-        for company in companies:
-            company_dict = company.to_dict()
-            app.logger.info(f'Company data: {company_dict}')
-            companies_list.append(company_dict)
+        companies_list = [company.to_dict() for company in companies]
         
-        app.logger.info(f'Found {len(companies_list)} companies for user {current_user.email}')
-        app.logger.info(f'Companies list: {companies_list}')
+        app.logger.info(f'Retrieved {len(companies_list)} companies')
         
         return render_template('dashboard.html', 
                              preferences=preferences_dict, 
                              companies=companies_list)
     except Exception as e:
-        app.logger.error(f'Error accessing dashboard: {str(e)}')
-        app.logger.error(traceback.format_exc())
+        app.logger.error(f'Dashboard error: {str(e)}')
         flash('Error loading dashboard')
         return redirect(url_for('index'))
 
