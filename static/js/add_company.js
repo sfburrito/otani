@@ -37,12 +37,12 @@ document.addEventListener('DOMContentLoaded', () => {
             // Show success message
             showSuccessMessage('Company added successfully!');
             
-            // Update companies list
-            await updateCompaniesList();
-            
             // Reset form and close modal
             addCompanyForm.reset();
             closeAddCompanyModal();
+            
+            // Reload companies list
+            location.reload();
 
         } catch (error) {
             console.error('Error:', error);
@@ -58,10 +58,11 @@ document.addEventListener('DOMContentLoaded', () => {
     function showFormErrors() {
         const invalidInputs = addCompanyForm.querySelectorAll(':invalid');
         invalidInputs.forEach(input => {
+            input.classList.add('invalid');
             const errorMessage = input.nextElementSibling;
             if (errorMessage && errorMessage.classList.contains('error-message')) {
                 errorMessage.textContent = input.validationMessage;
-                errorMessage.classList.add('show');
+                errorMessage.style.display = 'block';
             }
         });
     }
@@ -72,16 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
         successMessage.className = 'success-message';
         successMessage.textContent = message;
         document.body.appendChild(successMessage);
-
-        // Trigger reflow for animation
-        successMessage.offsetHeight;
-        successMessage.classList.add('show');
-
-        // Remove after 3 seconds
-        setTimeout(() => {
-            successMessage.classList.remove('show');
-            setTimeout(() => successMessage.remove(), 300);
-        }, 3000);
+        setTimeout(() => successMessage.remove(), 3000);
     }
 
     // Show error message
@@ -90,24 +82,16 @@ document.addEventListener('DOMContentLoaded', () => {
         errorMessage.className = 'error-message';
         errorMessage.textContent = message;
         document.body.appendChild(errorMessage);
-
-        // Trigger reflow for animation
-        errorMessage.offsetHeight;
-        errorMessage.classList.add('show');
-
-        // Remove after 3 seconds
-        setTimeout(() => {
-            errorMessage.classList.remove('show');
-            setTimeout(() => errorMessage.remove(), 300);
-        }, 3000);
+        setTimeout(() => errorMessage.remove(), 3000);
     }
 
     // Clear form errors when input changes
-    addCompanyForm.querySelectorAll('.form-input').forEach(input => {
+    addCompanyForm.querySelectorAll('input, textarea').forEach(input => {
         input.addEventListener('input', () => {
+            input.classList.remove('invalid');
             const errorMessage = input.nextElementSibling;
             if (errorMessage && errorMessage.classList.contains('error-message')) {
-                errorMessage.classList.remove('show');
+                errorMessage.style.display = 'none';
             }
         });
     });
