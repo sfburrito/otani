@@ -206,6 +206,15 @@ def dashboard():
             db.session.add(preferences)
             db.session.commit()
         
+        # Convert preferences to dictionary
+        preferences_dict = {
+            'investment_stages': preferences.investment_stages.split(',') if preferences.investment_stages else [],
+            'industry_sectors': preferences.industry_sectors.split(',') if preferences.industry_sectors else [],
+            'geographic_focus': preferences.geographic_focus.split(',') if preferences.geographic_focus else [],
+            'investment_sizes': preferences.investment_sizes.split(',') if preferences.investment_sizes else [],
+            'additional_preferences': preferences.additional_preferences or ''
+        }
+        
         # Get user companies
         companies = Company.query.filter_by(user_id=current_user.id).all()
         companies_list = []
@@ -218,7 +227,7 @@ def dashboard():
         app.logger.info(f'Companies list: {companies_list}')
         
         return render_template('dashboard.html', 
-                             preferences=preferences, 
+                             preferences=preferences_dict, 
                              companies=companies_list)
     except Exception as e:
         app.logger.error(f'Error accessing dashboard: {str(e)}')
