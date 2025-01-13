@@ -30,13 +30,15 @@ document.addEventListener('DOMContentLoaded', () => {
     
     addCompanyForm.addEventListener('submit', async (e) => {
         e.preventDefault();
+        console.log('Form submitted');
         
         if (!addCompanyForm.checkValidity()) {
+            console.log('Form invalid');
             showFormErrors();
             return;
         }
 
-        const submitButton = addCompanyForm.querySelector('button[type="submit"]');
+        const submitButton = document.querySelector('button[form="addCompanyForm"]');
         const originalText = submitButton.textContent;
         
         try {
@@ -47,6 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Get form data
             const formData = new FormData(addCompanyForm);
             const data = Object.fromEntries(formData.entries());
+            console.log('Form data:', data);
 
             // Send request to server
             const response = await fetch('/add_company', {
@@ -57,7 +60,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: JSON.stringify(data)
             });
 
+            console.log('Response:', response);
             const result = await response.json();
+            console.log('Result:', result);
 
             if (!response.ok) {
                 throw new Error(result.error || 'Failed to add company');
@@ -86,6 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Show form validation errors
     function showFormErrors() {
         const invalidInputs = document.querySelectorAll(':invalid');
+        console.log('Invalid inputs:', invalidInputs);
         invalidInputs.forEach(input => {
             input.classList.add('invalid');
             const errorMessage = input.nextElementSibling;

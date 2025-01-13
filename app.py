@@ -206,9 +206,14 @@ def dashboard():
         
         # Get user companies
         companies = Company.query.filter_by(user_id=current_user.id).all()
-        companies_list = [company.to_dict() for company in companies]
+        companies_list = []
+        for company in companies:
+            company_dict = company.to_dict()
+            app.logger.info(f'Company data: {company_dict}')
+            companies_list.append(company_dict)
         
         app.logger.info(f'Found {len(companies_list)} companies for user {current_user.email}')
+        app.logger.info(f'Companies list: {companies_list}')
         
         return render_template('dashboard.html', 
                              preferences=preferences, 
