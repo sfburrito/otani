@@ -228,68 +228,73 @@
                 <i class="fas fa-times"></i>
             </button>
         </div>
-        <div class="modal-content">
+        <div class="modal-body">
             <form id="addCompanyForm" class="add-company-form">
-                <div class="company-details-grid">
-                    <!-- Basic Information -->
-                    <div class="detail-section">
-                        <h3>Basic Information</h3>
-                        <div class="info-grid">
-                            <div class="info-item">
-                                <label>Company Name *</label>
-                                <input type="text" class="form-input" id="name" name="name" required>
-                            </div>
-                            <div class="info-item">
-                                <label>Industry *</label>
-                                <select class="form-input" id="industry" name="industry" required>
-                                    <option value="">Select Industry</option>
-                                    <option value="Software">Software</option>
-                                    <option value="Hardware">Hardware</option>
-                                    <option value="AI/ML">AI/ML</option>
-                                    <option value="Fintech">Fintech</option>
-                                    <option value="Healthcare">Healthcare</option>
-                                    <option value="E-commerce">E-commerce</option>
-                                    <option value="Other">Other</option>
-                                </select>
-                            </div>
-                            <div class="info-item">
-                                <label>Stage *</label>
-                                <select class="form-input" id="stage" name="stage" required>
-                                    <option value="">Select Stage</option>
-                                    <option value="Seed">Seed</option>
-                                    <option value="Series A">Series A</option>
-                                    <option value="Series B">Series B</option>
-                                    <option value="Series C">Series C</option>
-                                    <option value="Series D+">Series D+</option>
-                                </select>
-                            </div>
-                            <div class="info-item">
-                                <label>Investment Amount *</label>
-                                <input type="number" class="form-input" id="investment_amount" name="investment_amount" required>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Additional Details -->
-                    <div class="detail-section">
-                        <h3>Additional Details</h3>
-                        <div class="info-grid">
-                            <div class="info-item">
-                                <label>Website</label>
-                                <input type="url" class="form-input" id="website" name="website">
-                            </div>
-                            <div class="info-item">
-                                <label>Location</label>
-                                <input type="text" class="form-input" id="location" name="location">
-                            </div>
-                            <div class="info-item full-width">
-                                <label>Description</label>
-                                <textarea class="form-input" id="description" name="description" rows="3"></textarea>
-                            </div>
-                        </div>
-                    </div>
+                <div class="form-group">
+                    <label for="name">Company Name *</label>
+                    <input type="text" id="name" name="name" class="form-input" required>
+                    <div class="error-message"></div>
                 </div>
-                
+
+                <div class="form-group">
+                    <label for="industry">Industry *</label>
+                    <select id="industry" name="industry" class="form-input" required>
+                        <option value="">Select Industry</option>
+                        <option value="AI/ML">AI/Machine Learning</option>
+                        <option value="Fintech">Fintech</option>
+                        <option value="Healthcare">Healthcare/Biotech</option>
+                        <option value="Enterprise">Enterprise SaaS</option>
+                        <option value="Consumer">Consumer Tech</option>
+                        <option value="Cleantech">Cleantech/Sustainability</option>
+                        <option value="Cybersecurity">Cybersecurity</option>
+                        <option value="E-commerce">E-commerce</option>
+                    </select>
+                    <div class="error-message"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="stage">Stage *</label>
+                    <select id="stage" name="stage" class="form-input" required>
+                        <option value="">Select Stage</option>
+                        <option value="Seed">Seed</option>
+                        <option value="Series A">Series A</option>
+                        <option value="Series B">Series B</option>
+                        <option value="Series C">Series C</option>
+                        <option value="Series D+">Series D+</option>
+                    </select>
+                    <div class="error-message"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="website">Website</label>
+                    <input type="url" id="website" name="website" class="form-input" placeholder="https://example.com">
+                    <div class="error-message"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Contact Email</label>
+                    <input type="email" id="email" name="email" class="form-input" placeholder="contact@example.com">
+                    <div class="error-message"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea id="description" name="description" class="form-input" rows="4"></textarea>
+                    <div class="error-message"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="rating">Rating</label>
+                    <select id="rating" name="rating" class="form-input">
+                        <option value="">Select Rating</option>
+                        <option value="A">A - Excellent</option>
+                        <option value="B">B - Good</option>
+                        <option value="C">C - Fair</option>
+                        <option value="D">D - Poor</option>
+                    </select>
+                    <div class="error-message"></div>
+                </div>
+
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline" onclick="closeAddCompanyModal()">Cancel</button>
                     <button type="submit" class="btn btn-primary">Add Company</button>
