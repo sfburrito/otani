@@ -20,6 +20,30 @@ document.addEventListener('click', function(event) {
     }
 });
 
+// Function to add a new company row to the table
+function addCompanyToTable(company) {
+    const table = document.querySelector('.companies-table tbody');
+    const newRow = document.createElement('tr');
+    
+    newRow.innerHTML = `
+        <td>${company.name}</td>
+        <td>${company.industry}</td>
+        <td>${company.stage}</td>
+        <td class="rating-col">
+            <span class="rating-badge ${company.rating.toLowerCase()}">${company.rating}</span>
+        </td>
+        <td class="description-col">
+            <div class="description-content">${company.description || ''}</div>
+        </td>
+        <td class="icon-cell">
+            ${company.website ? `<a href="${company.website}" target="_blank" class="action-icon"><i class="fas fa-globe"></i></a>` : ''}
+            ${company.email ? `<a href="mailto:${company.email}" class="action-icon"><i class="fas fa-envelope"></i></a>` : ''}
+        </td>
+    `;
+    
+    table.appendChild(newRow);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     // Close modal when clicking close button
     document.querySelector('.close-modal').addEventListener('click', () => {
@@ -69,23 +93,16 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             console.log('Response status:', response.status);
-            console.log('Response headers:', Object.fromEntries(response.headers.entries()));
             
-            const responseText = await response.text();
-            console.log('Raw response:', responseText);
-            
-            let result;
-            try {
-                result = JSON.parse(responseText);
-                console.log('Parsed response:', result);
-            } catch (parseError) {
-                console.error('Failed to parse response:', parseError);
-                throw new Error('Invalid response format from server');
-            }
+            const result = await response.json();
+            console.log('Parsed response:', result);
 
             if (!response.ok) {
                 throw new Error(result.error || 'Failed to add company');
             }
+
+            // Add the new company to the table
+            addCompanyToTable(result.company);
 
             // Show success message
             showSuccessMessage('Company added successfully!');
@@ -93,15 +110,12 @@ document.addEventListener('DOMContentLoaded', () => {
             // Reset form and close modal
             addCompanyForm.reset();
             closeAddCompanyModal();
-            
-            // Refresh the page to show new company
-            window.location.href = '/dashboard';
 
         } catch (error) {
             console.error('Error adding company:', error);
-            showErrorMessage(error.message || 'Failed to add company. Please try again.');
+            showErrorMessage(error.message || 'Failed to add company');
         } finally {
-            // Reset button state
+            // Restore button state
             submitButton.disabled = false;
             submitButton.textContent = originalText;
         }
