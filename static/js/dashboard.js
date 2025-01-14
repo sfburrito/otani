@@ -8,14 +8,14 @@
 
     // Initialize when DOM is loaded
     document.addEventListener('DOMContentLoaded', function() {
-        console.log('Initial companies:', companies);
-        renderCompanies(companies);
+        console.log('Initial companies:', window.companies);
+        renderCompanies(window.companies);
 
         // Add search functionality
         if (elements.companySearch) {
             elements.companySearch.addEventListener('input', function(e) {
                 const searchTerm = e.target.value.toLowerCase();
-                const filteredCompanies = companies.filter(company => {
+                const filteredCompanies = window.companies.filter(company => {
                     return (
                         company.name?.toLowerCase().includes(searchTerm) ||
                         company.industry?.toLowerCase().includes(searchTerm) ||

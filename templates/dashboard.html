@@ -322,13 +322,14 @@
 
 <script src="{{ url_for('static', filename='js/company_details.js') }}"></script>
 <script src="{{ url_for('static', filename='js/add_company.js') }}"></script>
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     try {
-        // Get companies from the template context
-        const companies = {{ companies|tojson|safe }};
-        console.log('Initial companies:', companies);
+        // Get companies from the template context and make it globally available
+        window.companies = {{ companies|tojson|safe }};
+        console.log('Initial companies:', window.companies);
         
         // Initialize preferences from server data with safe defaults
         const serverPreferences = {{ preferences|tojson|safe if preferences else '{"investment_stages": [], "industry_sectors": [], "geographic_focus": [], "investment_sizes": [], "additional_preferences": ""}' }};
@@ -342,9 +343,8 @@ document.addEventListener('DOMContentLoaded', function() {
         // Set additional preferences
         document.getElementById('additionalPrefs').value = serverPreferences.additional_preferences;
 
-        // Render companies
-        renderCompanies(companies);
-
+        // Render companies using the dashboard.js function
+        window.renderCompanies(window.companies);
     } catch (error) {
         console.error('Error initializing dashboard:', error);
     }
