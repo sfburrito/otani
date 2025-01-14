@@ -11,9 +11,20 @@
     let isSubmitting = false;
     let lastSubmissionTime = 0;
     const DEBOUNCE_DELAY = 2000; // 2 seconds
+    let submitCount = 0; // Track number of submission attempts
+
+    // Debug logging
+    function debugLog(message, data = null) {
+        const timestamp = new Date().toISOString();
+        console.log(`[${timestamp}] ${message}`);
+        if (data) {
+            console.log('Data:', data);
+        }
+    }
 
     // Modal functions
     function openAddCompanyModal() {
+        debugLog('Opening add company modal');
         if (elements.addCompanyModal) {
             elements.addCompanyModal.style.display = 'block';
             document.body.style.overflow = 'hidden';
@@ -21,20 +32,25 @@
     }
 
     function closeAddCompanyModal() {
+        debugLog('Closing add company modal');
         if (elements.addCompanyModal) {
             elements.addCompanyModal.style.display = 'none';
             document.body.style.overflow = '';
             if (elements.addCompanyForm) {
                 elements.addCompanyForm.reset();
                 isSubmitting = false;
+                debugLog('Reset form and submission state');
             }
         }
     }
 
     // Function to add a new company row to the table
     function addCompanyToTable(company) {
-        console.log('Adding company to table:', company);
-        if (!elements.companiesTableBody) return;
+        debugLog('Adding company to table:', company);
+        if (!elements.companiesTableBody) {
+            debugLog('Error: Companies table body not found');
+            return;
+        }
         
         const newRow = document.createElement('tr');
         newRow.className = 'clickable-row';
@@ -66,11 +82,16 @@
         }
         
         elements.companiesTableBody.appendChild(newRow);
+        debugLog('Successfully added row to table');
     }
 
     // Show messages
     function showMessage(message, type = 'success') {
-        if (!elements.flashMessages) return;
+        debugLog(`Showing message: ${message} (${type})`);
+        if (!elements.flashMessages) {
+            debugLog('Error: Flash messages container not found');
+            return;
+        }
         
         const messageDiv = document.createElement('div');
         messageDiv.className = `alert alert-${type}`;
@@ -82,39 +103,64 @@
 
     // Show form validation errors
     function showFormErrors() {
-        if (!elements.addCompanyForm) return;
+        debugLog('Showing form validation errors');
+        if (!elements.addCompanyForm) {
+            debugLog('Error: Form not found');
+            return;
+        }
         
         elements.addCompanyForm.querySelectorAll('input, textarea, select').forEach(input => {
             if (!input.validity.valid) {
                 input.classList.add('invalid');
                 const errorSpan = document.getElementById(`${input.id}-error`);
                 if (errorSpan) errorSpan.textContent = input.validationMessage;
+                debugLog(`Validation error for ${input.id}: ${input.validationMessage}`);
             }
         });
     }
 
     // Handle form submission
     async function handleSubmit(event) {
-        if (event) event.preventDefault();
+        submitCount++;
+        const currentSubmit = submitCount;
+        debugLog(`Submit attempt #${currentSubmit} started`);
+
+        if (event) {
+            event.preventDefault();
+            debugLog('Prevented default form submission');
+        }
 
         // Check if enough time has passed since last submission
         const now = Date.now();
-        if (now - lastSubmissionTime < DEBOUNCE_DELAY) {
-            console.log('Submission too soon after last submission');
+        const timeSinceLastSubmission = now - lastSubmissionTime;
+        debugLog(`Time since last submission: ${timeSinceLastSubmission}ms`);
+
+        if (timeSinceLastSubmission < DEBOUNCE_DELAY) {
+            debugLog(`Submission too soon (${timeSinceLastSubmission}ms < ${DEBOUNCE_DELAY}ms)`);
             return;
         }
 
-        if (isSubmitting || !elements.addCompanyForm || !elements.addCompanyButton) {
-            console.log('Form submission already in progress or missing elements');
+        if (isSubmitting) {
+            debugLog('Form submission already in progress');
+            return;
+        }
+
+        if (!elements.addCompanyForm || !elements.addCompanyButton) {
+            debugLog('Error: Required elements not found', {
+                formFound: !!elements.addCompanyForm,
+                buttonFound: !!elements.addCompanyButton
+            });
             return;
         }
 
         if (!elements.addCompanyForm.checkValidity()) {
+            debugLog('Form validation failed');
             showFormErrors();
             return;
         }
 
         const originalText = elements.addCompanyButton.innerHTML;
+        debugLog('Starting submission process');
         
         try {
             isSubmitting = true;
@@ -124,7 +170,9 @@
 
             const formData = new FormData(elements.addCompanyForm);
             const data = Object.fromEntries(formData.entries());
+            debugLog('Form data prepared:', data);
             
+            debugLog('Sending POST request to /add_company');
             const response = await fetch('/add_company', {
                 method: 'POST',
                 headers: {
@@ -135,7 +183,11 @@
             });
             
             const result = await response.json();
-            if (!response.ok) throw new Error(result.error || 'Failed to add company');
+            debugLog('Received response:', result);
+
+            if (!response.ok) {
+                throw new Error(result.error || 'Failed to add company');
+            }
 
             addCompanyToTable(result.company);
             showMessage('Company added successfully!');
@@ -143,9 +195,11 @@
             closeAddCompanyModal();
 
         } catch (error) {
+            debugLog('Error during submission:', error);
             console.error('Error adding company:', error);
             showMessage(error.message || 'Failed to add company', 'error');
         } finally {
+            debugLog(`Submit attempt #${currentSubmit} finished`);
             if (elements.addCompanyButton) {
                 elements.addCompanyButton.disabled = false;
                 elements.addCompanyButton.innerHTML = originalText;
@@ -153,6 +207,7 @@
             // Only reset isSubmitting after a delay
             setTimeout(() => {
                 isSubmitting = false;
+                debugLog(`Reset submission state for attempt #${currentSubmit}`);
             }, DEBOUNCE_DELAY);
         }
     }
@@ -168,12 +223,22 @@
 
     // Initialize when DOM is loaded
     document.addEventListener('DOMContentLoaded', function() {
+        debugLog('DOM loaded, initializing form');
+        
         // Cache DOM elements
         elements.addCompanyModal = document.getElementById('addCompanyModal');
         elements.addCompanyForm = document.getElementById('addCompanyForm');
         elements.addCompanyButton = document.getElementById('addCompanyButton');
         elements.flashMessages = document.querySelector('.flash-messages');
         elements.companiesTableBody = document.querySelector('.companies-table tbody');
+
+        debugLog('Elements initialized:', {
+            modalFound: !!elements.addCompanyModal,
+            formFound: !!elements.addCompanyForm,
+            buttonFound: !!elements.addCompanyButton,
+            flashMessagesFound: !!elements.flashMessages,
+            tableBodyFound: !!elements.companiesTableBody
+        });
         
         // Add event listeners
         if (elements.addCompanyModal) {
@@ -205,12 +270,16 @@
 
             // Prevent form submission and handle it through the button click
             elements.addCompanyForm.addEventListener('submit', handleSubmit);
+            debugLog('Form submit handler attached');
         }
 
         // Add click handler for the submit button
         if (elements.addCompanyButton) {
             elements.addCompanyButton.addEventListener('click', handleSubmit);
+            debugLog('Button click handler attached');
         }
+
+        debugLog('Initialization complete');
     });
 
     // Expose functions to window

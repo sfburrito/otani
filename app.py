@@ -10,6 +10,7 @@ import traceback
 from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 import json
+import uuid
 
 # Configure logging
 logging.basicConfig(
@@ -254,40 +255,46 @@ def logout():
 @app.route('/add_company', methods=['POST'])
 @login_required
 def add_company():
-    app.logger.info(f"User {current_user.email} attempting to add new company")
+    request_id = str(uuid.uuid4())[:8]  # Generate a unique ID for this request
+    app.logger.info(f"[{request_id}] User {current_user.email} attempting to add new company")
     try:
         # Log raw request data
-        app.logger.debug(f"Raw request data: {request.get_data()}")
-        app.logger.debug(f"Request headers: {dict(request.headers)}")
+        app.logger.debug(f"[{request_id}] Raw request data: {request.get_data()}")
+        app.logger.debug(f"[{request_id}] Request headers: {dict(request.headers)}")
         
         # Get JSON data
         data = request.get_json()
-        app.logger.info(f"Parsed request data: {data}")
+        app.logger.info(f"[{request_id}] Parsed request data: {data}")
         
         if not data:
-            app.logger.error("No JSON data received")
+            app.logger.error(f"[{request_id}] No JSON data received")
             return jsonify({"error": "No data provided"}), 400
 
         # Validate required fields
         required_fields = ['name', 'industry', 'stage']
         for field in required_fields:
             if not data.get(field):
-                app.logger.error(f"Missing required field: {field}")
+                app.logger.error(f"[{request_id}] Missing required field: {field}")
                 return jsonify({"error": f"Missing required field: {field}"}), 400
 
         # Check for duplicate company within last 5 seconds
         five_seconds_ago = datetime.utcnow() - timedelta(seconds=5)
+        app.logger.debug(f"[{request_id}] Checking for duplicates since {five_seconds_ago}")
+        
         recent_company = Company.query.filter_by(
             user_id=current_user.id,
             name=data['name']
         ).filter(Company.created_at >= five_seconds_ago).first()
 
         if recent_company:
-            app.logger.warning(f"Duplicate submission detected for company {data['name']}")
+            app.logger.warning(f"[{request_id}] Duplicate submission detected for company {data['name']}")
+            app.logger.debug(f"[{request_id}] Found recent company: {recent_company.to_dict()}")
             return jsonify({
                 "message": "Company already added",
                 "company": recent_company.to_dict()
             }), 200
+
+        app.logger.debug(f"[{request_id}] No recent duplicate found, creating new company")
 
         # Create new company
         new_company = Company(
@@ -305,7 +312,8 @@ def add_company():
         db.session.add(new_company)
         db.session.commit()
         
-        app.logger.info(f"Successfully added new company {data['name']} for user {current_user.email}")
+        app.logger.info(f"[{request_id}] Successfully added new company {data['name']} for user {current_user.email}")
+        app.logger.debug(f"[{request_id}] New company details: {new_company.to_dict()}")
         
         # Return success response with company data
         return jsonify({
@@ -313,17 +321,10 @@ def add_company():
             "company": new_company.to_dict()
         }), 200
 
-    except json.JSONDecodeError as e:
-        app.logger.error(f"JSON decode error: {str(e)}")
-        return jsonify({"error": "Invalid JSON format"}), 400
-    except SQLAlchemyError as e:
-        app.logger.error(f"Database error: {str(e)}")
-        db.session.rollback()
-        return jsonify({"error": "Database error occurred"}), 500
     except Exception as e:
-        app.logger.error(f"Unexpected error: {str(e)}")
+        app.logger.error(f"[{request_id}] Error adding company: {str(e)}")
         db.session.rollback()
-        return jsonify({"error": "An unexpected error occurred"}), 500
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/get_preferences', methods=['GET'])
 @login_required
