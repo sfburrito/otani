@@ -43,8 +43,21 @@
         elements.deleteConfirmModal = document.getElementById('deleteConfirmModal');
         elements.deleteCompanyName = document.getElementById('deleteCompanyName');
 
-        // Initialize Bootstrap modal
-        new bootstrap.Modal(elements.modal);
+        // Close modal when clicking outside
+        document.addEventListener('click', function(event) {
+            const modal = document.getElementById('companyDetailsModal');
+            if (!modal) return;
+
+            if (event.target === modal) {
+                closeCompanyDetailModal();
+            }
+        });
+
+        // Close modal when clicking close button
+        const closeButtons = document.querySelectorAll('[data-bs-dismiss="modal"]');
+        closeButtons.forEach(button => {
+            button.addEventListener('click', closeCompanyDetailModal);
+        });
 
         // Use event delegation for modal clicks
         elements.modal.addEventListener('click', (e) => {
@@ -125,8 +138,14 @@
             }
 
             // Show the modal
-            const bsModal = new bootstrap.Modal(modal);
-            bsModal.show();
+            modal.style.display = 'block';
+            modal.classList.add('show');
+            document.body.classList.add('modal-open');
+            
+            // Add backdrop
+            const backdrop = document.createElement('div');
+            backdrop.className = 'modal-backdrop fade show';
+            document.body.appendChild(backdrop);
         } catch (error) {
             console.error('Error updating modal content:', error);
         }
@@ -134,9 +153,18 @@
 
     // Close company detail modal
     function closeCompanyDetailModal() {
-        if (!elements.modal) return;
-        elements.modal.style.display = 'none';
-        document.body.style.overflow = '';
+        const modal = document.getElementById('companyDetailsModal');
+        if (!modal) return;
+
+        modal.style.display = 'none';
+        modal.classList.remove('show');
+        document.body.classList.remove('modal-open');
+        
+        // Remove backdrop
+        const backdrop = document.querySelector('.modal-backdrop');
+        if (backdrop) {
+            backdrop.remove();
+        }
     }
 
     // Save company notes
@@ -232,21 +260,4 @@
     window.confirmDeleteCompany = confirmDeleteCompany;
     window.closeDeleteConfirmModal = closeDeleteConfirmModal;
     window.deleteCompany = deleteCompany;
-
-    // Close modal when clicking outside
-    document.addEventListener('click', function(event) {
-        const modal = document.getElementById('companyDetailsModal');
-        if (!modal) return;
-
-        if (event.target.matches('.modal-overlay')) {
-            closeCompanyDetailModal();
-        }
-    });
-
-    // Close modal with escape key
-    document.addEventListener('keydown', function(event) {
-        if (event.key === 'Escape') {
-            closeCompanyDetailModal();
-        }
-    });
 })();
