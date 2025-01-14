@@ -1218,6 +1218,47 @@ textarea.form-input:focus {
     }
 }
 
+/* Delete Confirmation Modal */
+.delete-confirm-modal {
+    max-width: 400px;
+    text-align: center;
+}
+
+.delete-confirm-modal .modal-body {
+    padding: 1.5rem;
+}
+
+.delete-confirm-modal p {
+    margin: 0;
+    font-size: 1rem;
+    color: var(--text-dark);
+}
+
+#deleteCompanyName {
+    font-weight: 600;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    color: white;
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+}
+
+.footer-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.footer-right {
+    display: flex;
+    gap: 0.75rem;
+}
+
 /* Additional Preferences */
 .additional-preferences {
     padding: 0 1rem;
@@ -1244,8 +1285,8 @@ textarea.form-input:focus {
 }
 
 .preference-textarea:focus {
-    outline: none;
     border-color: var(--teal);
+    outline: none;
     box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.1);
 }
 
@@ -1637,14 +1678,14 @@ textarea.form-input:focus {
 /* Additional Preferences */
 .additional-preferences {
     margin-top: 20px;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 
 .additional-preferences textarea {
     width: 100%;
     min-height: 100px;
     padding: 10px;
-    border: 1px solid #666;
+    border: 1px solid #bbb;
     border-radius: 4px;
     resize: vertical;
     font-family: inherit;
@@ -1668,7 +1709,7 @@ textarea.form-input:focus {
 /* Additional Preferences */
 .additional-preferences {
     margin-top: 20px;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 
 .additional-preferences textarea {
@@ -1739,14 +1780,14 @@ textarea.form-input:focus {
 /* Additional Preferences */
 .additional-preferences {
     margin-top: 20px;
-    margin-bottom: 10px;  /* Reduced from 20px to 10px */
+    margin-bottom: 10px;
 }
 
 .additional-preferences textarea {
     width: 100%;
     min-height: 100px;
     padding: 10px;
-    border: 1px solid #bbb;  /* Lighter border color */
+    border: 1px solid #bbb;
     border-radius: 4px;
     resize: vertical;
     font-family: inherit;

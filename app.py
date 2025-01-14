@@ -412,6 +412,25 @@ def save_preferences():
         app.logger.error(f'Traceback: {traceback.format_exc()}')
         return {'error': 'Failed to save preferences'}, 500
 
+@app.route('/delete_company/<int:company_id>', methods=['DELETE'])
+@login_required
+def delete_company(company_id):
+    try:
+        company = Company.query.filter_by(id=company_id, user_id=current_user.id).first()
+        
+        if not company:
+            return {'error': 'Company not found'}, 404
+            
+        db.session.delete(company)
+        db.session.commit()
+        
+        return {'message': 'Company deleted successfully'}, 200
+        
+    except Exception as e:
+        db.session.rollback()
+        app.logger.error(f'Error deleting company: {str(e)}')
+        return {'error': 'Failed to delete company'}, 500
+
 @app.route('/static/<path:filename>')
 def serve_static(filename):
     app.logger.info(f'Serving static file: {filename}')
