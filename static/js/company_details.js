@@ -29,19 +29,22 @@
             return;
         }
 
-        elements.name = elements.modal.querySelector('.company-name');
-        elements.industry = elements.modal.querySelector('.company-industry');
-        elements.stage = elements.modal.querySelector('.company-stage');
-        elements.rating = elements.modal.querySelector('.company-rating');
-        elements.website = elements.modal.querySelector('.company-website');
-        elements.email = elements.modal.querySelector('.company-email');
-        elements.description = elements.modal.querySelector('.company-description');
-        elements.location = elements.modal.querySelector('.company-location');
+        elements.name = document.getElementById('modal-company-name');
+        elements.industry = document.getElementById('modal-company-industry');
+        elements.stage = document.getElementById('modal-company-stage');
+        elements.rating = document.getElementById('modal-company-rating');
+        elements.website = document.getElementById('modal-company-website');
+        elements.email = document.getElementById('modal-company-email');
+        elements.description = document.getElementById('modal-company-description');
+        elements.location = document.getElementById('modal-company-location');
         elements.notes = document.getElementById('companyNotes');
         elements.modalClose = elements.modal.querySelector('.modal-close');
         elements.modalOverlay = elements.modal.querySelector('.modal-overlay');
         elements.deleteConfirmModal = document.getElementById('deleteConfirmModal');
         elements.deleteCompanyName = document.getElementById('deleteCompanyName');
+
+        // Initialize Bootstrap modal
+        new bootstrap.Modal(elements.modal);
 
         // Use event delegation for modal clicks
         elements.modal.addEventListener('click', (e) => {
@@ -71,48 +74,47 @@
         currentCompanyId = company.id;
 
         // Update modal content
-        modal.querySelector('.company-name').textContent = company.name || '';
-        modal.querySelector('.company-industry').textContent = company.industry || '';
-        modal.querySelector('.company-stage').textContent = company.stage || '';
-        modal.querySelector('.company-location').textContent = company.location || 'Location not specified';
-        modal.querySelector('.company-description').textContent = company.description || '';
-        
+        elements.name.textContent = company.name || '';
+        elements.industry.textContent = company.industry || '';
+        elements.stage.textContent = company.stage || '';
+        elements.location.textContent = company.location || 'Location not specified';
+        elements.description.textContent = company.description || '';
+
         // Update rating
-        const ratingElement = modal.querySelector('.company-rating');
         if (company.rating) {
-            ratingElement.innerHTML = `<span class="rating-badge ${company.rating.toLowerCase()}">${company.rating}</span>`;
+            elements.rating.innerHTML = `<span class="rating-badge ${company.rating.toLowerCase()}">${company.rating}</span>`;
         } else {
-            ratingElement.innerHTML = '';
+            elements.rating.innerHTML = '';
         }
-        
+
         // Update website
-        const websiteElement = modal.querySelector('.company-website');
         if (company.website) {
-            websiteElement.innerHTML = `<a href="${company.website}" target="_blank" rel="noopener noreferrer">${company.website}</a>`;
+            elements.website.href = company.website;
+            elements.website.textContent = company.website;
         } else {
-            websiteElement.textContent = 'Not provided';
+            elements.website.textContent = 'Not provided';
         }
-        
+
         // Update email
-        const emailElement = modal.querySelector('.company-email');
         if (company.email) {
-            emailElement.innerHTML = `<a href="mailto:${company.email}">${company.email}</a>`;
+            elements.email.href = `mailto:${company.email}`;
+            elements.email.textContent = company.email;
         } else {
-            emailElement.textContent = 'Not provided';
+            elements.email.textContent = 'Not provided';
         }
-        
+
         // Update timestamps
         const created = new Date(company.created_at);
         const updated = new Date(company.updated_at);
-        modal.querySelector('.company-created').textContent = created.toLocaleString();
-        modal.querySelector('.company-updated').textContent = updated.toLocaleString();
-        
+        elements.modal.querySelector('.company-created').textContent = created.toLocaleString();
+        elements.modal.querySelector('.company-updated').textContent = updated.toLocaleString();
+
         // Store company ID for delete operation
-        modal.dataset.companyId = company.id;
-        
+        elements.modal.dataset.companyId = company.id;
+
         // Show modal
-        modal.style.display = 'block';
-        document.body.style.overflow = 'hidden';
+        const bsModal = new bootstrap.Modal(modal);
+        bsModal.show();
     }
 
     // Close company detail modal
@@ -125,10 +127,10 @@
     // Save company notes
     function saveCompanyNotes() {
         if (!elements.modal || !elements.notes) return;
-        
+
         const companyId = elements.modal.dataset.companyId;
         const notes = elements.notes.value;
-        
+
         localStorage.setItem(`company_notes_${companyId}`, notes);
         showMessage('Notes saved successfully');
     }
@@ -136,7 +138,7 @@
     // Show delete confirmation
     function confirmDeleteCompany() {
         if (!elements.deleteConfirmModal || !elements.deleteCompanyName || !elements.name) return;
-        
+
         elements.deleteCompanyName.textContent = elements.name.textContent;
         elements.modal.style.display = 'none';
         elements.deleteConfirmModal.style.display = 'flex';
@@ -153,28 +155,28 @@
     async function deleteCompany() {
         const modal = document.getElementById('companyDetailsModal');
         if (!modal) return;
-        
+
         const companyId = modal.dataset.companyId;
         if (!companyId) return;
-        
+
         if (!confirm('Are you sure you want to delete this company?')) return;
-        
+
         try {
             const response = await fetch(`/delete_company/${companyId}`, {
                 method: 'DELETE'
             });
-            
+
             if (!response.ok) throw new Error('Failed to delete company');
-            
+
             const result = await response.json();
-            
+
             // Remove the company row from the table
             const row = document.querySelector(`tr[data-company-id="${companyId}"]`);
             if (row) row.remove();
-            
+
             // Close the modal
             closeCompanyDetailModal();
-            
+
             // Show success message
             const event = new CustomEvent('showMessage', {
                 detail: {
@@ -183,7 +185,7 @@
                 }
             });
             document.dispatchEvent(event);
-            
+
         } catch (error) {
             console.error('Error deleting company:', error);
             const event = new CustomEvent('showMessage', {
@@ -200,7 +202,7 @@
     function showMessage(message, type = 'success') {
         const flashMessages = document.querySelector('.flash-messages');
         if (!flashMessages) return;
-        
+
         const messageDiv = document.createElement('div');
         messageDiv.className = `alert alert-${type}`;
         messageDiv.textContent = message;
@@ -220,7 +222,7 @@
     document.addEventListener('click', function(event) {
         const modal = document.getElementById('companyDetailsModal');
         if (!modal) return;
-        
+
         if (event.target.matches('.modal-overlay')) {
             closeCompanyDetailModal();
         }
