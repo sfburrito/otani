@@ -1,28 +1,21 @@
 // Modal functions
-function openAddCompanyModal() {
-    const modal = document.getElementById('addCompanyModal');
+function openModal(modalId) {
+    const modal = document.getElementById(modalId);
     modal.classList.add('active');
     document.body.style.overflow = 'hidden';
 }
 
-function closeAddCompanyModal() {
-    const modal = document.getElementById('addCompanyModal');
+function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
     modal.classList.remove('active');
     document.body.style.overflow = '';
-    // Get the form either by original ID or the cloned one
-    const form = document.getElementById('addCompanyForm');
-    if (form) form.reset();
 }
 
 // Close modal when clicking outside
 document.addEventListener('click', function(event) {
     if (event.target.classList.contains('modal-overlay')) {
         const modal = event.target.closest('.modal');
-        if (modal.id === 'addCompanyModal') {
-            closeAddCompanyModal();
-        } else if (modal.id === 'companyDetailModal') {
-            closeCompanyDetailModal();
-        }
+        closeModal(modal.id);
     }
 });
 
@@ -149,7 +142,7 @@ function initializeForm() {
             
             // Reset form and close modal
             newForm.reset();
-            closeAddCompanyModal();
+            closeModal('addCompanyModal');
 
         } catch (error) {
             console.error('Error adding company:', error);
@@ -162,24 +155,6 @@ function initializeForm() {
         }
     });
 }
-
-// Initialize modals when DOM is loaded
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize close buttons
-    document.querySelectorAll('.modal-close').forEach(button => {
-        button.addEventListener('click', function() {
-            const modal = this.closest('.modal');
-            if (modal.id === 'addCompanyModal') {
-                closeAddCompanyModal();
-            } else if (modal.id === 'companyDetailModal') {
-                closeCompanyDetailModal();
-            }
-        });
-    });
-    
-    // Initialize the form
-    initializeForm();
-});
 
 // Show form validation errors
 function showFormErrors() {
@@ -269,15 +244,11 @@ function openCompanyDetail(company) {
     document.getElementById('companyDetailModal').dataset.companyId = company.id;
     
     // Show modal
-    const modal = document.getElementById('companyDetailModal');
-    console.log('Modal element:', modal);
-    modal.classList.add('active');
-    document.body.style.overflow = 'hidden';
+    openModal('companyDetailModal');
 }
 
 function closeCompanyDetailModal() {
-    document.getElementById('companyDetailModal').classList.remove('active');
-    document.body.style.overflow = '';
+    closeModal('companyDetailModal');
 }
 
 function saveCompanyNotes() {
@@ -292,19 +263,16 @@ function saveCompanyNotes() {
     showSuccessMessage('Notes saved successfully');
 }
 
-// Close modal when clicking overlay
+// Initialize modals when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
-    const modal = document.getElementById('companyDetailModal');
-    if (modal) {
-        modal.querySelector('.modal-overlay').addEventListener('click', closeCompanyDetailModal);
-    }
-    
-    // Close flash messages
-    document.addEventListener('click', function(e) {
-        if (e.target.matches('.close-flash')) {
-            const message = e.target.parentElement;
-            message.style.opacity = '0';
-            setTimeout(() => message.remove(), 300);
-        }
+    // Initialize close buttons
+    document.querySelectorAll('.modal-close').forEach(button => {
+        button.addEventListener('click', function() {
+            const modal = this.closest('.modal');
+            closeModal(modal.id);
+        });
     });
+    
+    // Initialize the form
+    initializeForm();
 });
