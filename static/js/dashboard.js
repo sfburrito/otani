@@ -79,27 +79,27 @@
             row.className = 'company-row';
             row.setAttribute('data-company-id', company.id);
             
-            // Create row content
+            // Create row content with proper column widths
             const rowContent = `
-                <td class="company-name">
+                <td style="width: 20%">
                     <span class="table-badge">${company.name || ''}</span>
                 </td>
-                <td class="company-industry">
+                <td style="width: 15%">
                     <span class="table-badge">${company.industry || ''}</span>
                 </td>
-                <td class="company-stage">
+                <td style="width: 15%">
                     <span class="table-badge">${company.stage || ''}</span>
                 </td>
-                <td class="company-location">
+                <td style="width: 15%">
                     <span class="table-badge">${company.location || ''}</span>
                 </td>
-                <td class="company-otani-rating text-center">
+                <td style="width: 12%; text-align: center">
                     <span class="rating-badge otani-rating-${(company.otani_rating || 'D').toLowerCase()}">${company.otani_rating || 'D'}</span>
                 </td>
-                <td class="company-rating text-center">
+                <td style="width: 12%; text-align: center">
                     <span class="rating-badge rating-${(company.rating || '').toLowerCase()}">${company.rating || ''}</span>
                 </td>
-                <td class="company-actions text-center">
+                <td style="width: 11%; text-align: center">
                     <div class="table-actions">
                         ${company.website ? `
                             <a href="${company.website}" 

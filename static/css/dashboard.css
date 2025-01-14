@@ -43,6 +43,7 @@
     background: white !important;
     border-radius: 8px !important;
     overflow: hidden !important;
+    table-layout: fixed !important;
 }
 
 .dashboard-container .companies-table thead th {
@@ -71,6 +72,45 @@
     color: #4a5568 !important;
     font-size: 0.875rem !important;
     vertical-align: middle !important;
+}
+
+/* Column Widths */
+.dashboard-container .companies-table th:nth-child(1),
+.dashboard-container .companies-table td:nth-child(1) {
+    width: 20% !important;
+}
+
+.dashboard-container .companies-table th:nth-child(2),
+.dashboard-container .companies-table td:nth-child(2) {
+    width: 15% !important;
+}
+
+.dashboard-container .companies-table th:nth-child(3),
+.dashboard-container .companies-table td:nth-child(3) {
+    width: 15% !important;
+}
+
+.dashboard-container .companies-table th:nth-child(4),
+.dashboard-container .companies-table td:nth-child(4) {
+    width: 15% !important;
+}
+
+.dashboard-container .companies-table th:nth-child(5),
+.dashboard-container .companies-table td:nth-child(5) {
+    width: 12% !important;
+    text-align: center !important;
+}
+
+.dashboard-container .companies-table th:nth-child(6),
+.dashboard-container .companies-table td:nth-child(6) {
+    width: 12% !important;
+    text-align: center !important;
+}
+
+.dashboard-container .companies-table th:nth-child(7),
+.dashboard-container .companies-table td:nth-child(7) {
+    width: 11% !important;
+    text-align: center !important;
 }
 
 /* Badge Styles */
