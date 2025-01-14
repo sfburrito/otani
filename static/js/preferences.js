@@ -133,7 +133,12 @@ function setSelectedOptions(placeholder, values) {
     // Find and check the checkboxes
     values.forEach(value => {
         const checkbox = Array.from(select.querySelectorAll('input[type="checkbox"]'))
-            .find(cb => cb.value === value || cb.parentElement.textContent.trim() === value);
+            .find(cb => {
+                const cbValue = cb.value;
+                const cbText = cb.parentElement.textContent.trim();
+                const normalizedValue = value.toLowerCase().replace(/[^a-z0-9]/g, '_');
+                return cbValue === value || cbValue === normalizedValue || cbText.toLowerCase() === value.toLowerCase();
+            });
         
         if (checkbox) {
             console.log(`Found checkbox for value "${value}"`);
@@ -143,8 +148,18 @@ function setSelectedOptions(placeholder, values) {
         }
     });
     
-    // Update the selected text
-    updateSelectedText(select);
+    // Update the selected text with proper labels
+    const selectedOptions = Array.from(select.querySelectorAll('input[type="checkbox"]:checked'))
+        .map(checkbox => checkbox.parentElement.textContent.trim());
+    const selectedText = select.querySelector('.selected-text');
+    
+    if (selectedText) {
+        if (selectedOptions.length > 0) {
+            selectedText.textContent = selectedOptions.join(', ');
+        } else {
+            selectedText.textContent = select.dataset.placeholder;
+        }
+    }
 }
 
 function savePreferences() {
