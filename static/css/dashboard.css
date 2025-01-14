@@ -151,6 +151,13 @@
     max-width: calc(100% - 1rem) !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
+    border: none !important;
+}
+
+/* Override any global stage styles */
+.dashboard-container .companies-table .company-stage .table-badge {
+    background: #f1f5f9 !important;
+    color: #475569 !important;
 }
 
 /* Rating Badge Styles */
