@@ -7,6 +7,8 @@
         companiesTableBody: null
     };
 
+    let isSubmitting = false; // Move isSubmitting to module scope
+
     // Modal functions
     function openAddCompanyModal() {
         if (elements.addCompanyModal) {
@@ -19,7 +21,10 @@
         if (elements.addCompanyModal) {
             elements.addCompanyModal.style.display = 'none';
             document.body.style.overflow = '';
-            if (elements.addCompanyForm) elements.addCompanyForm.reset();
+            if (elements.addCompanyForm) {
+                elements.addCompanyForm.reset();
+                isSubmitting = false; // Reset submission state when closing modal
+            }
         }
     }
 
@@ -30,6 +35,7 @@
         
         const newRow = document.createElement('tr');
         newRow.className = 'clickable-row';
+        newRow.dataset.companyId = company.id; // Add company ID for deletion
         newRow.onclick = () => window.openCompanyDetail?.(company);
         
         newRow.innerHTML = `
@@ -49,6 +55,12 @@
                 <div class="description-content">${company.description || ''}</div>
             </td>
         `;
+        
+        // Remove empty state if it exists
+        const emptyState = elements.companiesTableBody.querySelector('.empty-state');
+        if (emptyState) {
+            emptyState.remove();
+        }
         
         elements.companiesTableBody.appendChild(newRow);
     }
@@ -70,9 +82,7 @@
     function initializeForm() {
         if (!elements.addCompanyForm) return;
         
-        const inputs = elements.addCompanyForm.querySelectorAll('input, textarea, select');
         const submitButton = document.querySelector('button[form="addCompanyForm"]');
-        let isSubmitting = false;
         
         // Add input event listeners using event delegation
         elements.addCompanyForm.addEventListener('input', (e) => {
@@ -86,7 +96,10 @@
         
         elements.addCompanyForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            if (isSubmitting) return;
+            if (isSubmitting) {
+                console.log('Form submission already in progress');
+                return;
+            }
             
             if (!elements.addCompanyForm.checkValidity()) {
                 showFormErrors();
@@ -125,11 +138,14 @@
                 console.error('Error adding company:', error);
                 showMessage(error.message || 'Failed to add company', 'error');
             } finally {
-                isSubmitting = false;
                 if (submitButton) {
                     submitButton.disabled = false;
                     submitButton.textContent = originalText;
                 }
+                // Only reset isSubmitting after a delay to prevent double submissions
+                setTimeout(() => {
+                    isSubmitting = false;
+                }, 1000);
             }
         });
     }
@@ -171,6 +187,13 @@
                 if (e.target.matches('.modal-close, .modal-close *')) {
                     closeAddCompanyModal();
                 } else if (e.target.matches('.modal-overlay')) {
+                    closeAddCompanyModal();
+                }
+            });
+
+            // Handle escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && elements.addCompanyModal.style.display === 'block') {
                     closeAddCompanyModal();
                 }
             });
