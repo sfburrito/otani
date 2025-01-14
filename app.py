@@ -3,9 +3,9 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta
+import json
 import logging
 import os
-import json
 import uuid
 import random
 import sys
@@ -131,6 +131,17 @@ def init_db():
             )
             test_user.set_password('password')
             db.session.add(test_user)
+            
+            # Initialize preferences for test user
+            test_preferences = UserPreferences(
+                user_id=test_user.id,
+                investment_stages=json.dumps([]),
+                industry_sectors=json.dumps([]),
+                geographic_focus=json.dumps([]),
+                investment_sizes=json.dumps([]),
+                additional_preferences=''
+            )
+            db.session.add(test_preferences)
             
             # Sample companies data
             companies = [
