@@ -46,7 +46,7 @@
 
 /* Table Base Styles */
 .dashboard-container .companies-table {
-    width: 100% !important;
+    min-width: 100% !important;
     border-collapse: separate !important;
     border-spacing: 0 !important;
     table-layout: fixed !important;
@@ -62,37 +62,43 @@
     border-bottom: 2px solid #edf2f7 !important;
     white-space: nowrap !important;
     font-size: 0.875rem !important;
+    position: relative !important;
 }
 
 /* Column Widths */
-.dashboard-container .companies-table th:nth-child(1),
-.dashboard-container .companies-table td:nth-child(1),
+.dashboard-container .companies-table th:first-child,
+.dashboard-container .companies-table td:first-child,
 .dashboard-container .companies-table .company-name {
     width: 20% !important;
+    min-width: 200px !important;
 }
 
 .dashboard-container .companies-table th:nth-child(2),
 .dashboard-container .companies-table td:nth-child(2),
 .dashboard-container .companies-table .company-industry {
     width: 15% !important;
+    min-width: 150px !important;
 }
 
 .dashboard-container .companies-table th:nth-child(3),
 .dashboard-container .companies-table td:nth-child(3),
 .dashboard-container .companies-table .company-stage {
     width: 15% !important;
+    min-width: 150px !important;
 }
 
 .dashboard-container .companies-table th:nth-child(4),
 .dashboard-container .companies-table td:nth-child(4),
 .dashboard-container .companies-table .company-location {
     width: 15% !important;
+    min-width: 150px !important;
 }
 
 .dashboard-container .companies-table th:nth-child(5),
 .dashboard-container .companies-table td:nth-child(5),
 .dashboard-container .companies-table .company-otani-rating {
     width: 12% !important;
+    min-width: 120px !important;
     text-align: center !important;
 }
 
@@ -100,6 +106,7 @@
 .dashboard-container .companies-table td:nth-child(6),
 .dashboard-container .companies-table .company-rating {
     width: 12% !important;
+    min-width: 120px !important;
     text-align: center !important;
 }
 
@@ -107,6 +114,7 @@
 .dashboard-container .companies-table td:nth-child(7),
 .dashboard-container .companies-table .company-actions {
     width: 11% !important;
+    min-width: 110px !important;
     text-align: center !important;
 }
 
@@ -126,6 +134,7 @@
     color: #4a5568 !important;
     font-size: 0.875rem !important;
     vertical-align: middle !important;
+    position: relative !important;
 }
 
 /* Badge Styles */
@@ -139,7 +148,7 @@
     background: #f1f5f9 !important;
     color: #475569 !important;
     white-space: nowrap !important;
-    max-width: 100% !important;
+    max-width: calc(100% - 1rem) !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
 }
