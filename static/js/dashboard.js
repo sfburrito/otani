@@ -79,7 +79,7 @@
             row.className = 'company-row';
             row.setAttribute('data-company-id', company.id);
             
-            // Create row content with proper column widths
+            // Create row content with proper column widths and explicit styling for stage
             const rowContent = `
                 <td class="company-name">
                     <span class="table-badge">${company.name || ''}</span>
@@ -88,7 +88,7 @@
                     <span class="table-badge">${company.industry || ''}</span>
                 </td>
                 <td class="company-stage">
-                    <span class="table-badge">${company.stage || ''}</span>
+                    <span class="table-badge" style="background: #f1f5f9 !important; color: #475569 !important; border: none !important; box-shadow: none !important;">${company.stage || ''}</span>
                 </td>
                 <td class="company-location">
                     <span class="table-badge">${company.location || ''}</span>

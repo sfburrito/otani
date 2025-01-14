@@ -154,10 +154,32 @@
     border: none !important;
 }
 
-/* Override any global stage styles */
-.dashboard-container .companies-table .company-stage .table-badge {
+/* Stage Badge Styles - Stronger Overrides */
+.dashboard-container .companies-table .company-stage .table-badge,
+.dashboard-container .companies-table td.company-stage .table-badge,
+.dashboard-container .companies-table td.company-stage span.table-badge,
+.dashboard-container .companies-table .company-stage span,
+.dashboard-container .companies-table .stage,
+.dashboard-container .companies-table [class*="stage-"],
+.dashboard-container .companies-table td[class*="stage"] *,
+.dashboard-container .companies-table tr td.company-stage span,
+.dashboard-container .companies-table tr td.company-stage .table-badge {
+    display: inline-flex !important;
+    align-items: center !important;
+    padding: 0.25rem 0.75rem !important;
+    border-radius: 20px !important;
+    font-size: 0.75rem !important;
+    font-weight: 500 !important;
     background: #f1f5f9 !important;
     color: #475569 !important;
+    white-space: nowrap !important;
+    max-width: calc(100% - 1rem) !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    border: none !important;
+    box-shadow: none !important;
+    -webkit-appearance: none !important;
+    appearance: none !important;
 }
 
 /* Rating Badge Styles */
