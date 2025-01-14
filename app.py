@@ -311,7 +311,7 @@ def add_company():
         db.session.rollback()
         return jsonify({"error": "An unexpected error occurred"}), 500
 
-@app.route('/api/preferences', methods=['GET'])
+@app.route('/get_preferences', methods=['GET'])
 @login_required
 def get_preferences():
     app.logger.info('=== Getting Preferences ===')
@@ -342,7 +342,7 @@ def get_preferences():
     app.logger.info(f'Result: {result}')
     return result
 
-@app.route('/api/preferences', methods=['POST'])
+@app.route('/save_preferences', methods=['POST'])
 @login_required
 def save_preferences():
     try:
