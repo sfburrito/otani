@@ -64,8 +64,11 @@
             <td class="company-industry text-left">${company.industry || ''}</td>
             <td class="company-stage text-left">${company.stage || ''}</td>
             <td class="company-location text-left">${company.location || ''}</td>
-            <td class="company-rating text-center">
+            <td class="company-otani-rating text-center">
                 <span class="otani-rating otani-rating-${company.otani_rating?.toLowerCase() || 'd'}">${company.otani_rating || 'D'}</span>
+            </td>
+            <td class="company-rating text-center">
+                <span class="rating-badge ${company.rating?.toLowerCase() || ''}">${company.rating || ''}</span>
             </td>
             <td class="company-actions text-center">
                 <div class="action-buttons">
