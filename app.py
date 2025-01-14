@@ -81,28 +81,47 @@ class UserPreferences(db.Model):
 class Company(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
-    industry = db.Column(db.String(50))
-    stage = db.Column(db.String(50))
+    industry = db.Column(db.String(50), nullable=False)
+    stage = db.Column(db.String(50), nullable=False)
+    location = db.Column(db.String(50), nullable=False)
     website = db.Column(db.String(200))
     email = db.Column(db.String(100))
     description = db.Column(db.Text)
-    rating = db.Column(db.String(1))
-    location = db.Column(db.String(100), nullable=True)  # New field, nullable to handle existing records
+    rating = db.Column(db.String(50))
+    otani_rating = db.Column(db.String(1))  # A, B, C, or D
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
+    def calculate_otani_rating(self, user_preferences):
+        """Calculate Otani Rating based on matches with user preferences."""
+        matches = 0
+        
+        # Get user preferences
+        industry_match = self.industry.lower().replace('/', '_').replace(' ', '_') in user_preferences.get('industry_sectors', [])
+        stage_match = self.stage.lower().replace(' ', '_') in user_preferences.get('investment_stages', [])
+        location_match = self.location.lower().replace(' ', '_') in user_preferences.get('geographic_focus', [])
+        
+        # Count matches
+        matches += industry_match + stage_match + location_match
+        
+        # Assign rating based on matches
+        rating_map = {3: 'A', 2: 'B', 1: 'C', 0: 'D'}
+        return rating_map[matches]
+
     def to_dict(self):
+        """Convert company to dictionary."""
         return {
             'id': self.id,
             'name': self.name,
             'industry': self.industry,
             'stage': self.stage,
+            'location': self.location,
             'website': self.website,
             'email': self.email,
             'description': self.description,
             'rating': self.rating,
-            'location': self.location,
+            'otani_rating': self.otani_rating,
             'created_at': self.created_at.isoformat() if self.created_at else None,
             'updated_at': self.updated_at.isoformat() if self.updated_at else None
         }
@@ -429,11 +448,12 @@ def dashboard():
                 'name': company.name,
                 'industry': company.industry,
                 'stage': company.stage,
+                'location': company.location,
                 'website': company.website,
                 'email': company.email,
                 'description': company.description,
                 'rating': company.rating,
-                'location': company.location,
+                'otani_rating': company.otani_rating,
                 'user_id': company.user_id
             }
             companies_list.append(company_dict)
@@ -525,13 +545,17 @@ def add_company():
             name=data['name'],
             industry=data['industry'],
             stage=data['stage'],
+            location=data['location'],
             website=data.get('website', ''),
             email=data.get('email', ''),
             description=data.get('description', ''),
             rating=data.get('rating', ''),
-            location=data.get('location', ''),
             user_id=current_user.id
         )
+
+        # Get user preferences and calculate Otani Rating
+        preferences = json.loads(current_user.preferences) if current_user.preferences else {}
+        new_company.otani_rating = new_company.calculate_otani_rating(preferences)
 
         # Add to database
         db.session.add(new_company)
@@ -740,6 +764,47 @@ def internal_error(error):
     app.logger.error(traceback.format_exc())
     db.session.rollback()
     return render_template('500.html'), 500
+
+def update_company_ratings(user_id):
+    """Update Otani Ratings for all companies of a user."""
+    user = User.query.get(user_id)
+    if not user:
+        return
+    
+    # Get user preferences
+    preferences = json.loads(user.preferences) if user.preferences else {}
+    
+    # Update ratings for all companies
+    companies = Company.query.filter_by(user_id=user_id).all()
+    for company in companies:
+        company.otani_rating = company.calculate_otani_rating(preferences)
+    
+    db.session.commit()
+
+@app.route('/update_preferences', methods=['POST'])
+@login_required
+def update_preferences():
+    try:
+        data = request.get_json()
+        
+        # Update user preferences
+        current_user.preferences = json.dumps({
+            'investment_stages': data.get('investment_stages', []),
+            'industry_sectors': data.get('industry_sectors', []),
+            'geographic_focus': data.get('geographic_focus', []),
+            'investment_sizes': data.get('investment_sizes', []),
+            'additional_preferences': data.get('additional_preferences', '')
+        })
+        
+        db.session.commit()
+        
+        # Update Otani Ratings for all companies
+        update_company_ratings(current_user.id)
+        
+        return jsonify({'message': 'Preferences updated successfully'})
+    except Exception as e:
+        print(f"Error updating preferences: {str(e)}")
+        return jsonify({'error': 'Failed to update preferences'}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)

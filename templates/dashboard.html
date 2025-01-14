@@ -182,13 +182,13 @@
             <table class="companies-table">
                 <thead>
                     <tr>
-                        <th class="rating-col text-left">Rating</th>
-                        <th class="text-left">Company</th>
-                        <th class="text-left">Stage</th>
-                        <th class="text-left">Industry</th>
-                        <th class="text-left">Location</th>
-                        <th class="icon-cell">Website</th>
-                        <th class="icon-cell">Email</th>
+                        <th>Name</th>
+                        <th>Industry</th>
+                        <th>Stage</th>
+                        <th>Location</th>
+                        <th>Otani Rating</th>
+                        <th>Your Rating</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody id="companiesTableBody">
@@ -353,52 +353,39 @@ document.addEventListener('DOMContentLoaded', function() {
 // Render companies in the table
 function renderCompanies(companies) {
     console.log('Rendering companies:', companies);
-    const tbody = document.querySelector('#companiesTableBody');
-    if (!tbody) {
-        console.error('Companies table body not found');
-        return;
-    }
-    tbody.innerHTML = '';
+    const tableBody = document.getElementById('companiesTableBody');
+    if (!tableBody) return;
 
-    if (!companies || companies.length === 0) {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td colspan="8" class="text-center">
-                <div class="empty-state">
-                    <p>No companies added yet</p>
-                </div>
-            </td>
-        `;
-        tbody.appendChild(tr);
-        return;
-    }
-
+    tableBody.innerHTML = '';
     companies.forEach(company => {
         console.log('Creating row for company:', company);
-        const tr = document.createElement('tr');
-        tr.className = 'clickable-row';
-        tr.dataset.companyId = company.id;  
-        tr.onclick = function() {
+        const row = document.createElement('tr');
+        row.setAttribute('data-company-id', company.id);
+        row.onclick = function() {
             console.log('Row clicked:', company);
             openCompanyDetail(company);
         };
-        
-        tr.innerHTML = `
-            <td class="rating-col text-left">
-                <span class="rating-badge ${company.rating?.toLowerCase() || ''}">${company.rating || ''}</span>
+
+        row.innerHTML = `
+            <td>${company.name}</td>
+            <td>${company.industry}</td>
+            <td>${company.stage}</td>
+            <td>${company.location}</td>
+            <td>
+                <span class="badge otani-rating-${company.otani_rating.toLowerCase()}">${company.otani_rating}</span>
             </td>
-            <td class="text-left">${company.name || ''}</td>
-            <td class="text-left">${company.stage || ''}</td>
-            <td class="text-left">${company.industry || ''}</td>
-            <td class="text-left">${company.location || ''}</td>
-            <td class="icon-cell" onclick="event.stopPropagation()">
-                ${company.website ? `<a href="${company.website}" target="_blank" rel="noopener noreferrer"><i class="fas fa-external-link-alt"></i></a>` : ''}
+            <td>
+                <span class="badge rating-badge ${company.rating ? company.rating.toLowerCase() : ''}">${company.rating || 'Not Rated'}</span>
             </td>
-            <td class="icon-cell" onclick="event.stopPropagation()">
-                ${company.email ? `<a href="mailto:${company.email}"><i class="fas fa-envelope"></i></a>` : ''}
+            <td>
+                <button class="btn btn-sm btn-outline-primary view-btn">
+                    <i class="fas fa-eye"></i>
+                    View
+                </button>
             </td>
         `;
-        tbody.appendChild(tr);
+
+        tableBody.appendChild(row);
     });
 }
 
@@ -495,4 +482,27 @@ function showMessage(message, type = 'success') {
     setTimeout(() => messageDiv.remove(), 5000);
 }
 </script>
+
+<style>
+/* Add styles for Otani Rating badges */
+.otani-rating-a {
+    background-color: #10B981;
+    color: white;
+}
+
+.otani-rating-b {
+    background-color: #3B82F6;
+    color: white;
+}
+
+.otani-rating-c {
+    background-color: #F59E0B;
+    color: white;
+}
+
+.otani-rating-d {
+    background-color: #EF4444;
+    color: white;
+}
+</style>
 {% endblock %}
