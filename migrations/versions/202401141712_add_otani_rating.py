@@ -17,35 +17,9 @@ depends_on = None
 
 
 def upgrade():
-    # Add otani_rating column to company table if it doesn't exist
-    op.execute("""
-        DO $$
-        BEGIN
-            IF NOT EXISTS (
-                SELECT 1 
-                FROM information_schema.columns 
-                WHERE table_name='company' 
-                AND column_name='otani_rating'
-            ) THEN
-                ALTER TABLE company ADD COLUMN otani_rating VARCHAR(1);
-                UPDATE company SET otani_rating = 'D' WHERE otani_rating IS NULL;
-            END IF;
-        END $$;
-    """)
+    op.execute('ALTER TABLE company ADD COLUMN IF NOT EXISTS otani_rating VARCHAR(1)')
+    op.execute("UPDATE company SET otani_rating = 'D' WHERE otani_rating IS NULL")
 
 
 def downgrade():
-    # Remove otani_rating column from company table if it exists
-    op.execute("""
-        DO $$
-        BEGIN
-            IF EXISTS (
-                SELECT 1 
-                FROM information_schema.columns 
-                WHERE table_name='company' 
-                AND column_name='otani_rating'
-            ) THEN
-                ALTER TABLE company DROP COLUMN otani_rating;
-            END IF;
-        END $$;
-    """)
+    op.execute('ALTER TABLE company DROP COLUMN IF EXISTS otani_rating')
