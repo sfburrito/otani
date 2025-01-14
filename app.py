@@ -104,15 +104,28 @@ class Company(db.Model):
 
     def calculate_otani_rating(self, user_preferences):
         """Calculate Otani Rating based on matches with user preferences."""
+        if not user_preferences:
+            return 'D'  # Default rating if no preferences set
+            
         matches = 0
         
-        # Get user preferences
-        industry_match = self.industry.lower().replace('/', '_').replace(' ', '_') in user_preferences.get('industry_sectors', [])
-        stage_match = self.stage.lower().replace(' ', '_') in user_preferences.get('investment_stages', [])
-        location_match = self.location.lower().replace(' ', '_') in user_preferences.get('geographic_focus', [])
+        # Get user preferences lists (ensure they exist)
+        industry_sectors = user_preferences.get('industry_sectors', [])
+        investment_stages = user_preferences.get('investment_stages', [])
+        geographic_focus = user_preferences.get('geographic_focus', [])
+        
+        # Normalize company values for comparison
+        company_industry = self.industry.lower().replace('/', '_').replace(' ', '_')
+        company_stage = self.stage.lower().replace(' ', '_')
+        company_location = self.location.lower().replace(' ', '_')
         
         # Count matches
-        matches += industry_match + stage_match + location_match
+        if company_industry in industry_sectors:
+            matches += 1
+        if company_stage in investment_stages:
+            matches += 1
+        if company_location in geographic_focus:
+            matches += 1
         
         # Assign rating based on matches
         rating_map = {3: 'A', 2: 'B', 1: 'C', 0: 'D'}
@@ -569,7 +582,7 @@ def add_company():
         )
 
         # Get user preferences and calculate Otani Rating
-        preferences = json.loads(current_user.preferences) if current_user.preferences else {}
+        preferences = current_user.preferences.to_dict() if current_user.preferences else {}
         new_company.otani_rating = new_company.calculate_otani_rating(preferences)
 
         # Add to database
