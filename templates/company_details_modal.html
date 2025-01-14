@@ -1,120 +1,54 @@
 <!-- Company Details Modal -->
-<div id="companyDetailsModal" class="modal">
+<div id="companyDetailModal" class="modal">
     <div class="modal-overlay"></div>
     <div class="modal-container">
         <div class="modal-header">
-            <h2 id="modalTitle"></h2>
-            <button class="modal-close" aria-label="Close modal">
+            <h2 id="companyDetailName"></h2>
+            <button class="modal-close" onclick="closeCompanyDetailModal()">
                 <i class="fas fa-times"></i>
             </button>
         </div>
-        <div class="modal-content">
-            <div class="company-details-grid">
-                <!-- Basic Information -->
-                <div class="detail-section">
-                    <h3>Basic Information</h3>
-                    <div class="info-grid">
-                        <div class="info-item">
-                            <label>Annual Recurring Revenue (ARR)</label>
-                            <input type="text" class="form-input" placeholder="Enter ARR" />
-                        </div>
-                        <div class="info-item">
-                            <label>Stage</label>
-                            <input type="text" class="form-input" placeholder="Company stage" />
-                        </div>
-                        <div class="info-item">
-                            <label>Industry</label>
-                            <input type="text" class="form-input" placeholder="Industry" />
-                        </div>
-                        <div class="info-item">
-                            <label>Location</label>
-                            <input type="text" class="form-input" placeholder="Company location" />
-                        </div>
-                    </div>
+        <div class="modal-body">
+            <div class="company-details">
+                <div class="detail-row">
+                    <div class="detail-label">Industry:</div>
+                    <div id="companyDetailIndustry" class="detail-value"></div>
                 </div>
-
-                <!-- Company Description -->
-                <div class="detail-section">
-                    <h3>Company Description</h3>
-                    <textarea class="form-input" placeholder="Enter company description"></textarea>
+                <div class="detail-row">
+                    <div class="detail-label">Stage:</div>
+                    <div id="companyDetailStage" class="detail-value"></div>
                 </div>
-
-                <!-- Team Information -->
-                <div class="detail-section">
-                    <h3>Team Information</h3>
-                    <div class="team-grid">
-                        <div class="info-item">
-                            <label>CEO</label>
-                            <input type="text" class="form-input" placeholder="CEO name" />
-                        </div>
-                        <div class="info-item">
-                            <label>CTO</label>
-                            <input type="text" class="form-input" placeholder="CTO name" />
-                        </div>
-                    </div>
+                <div class="detail-row">
+                    <div class="detail-label">Rating:</div>
+                    <div id="companyDetailRating" class="detail-value"></div>
                 </div>
-
-                <!-- Funding History -->
-                <div class="detail-section full-width">
-                    <h3>Funding History</h3>
-                    <table class="funding-table">
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Round</th>
-                                <th>Amount</th>
-                                <th>Lead Investor</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>2024-01-01</td>
-                                <td>Series A</td>
-                                <td>$5M</td>
-                                <td>Example VC</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <button class="btn-outline">Add Funding Round</button>
+                <div class="detail-row">
+                    <div class="detail-label">Website:</div>
+                    <div id="companyDetailWebsite" class="detail-value"></div>
                 </div>
-
-                <!-- Market Analysis -->
-                <div class="detail-section">
-                    <h3>Market Analysis</h3>
-                    <div class="info-grid">
-                        <div class="info-item">
-                            <label>Market Size</label>
-                            <input type="text" class="form-input" placeholder="Total addressable market" />
-                        </div>
-                        <div class="info-item">
-                            <label>Growth Rate</label>
-                            <input type="text" class="form-input" placeholder="Annual growth rate" />
-                        </div>
-                    </div>
+                <div class="detail-row">
+                    <div class="detail-label">Email:</div>
+                    <div id="companyDetailEmail" class="detail-value"></div>
                 </div>
-
-                <!-- Risk Factors -->
-                <div class="detail-section">
-                    <h3>Risk Factors</h3>
-                    <div class="risks-list">
-                        <span class="risk-tag">
-                            Market Competition
-                            <button aria-label="Remove risk"><i class="fas fa-times"></i></button>
-                        </span>
-                        <span class="risk-tag">
-                            Regulatory Changes
-                            <button aria-label="Remove risk"><i class="fas fa-times"></i></button>
-                        </span>
-                    </div>
-                    <button class="btn-outline">Add Risk Factor</button>
+                <div class="detail-row">
+                    <div class="detail-label">Description:</div>
+                    <div id="companyDetailDescription" class="detail-value"></div>
                 </div>
-
-                <!-- Notes -->
-                <div class="detail-section full-width">
-                    <h3>Investor Notes</h3>
-                    <textarea class="form-input" placeholder="Add your notes here"></textarea>
+                <div class="detail-row">
+                    <div class="detail-label">Notes:</div>
+                    <textarea id="companyNotes" class="detail-notes" placeholder="Add your notes here..."></textarea>
                 </div>
             </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-outline" onclick="closeCompanyDetailModal()">
+                <i class="fas fa-times"></i>
+                <span>Close</span>
+            </button>
+            <button type="button" class="btn btn-primary" onclick="saveCompanyNotes()">
+                <i class="fas fa-save"></i>
+                <span>Save Notes</span>
+            </button>
         </div>
     </div>
 </div>
