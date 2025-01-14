@@ -1,17 +1,20 @@
 // Modal functions
-function openModal(modalId) {
-    const modal = document.getElementById(modalId);
+function openAddCompanyModal() {
+    const modal = document.getElementById('addCompanyModal');
     if (modal) {
-        modal.classList.add('active');
+        modal.style.display = 'block';
         document.body.style.overflow = 'hidden';
     }
 }
 
-function closeModal(modalId) {
-    const modal = document.getElementById(modalId);
+function closeAddCompanyModal() {
+    const modal = document.getElementById('addCompanyModal');
     if (modal) {
-        modal.classList.remove('active');
+        modal.style.display = 'none';
         document.body.style.overflow = '';
+        // Reset form
+        const form = document.getElementById('addCompanyForm');
+        if (form) form.reset();
     }
 }
 
@@ -19,8 +22,8 @@ function closeModal(modalId) {
 document.addEventListener('click', function(event) {
     if (event.target.classList.contains('modal-overlay')) {
         const modal = event.target.closest('.modal');
-        if (modal) {
-            closeModal(modal.id);
+        if (modal && modal.id === 'addCompanyModal') {
+            closeAddCompanyModal();
         }
     }
 });
@@ -35,7 +38,7 @@ function addCompanyToTable(company) {
     newRow.className = 'clickable-row';
     newRow.onclick = function() {
         console.log('Row clicked:', company);
-        openCompanyDetails(company.name);
+        // Removed openCompanyDetails function call
     };
     
     newRow.innerHTML = `
@@ -151,7 +154,7 @@ function initializeForm() {
             
             // Reset form and close modal
             newForm.reset();
-            closeModal('addCompanyModal');
+            closeAddCompanyModal();
 
         } catch (error) {
             console.error('Error adding company:', error);
@@ -218,43 +221,15 @@ function formatCurrency(value) {
 
 // Initialize modals when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize close buttons
-    document.querySelectorAll('.modal-close').forEach(button => {
-        button.addEventListener('click', function() {
-            const modal = this.closest('.modal');
-            if (modal) {
-                closeModal(modal.id);
-            }
-        });
-    });
+    // Initialize close buttons for add company modal
+    const addCompanyModal = document.getElementById('addCompanyModal');
+    if (addCompanyModal) {
+        const closeButton = addCompanyModal.querySelector('.modal-close');
+        if (closeButton) {
+            closeButton.addEventListener('click', closeAddCompanyModal);
+        }
+    }
     
     // Initialize the form
     initializeForm();
 });
-
-// Company Detail Modal Functions
-function openCompanyDetails(companyName) {
-    console.log('Opening company details:', companyName);
-    // Update modal content
-    const nameElement = document.getElementById('companyDetailName');
-    if (nameElement) nameElement.textContent = companyName || '';
-    
-    // ... rest of the function remains the same ...
-}
-
-function closeCompanyDetailModal() {
-    closeModal('companyDetailModal');
-}
-
-function saveCompanyNotes() {
-    const modal = document.getElementById('companyDetailModal');
-    if (!modal) return;
-    
-    const companyId = modal.dataset.companyId;
-    const notesTextarea = document.getElementById('companyNotes');
-    if (!notesTextarea) return;
-    
-    const notes = notesTextarea.value;
-    localStorage.setItem(`company_notes_${companyId}`, notes);
-    showSuccessMessage('Notes saved successfully');
-}
