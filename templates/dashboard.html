@@ -395,7 +395,13 @@ function updateSelectedText(select) {
     if (selectedOptions.length === 0) {
         selectedText.textContent = placeholder;
     } else {
-        selectedText.textContent = `${selectedOptions.length} selected`;
+        const selectedLabels = selectedOptions.map(option => {
+            // Get the label text by finding the parent label element
+            const label = option.closest('.option-item');
+            return label ? label.textContent.trim() : '';
+        }).filter(text => text); // Remove any empty strings
+        
+        selectedText.textContent = selectedLabels.join(', ');
     }
 }
 
