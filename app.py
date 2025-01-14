@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta
+from flask_migrate import Migrate
 import json
 import logging
 import os
@@ -26,11 +27,19 @@ app.logger.setLevel(logging.INFO)
 
 # Configure app
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev')
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///otani.db')
+if os.environ.get('DATABASE_URL'):
+    # Handle Render Postgres database URL
+    database_url = os.environ.get('DATABASE_URL')
+    if database_url.startswith("postgres://"):
+        database_url = database_url.replace("postgres://", "postgresql://", 1)
+    app.config['SQLALCHEMY_DATABASE_URI'] = database_url
+else:
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///otani.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialize extensions
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 
@@ -319,7 +328,13 @@ def init_db():
 
 # Initialize database
 with app.app_context():
-    init_db()
+    db.create_all()
+    app.logger.info('Database tables created successfully!')
+    
+    # List all tables using SQLAlchemy inspector
+    inspector = db.inspect(db.engine)
+    tables = inspector.get_table_names()
+    app.logger.info('Found tables: %s', tables)
 
 # Routes
 @app.route('/')
