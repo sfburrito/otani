@@ -278,10 +278,10 @@ def init_db():
         if user and not user.preferences:
             preferences = UserPreferences(
                 user_id=user.id,
-                investment_stages=json.dumps(['seed', 'series_a', 'series_b']),
-                industry_sectors=json.dumps(['ai_ml', 'fintech', 'healthcare']),
-                geographic_focus=json.dumps(['north_america', 'europe']),
-                investment_sizes=json.dumps(['1m_5m', '5m_20m']),
+                investment_stages=json.dumps([]),
+                industry_sectors=json.dumps([]),
+                geographic_focus=json.dumps([]),
+                investment_sizes=json.dumps([]),
                 additional_preferences='Looking for companies with strong IP and experienced founding teams.'
             )
             db.session.add(preferences)
@@ -383,15 +383,15 @@ def login():
 @app.route('/dashboard')
 @login_required
 def dashboard():
+    """Dashboard route."""
     try:
         app.logger.info(f'Dashboard access: {current_user.email}')
         
-        # Get or create user preferences
-        preferences = current_user.preferences
+        # Get user preferences
+        preferences = UserPreferences.query.filter_by(user_id=current_user.id).first()
         app.logger.info(f'User preferences object: {preferences}')
         
         if not preferences:
-            app.logger.info('Creating new preferences for user')
             preferences = UserPreferences(
                 user_id=current_user.id,
                 investment_stages=json.dumps([]),
@@ -403,35 +403,40 @@ def dashboard():
             db.session.add(preferences)
             db.session.commit()
         
-        # Log raw preferences values before parsing
-        app.logger.info(f'Raw preferences values:')
+        # Log raw values for debugging
+        app.logger.info('Raw preferences values:')
         app.logger.info(f'investment_stages: {preferences.investment_stages}')
         app.logger.info(f'industry_sectors: {preferences.industry_sectors}')
         app.logger.info(f'geographic_focus: {preferences.geographic_focus}')
         app.logger.info(f'investment_sizes: {preferences.investment_sizes}')
         
-        # Convert preferences to dictionary
-        preferences_dict = {
-            'investment_stages': json.loads(preferences.investment_stages or '[]'),
-            'industry_sectors': json.loads(preferences.industry_sectors or '[]'),
-            'geographic_focus': json.loads(preferences.geographic_focus or '[]'),
-            'investment_sizes': json.loads(preferences.investment_sizes or '[]'),
-            'additional_preferences': preferences.additional_preferences or ''
-        }
+        def parse_json_or_string(value):
+            if not value:
+                return []
+            try:
+                # Try to parse as JSON first
+                return json.loads(value)
+            except json.JSONDecodeError:
+                # If it's a string, wrap it in a list
+                return [value] if value else []
         
-        # Get user companies
+        # Get all companies for the current user
         companies = Company.query.filter_by(user_id=current_user.id).all()
-        companies_list = [company.to_dict() for company in companies]
         
-        app.logger.info(f'Retrieved {len(companies_list)} companies')
-        
-        return render_template('dashboard.html', 
-                             preferences=preferences_dict, 
-                             companies=companies_list)
+        return render_template(
+            'dashboard.html',
+            companies=companies,
+            preferences={
+                'investment_stages': parse_json_or_string(preferences.investment_stages),
+                'industry_sectors': parse_json_or_string(preferences.industry_sectors),
+                'geographic_focus': parse_json_or_string(preferences.geographic_focus),
+                'investment_sizes': parse_json_or_string(preferences.investment_sizes),
+                'additional_preferences': preferences.additional_preferences
+            }
+        )
     except Exception as e:
         app.logger.error(f'Dashboard error: {str(e)}')
-        app.logger.exception('Full traceback:')
-        flash('Error loading dashboard')
+        app.logger.error('Full traceback:', exc_info=True)
         return redirect(url_for('index'))
 
 @app.route('/api/companies', methods=['GET'])
