@@ -1,51 +1,64 @@
 <!-- Company Details Modal -->
 <div id="companyDetailModal" class="modal">
     <div class="modal-overlay"></div>
-    <div class="modal-container">
-        <div class="modal-header">
-            <h2 id="companyDetailName"></h2>
-            <button class="modal-close" onclick="closeCompanyDetailModal()">
+    <div class="modal-container modern-startup">
+        <div class="modal-header startup-header">
+            <div class="company-header">
+                <h2 id="companyDetailName" class="company-title"></h2>
+                <div class="company-badges">
+                    <span id="companyDetailIndustry" class="badge industry-badge"></span>
+                    <span id="companyDetailStage" class="badge stage-badge"></span>
+                    <span id="companyDetailRating" class="badge rating-badge"></span>
+                </div>
+            </div>
+            <button class="modal-close modern-close" onclick="closeCompanyDetailModal()">
                 <i class="fas fa-times"></i>
             </button>
         </div>
-        <div class="modal-body">
-            <div class="company-details">
-                <div class="detail-row">
-                    <div class="detail-label">Industry:</div>
-                    <div id="companyDetailIndustry" class="detail-value"></div>
+        <div class="modal-body startup-body">
+            <div class="company-details modern-details">
+                <div class="detail-section">
+                    <div class="detail-group">
+                        <div class="detail-item">
+                            <i class="fas fa-globe detail-icon"></i>
+                            <div class="detail-content">
+                                <label class="detail-label">Website</label>
+                                <div id="companyDetailWebsite" class="detail-value website-value"></div>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-envelope detail-icon"></i>
+                            <div class="detail-content">
+                                <label class="detail-label">Email</label>
+                                <div id="companyDetailEmail" class="detail-value"></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="detail-row">
-                    <div class="detail-label">Stage:</div>
-                    <div id="companyDetailStage" class="detail-value"></div>
+
+                <div class="detail-section description-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-info-circle"></i>
+                        About
+                    </h3>
+                    <div id="companyDetailDescription" class="detail-value description-value"></div>
                 </div>
-                <div class="detail-row">
-                    <div class="detail-label">Rating:</div>
-                    <div id="companyDetailRating" class="detail-value"></div>
-                </div>
-                <div class="detail-row">
-                    <div class="detail-label">Website:</div>
-                    <div id="companyDetailWebsite" class="detail-value"></div>
-                </div>
-                <div class="detail-row">
-                    <div class="detail-label">Email:</div>
-                    <div id="companyDetailEmail" class="detail-value"></div>
-                </div>
-                <div class="detail-row">
-                    <div class="detail-label">Description:</div>
-                    <div id="companyDetailDescription" class="detail-value"></div>
-                </div>
-                <div class="detail-row">
-                    <div class="detail-label">Notes:</div>
-                    <textarea id="companyNotes" class="detail-notes" placeholder="Add your notes here..."></textarea>
+
+                <div class="detail-section notes-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-sticky-note"></i>
+                        Notes
+                    </h3>
+                    <textarea id="companyNotes" class="detail-notes modern-textarea" placeholder="Add your notes about this company..."></textarea>
                 </div>
             </div>
         </div>
-        <div class="modal-footer">
+        <div class="modal-footer startup-footer">
             <button type="button" class="btn btn-outline" onclick="closeCompanyDetailModal()">
                 <i class="fas fa-times"></i>
                 <span>Close</span>
             </button>
-            <button type="button" class="btn btn-primary" onclick="saveCompanyNotes()">
+            <button type="button" class="btn btn-primary save-notes" onclick="saveCompanyNotes()">
                 <i class="fas fa-save"></i>
                 <span>Save Notes</span>
             </button>
