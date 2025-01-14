@@ -881,6 +881,24 @@ textarea.form-input:focus {
     align-items: center;
 }
 
+.header-actions {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.header-actions .btn {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.8rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-width: auto;
+}
+
+.header-actions .btn i {
+    font-size: 0.85rem;
+}
+
 /* Preferences Panel */
 .preferences-panel {
     max-width: 1200px;
@@ -1615,6 +1633,7 @@ textarea.form-input:focus {
         grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     }
 }
+
 /* Additional Preferences */
 .additional-preferences {
     margin-top: 20px;
@@ -1645,6 +1664,7 @@ textarea.form-input:focus {
     color: var(--text-dark);
     font-size: 0.9rem;
 }
+
 /* Additional Preferences */
 .additional-preferences {
     margin-top: 20px;
@@ -1715,6 +1735,7 @@ textarea.form-input:focus {
     margin-top: 2rem;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
+
 /* Additional Preferences */
 .additional-preferences {
     margin-top: 20px;
@@ -1738,6 +1759,7 @@ textarea.form-input:focus {
     outline: none;
     box-shadow: 0 0 0 2px rgba(0, 167, 181, 0.2);
 }
+
 /* Modal */
 .modal {
     display: none;
@@ -1843,6 +1865,7 @@ textarea.form-input:focus {
         opacity: 1;
     }
 }
+
 /* Form Groups */
 .form-group {
     margin-bottom: 1rem;
@@ -1891,6 +1914,7 @@ textarea.form-input:focus {
         transform: rotate(360deg);
     }
 }
+
 /* Modal */
 .modal {
     display: none;
@@ -1950,6 +1974,7 @@ textarea.form-input:focus {
     gap: 1rem;
     background: var(--white);
 }
+
 /* Empty State */
 .empty-state {
     padding: 2rem;
