@@ -45,44 +45,191 @@
     background-image: linear-gradient(135deg, #FF8A8A, #FF7575);
 }
 
+/* Companies Section Styles */
+.companies-section {
+    margin-top: 2rem;
+}
+
+.table-responsive {
+    overflow-x: auto;
+    margin: 1rem 0;
+}
+
+.companies-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin: 1rem 0;
+}
+
+.companies-table thead th {
+    background: #f8f9fa;
+    color: #344767;
+    font-weight: 600;
+    padding: 0.875rem 1rem;
+    text-align: left;
+    border-bottom: 2px solid #edf2f7;
+    white-space: nowrap;
+}
+
+.companies-table thead th i {
+    margin-right: 0.5rem;
+    color: #64748b;
+}
+
+.companies-table tbody tr {
+    transition: all 0.2s ease;
+}
+
+.companies-table tbody tr:nth-child(even) {
+    background-color: #fafbfc;
+}
+
+.companies-table tbody tr:hover {
+    background-color: #f1f4f8;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.companies-table td {
+    padding: 0.875rem 1rem;
+    border-bottom: 1px solid #edf2f7;
+    color: #4a5568;
+    vertical-align: middle;
+}
+
+.companies-table td:first-child {
+    font-weight: 500;
+    color: #2d3748;
+}
+
+/* Badge styles */
+.table-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1.5;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.industry-badge, .stage-badge {
+    background-color: #f1f5f9;
+    color: #475569;
+}
+
+.rating-badge {
+    padding: 0.25rem 0.75rem;
+    font-weight: 600;
+    min-width: 60px;
+    justify-content: center;
+}
+
+/* Rating colors */
+.rating-a, .otani-rating-a {
+    background-color: #dcfce7;
+    color: #15803d;
+}
+
+.rating-b, .otani-rating-b {
+    background-color: #e0f2fe;
+    color: #0369a1;
+}
+
+.rating-c, .otani-rating-c {
+    background-color: #fef9c3;
+    color: #854d0e;
+}
+
+.rating-d, .otani-rating-d {
+    background-color: #fee2e2;
+    color: #b91c1c;
+}
+
+/* Actions column styling */
+.table-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    padding: 0 0.5rem;
+}
+
+.action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.action-btn:hover {
+    background: #edf2f7;
+    color: #2d3748;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.action-btn.edit-btn:hover {
+    background: #ebf5ff;
+    color: #3182ce;
+    border-color: #bfdbfe;
+}
+
+.action-btn.delete-btn:hover {
+    background: #fef2f2;
+    color: #dc2626;
+    border-color: #fecaca;
+}
+
+/* Location styling */
+.location-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.location-cell i {
+    color: #64748b;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .companies-table {
+        font-size: 0.875rem;
+    }
+    
+    .companies-table td,
+    .companies-table th {
+        padding: 0.75rem;
+    }
+    
+    .table-badge {
+        padding: 0.2rem 0.5rem;
+        font-size: 0.75rem;
+    }
+
+    .action-btn {
+        padding: 0.4rem;
+        width: 28px;
+        height: 28px;
+    }
+}
+
 /* Table Styles */
 .dashboard-container {
     padding: 20px;
     max-width: 1200px;
     margin: 0 auto;
-}
-
-.companies-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-    background: white;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.companies-table th,
-.companies-table td {
-    padding: 8px 12px;
-    border-bottom: 1px solid #eee;
-    vertical-align: middle;
-    line-height: 1.4;
-}
-
-.companies-table th {
-    background-color: #f8f9fa;
-    font-weight: 600;
-    color: #495057;
-    text-align: left;
-}
-
-.companies-table tr:last-child td {
-    border-bottom: none;
-}
-
-.companies-table tr:hover {
-    background-color: #f8f9fa;
 }
 
 /* Rating Column */
