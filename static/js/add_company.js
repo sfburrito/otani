@@ -1,14 +1,14 @@
 // Modal functions
 function openAddCompanyModal() {
     const modal = document.getElementById('addCompanyModal');
-    modal.style.display = 'block';
+    modal.classList.add('active');
     document.body.style.overflow = 'hidden';
 }
 
 function closeAddCompanyModal() {
     const modal = document.getElementById('addCompanyModal');
-    modal.style.display = 'none';
-    document.body.style.overflow = 'auto';
+    modal.classList.remove('active');
+    document.body.style.overflow = '';
     // Get the form either by original ID or the cloned one
     const form = document.getElementById('addCompanyForm');
     if (form) form.reset();
@@ -16,16 +16,26 @@ function closeAddCompanyModal() {
 
 // Close modal when clicking outside
 document.addEventListener('click', function(event) {
-    const modal = document.getElementById('addCompanyModal');
     if (event.target.classList.contains('modal-overlay')) {
-        closeAddCompanyModal();
+        const modal = event.target.closest('.modal');
+        if (modal.id === 'addCompanyModal') {
+            closeAddCompanyModal();
+        } else if (modal.id === 'companyDetailModal') {
+            closeCompanyDetailModal();
+        }
     }
 });
 
 // Function to add a new company row to the table
 function addCompanyToTable(company) {
+    console.log('Adding company to table:', company);
     const tbody = document.querySelector('.companies-table tbody');
     const newRow = document.createElement('tr');
+    newRow.className = 'clickable-row';
+    newRow.onclick = function() {
+        console.log('Row clicked:', company);
+        openCompanyDetail(company);
+    };
     
     newRow.innerHTML = `
         <td class="rating-col text-left">
@@ -34,10 +44,10 @@ function addCompanyToTable(company) {
         <td class="text-left">${company.name}</td>
         <td class="text-left">${company.industry}</td>
         <td class="text-left">${company.stage}</td>
-        <td class="icon-cell">
+        <td class="icon-cell" onclick="event.stopPropagation()">
             ${company.website ? `<a href="${company.website}" target="_blank" rel="noopener noreferrer"><i class="fas fa-external-link-alt"></i></a>` : ''}
         </td>
-        <td class="icon-cell">
+        <td class="icon-cell" onclick="event.stopPropagation()">
             ${company.email ? `<a href="mailto:${company.email}"><i class="fas fa-envelope"></i></a>` : ''}
         </td>
         <td class="description-col text-left">
@@ -153,13 +163,19 @@ function initializeForm() {
     });
 }
 
-// Initialize form when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
-    // Initialize close button
-    const closeButton = document.querySelector('.close-modal');
-    if (closeButton) {
-        closeButton.addEventListener('click', closeAddCompanyModal);
-    }
+// Initialize modals when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize close buttons
+    document.querySelectorAll('.modal-close').forEach(button => {
+        button.addEventListener('click', function() {
+            const modal = this.closest('.modal');
+            if (modal.id === 'addCompanyModal') {
+                closeAddCompanyModal();
+            } else if (modal.id === 'companyDetailModal') {
+                closeCompanyDetailModal();
+            }
+        });
+    });
     
     // Initialize the form
     initializeForm();
@@ -212,6 +228,8 @@ function formatCurrency(value) {
 
 // Company Detail Modal Functions
 function openCompanyDetail(company) {
+    console.log('Opening company detail:', company);
+    
     // Update modal content
     document.getElementById('companyDetailName').textContent = company.name;
     document.getElementById('companyDetailIndustry').textContent = company.industry;
@@ -241,7 +259,7 @@ function openCompanyDetail(company) {
     }
     
     // Set description
-    document.getElementById('companyDetailDescription').textContent = company.description;
+    document.getElementById('companyDetailDescription').textContent = company.description || '';
     
     // Load notes if they exist
     const notes = localStorage.getItem(`company_notes_${company.id}`);
@@ -251,13 +269,15 @@ function openCompanyDetail(company) {
     document.getElementById('companyDetailModal').dataset.companyId = company.id;
     
     // Show modal
-    document.getElementById('companyDetailModal').classList.add('active');
-    document.body.style.overflow = 'hidden'; // Prevent scrolling
+    const modal = document.getElementById('companyDetailModal');
+    console.log('Modal element:', modal);
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
 }
 
 function closeCompanyDetailModal() {
     document.getElementById('companyDetailModal').classList.remove('active');
-    document.body.style.overflow = ''; // Restore scrolling
+    document.body.style.overflow = '';
 }
 
 function saveCompanyNotes() {
@@ -269,20 +289,7 @@ function saveCompanyNotes() {
     localStorage.setItem(`company_notes_${companyId}`, notes);
     
     // Show success message
-    const flashMessages = document.querySelector('.flash-messages');
-    const message = document.createElement('div');
-    message.className = 'flash-message success';
-    message.innerHTML = `
-        Notes saved successfully
-        <button class="close-flash">&times;</button>
-    `;
-    flashMessages.appendChild(message);
-    
-    // Remove message after 3 seconds
-    setTimeout(() => {
-        message.style.opacity = '0';
-        setTimeout(() => message.remove(), 300);
-    }, 3000);
+    showSuccessMessage('Notes saved successfully');
 }
 
 // Close modal when clicking overlay

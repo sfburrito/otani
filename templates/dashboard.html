@@ -192,33 +192,6 @@
                     </tr>
                 </thead>
                 <tbody id="companiesTableBody">
-                    {% for company in companies %}
-                    <tr onclick="openCompanyDetail({{ company|tojson|safe }})" class="clickable-row">
-                        <td class="rating-col text-left">
-                            <span class="rating-badge {{ company.rating.lower() }}">{{ company.rating }}</span>
-                        </td>
-                        <td class="text-left">{{ company.name }}</td>
-                        <td class="text-left">{{ company.industry }}</td>
-                        <td class="text-left">{{ company.stage }}</td>
-                        <td class="icon-cell" onclick="event.stopPropagation()">
-                            {% if company.website %}
-                            <a href="{{ company.website }}" target="_blank" rel="noopener noreferrer">
-                                <i class="fas fa-external-link-alt"></i>
-                            </a>
-                            {% endif %}
-                        </td>
-                        <td class="icon-cell" onclick="event.stopPropagation()">
-                            {% if company.email %}
-                            <a href="mailto:{{ company.email }}">
-                                <i class="fas fa-envelope"></i>
-                            </a>
-                            {% endif %}
-                        </td>
-                        <td class="description-col text-left">
-                            <div class="description-content">{{ company.description }}</div>
-                        </td>
-                    </tr>
-                    {% endfor %}
                 </tbody>
             </table>
         </div>
@@ -337,17 +310,12 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     try {
+        // Get companies from the template context
+        const companies = {{ companies|tojson|safe }};
+        console.log('Initial companies:', companies);
+        
         // Initialize preferences from server data with safe defaults
         const serverPreferences = {{ preferences|tojson|safe if preferences else '{"investment_stages": [], "industry_sectors": [], "geographic_focus": [], "investment_sizes": [], "additional_preferences": ""}' }};
-
-        // Initialize companies list
-        const companies = {{ companies|tojson|safe if companies else '[]' }};
-        console.log('Companies:', companies);
-        if (companies) {
-            renderCompanies(companies);
-        } else {
-            renderCompanies([]);
-        }
 
         // Set initial values for each preference
         setSelectedOptions('Select stages', serverPreferences.investment_stages);
@@ -357,6 +325,24 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Set additional preferences
         document.getElementById('additionalPrefs').value = serverPreferences.additional_preferences;
+
+        // Render companies
+        renderCompanies(companies);
+        
+        // Initialize close buttons
+        document.querySelectorAll('.modal-close').forEach(button => {
+            button.addEventListener('click', function() {
+                const modal = this.closest('.modal');
+                if (modal.id === 'addCompanyModal') {
+                    closeAddCompanyModal();
+                } else if (modal.id === 'companyDetailModal') {
+                    closeCompanyDetailModal();
+                }
+            });
+        });
+        
+        // Initialize the form
+        initializeForm();
 
     } catch (error) {
         console.error('Error initializing dashboard:', error);
@@ -387,7 +373,14 @@ function renderCompanies(companies) {
     }
 
     companies.forEach(company => {
+        console.log('Creating row for company:', company);
         const tr = document.createElement('tr');
+        tr.className = 'clickable-row';
+        tr.onclick = function() {
+            console.log('Row clicked:', company);
+            openCompanyDetail(company);
+        };
+        
         tr.innerHTML = `
             <td class="rating-col text-left">
                 <span class="rating-badge ${company.rating.toLowerCase()}">${company.rating}</span>
@@ -395,18 +388,14 @@ function renderCompanies(companies) {
             <td class="text-left">${company.name}</td>
             <td class="text-left">${company.industry}</td>
             <td class="text-left">${company.stage}</td>
-            <td class="icon-cell">
-                <a href="${company.website}" target="_blank" rel="noopener noreferrer">
-                    <i class="fas fa-external-link-alt"></i>
-                </a>
+            <td class="icon-cell" onclick="event.stopPropagation()">
+                ${company.website ? `<a href="${company.website}" target="_blank" rel="noopener noreferrer"><i class="fas fa-external-link-alt"></i></a>` : ''}
             </td>
-            <td class="icon-cell">
-                <a href="mailto:${company.email}">
-                    <i class="fas fa-envelope"></i>
-                </a>
+            <td class="icon-cell" onclick="event.stopPropagation()">
+                ${company.email ? `<a href="mailto:${company.email}"><i class="fas fa-envelope"></i></a>` : ''}
             </td>
             <td class="description-col text-left">
-                <div class="description-content">${company.description}</div>
+                <div class="description-content">${company.description || ''}</div>
             </td>
         `;
         tbody.appendChild(tr);
