@@ -375,7 +375,10 @@ def dashboard():
         
         # Get or create user preferences
         preferences = current_user.preferences
+        app.logger.info(f'User preferences object: {preferences}')
+        
         if not preferences:
+            app.logger.info('Creating new preferences for user')
             preferences = UserPreferences(
                 user_id=current_user.id,
                 investment_stages=json.dumps([]),
@@ -387,12 +390,19 @@ def dashboard():
             db.session.add(preferences)
             db.session.commit()
         
+        # Log raw preferences values before parsing
+        app.logger.info(f'Raw preferences values:')
+        app.logger.info(f'investment_stages: {preferences.investment_stages}')
+        app.logger.info(f'industry_sectors: {preferences.industry_sectors}')
+        app.logger.info(f'geographic_focus: {preferences.geographic_focus}')
+        app.logger.info(f'investment_sizes: {preferences.investment_sizes}')
+        
         # Convert preferences to dictionary
         preferences_dict = {
-            'investment_stages': json.loads(preferences.investment_stages) if preferences.investment_stages else [],
-            'industry_sectors': json.loads(preferences.industry_sectors) if preferences.industry_sectors else [],
-            'geographic_focus': json.loads(preferences.geographic_focus) if preferences.geographic_focus else [],
-            'investment_sizes': json.loads(preferences.investment_sizes) if preferences.investment_sizes else [],
+            'investment_stages': json.loads(preferences.investment_stages or '[]'),
+            'industry_sectors': json.loads(preferences.industry_sectors or '[]'),
+            'geographic_focus': json.loads(preferences.geographic_focus or '[]'),
+            'investment_sizes': json.loads(preferences.investment_sizes or '[]'),
             'additional_preferences': preferences.additional_preferences or ''
         }
         
@@ -407,6 +417,7 @@ def dashboard():
                              companies=companies_list)
     except Exception as e:
         app.logger.error(f'Dashboard error: {str(e)}')
+        app.logger.exception('Full traceback:')
         flash('Error loading dashboard')
         return redirect(url_for('index'))
 
