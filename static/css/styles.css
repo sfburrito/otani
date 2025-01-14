@@ -282,26 +282,29 @@
 }
 
 .modal-overlay {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
     background: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(4px);
+    z-index: 1000;
 }
 
 .modal-container {
-    position: relative;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     width: 90%;
     max-width: 800px;
     max-height: 90vh;
-    margin: 2rem auto;
     background: white;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     overflow: hidden;
-    z-index: 1;
+    z-index: 1001;
 }
 
 .modal-header {
@@ -324,6 +327,7 @@
     padding: 1.5rem;
     overflow-y: auto;
     max-height: calc(90vh - 130px);
+    background: white;
 }
 
 .modal-footer {
