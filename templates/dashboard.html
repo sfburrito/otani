@@ -509,10 +509,15 @@ function showMessage(message, type = 'success') {
     background: #f8f9fa;
     color: #344767;
     font-weight: 600;
-    padding: 1rem;
+    padding: 1.25rem 1rem;
     text-align: left;
     border-bottom: 2px solid #edf2f7;
     white-space: nowrap;
+}
+
+.companies-table thead th i {
+    margin-right: 0.5rem;
+    color: #64748b;
 }
 
 .companies-table tbody tr {
@@ -530,7 +535,7 @@ function showMessage(message, type = 'success') {
 }
 
 .companies-table td {
-    padding: 1rem;
+    padding: 1.25rem 1rem;
     border-bottom: 1px solid #edf2f7;
     color: #4a5568;
     vertical-align: middle;
@@ -545,41 +550,51 @@ function showMessage(message, type = 'success') {
 .table-badge {
     display: inline-flex;
     align-items: center;
-    padding: 0.25rem 0.75rem;
+    padding: 0.35rem 0.85rem;
     border-radius: 20px;
     font-size: 0.875rem;
     font-weight: 500;
     line-height: 1.5;
+    text-align: center;
+    white-space: nowrap;
 }
 
 .industry-badge {
-    background-color: #e9ecef;
-    color: #495057;
+    background-color: #ebf5ff;
+    color: #3182ce;
 }
 
 .stage-badge {
-    background-color: #e3f2fd;
-    color: #1976d2;
+    background-color: #e9ecef;
+    color: #495057;
 }
 
 .rating-badge {
     padding: 0.35rem 0.85rem;
     font-weight: 600;
+    min-width: 80px;
+    justify-content: center;
 }
 
 /* Actions column styling */
 .table-actions {
     display: flex;
-    gap: 0.5rem;
-    justify-content: flex-end;
+    gap: 1rem;
+    justify-content: center;
+    padding: 0 0.5rem;
 }
 
 .action-btn {
-    padding: 0.5rem;
-    border-radius: 6px;
-    background: transparent;
-    border: none;
-    color: #4a5568;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.6rem;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    color: #64748b;
     cursor: pointer;
     transition: all 0.2s ease;
 }
@@ -587,6 +602,52 @@ function showMessage(message, type = 'success') {
 .action-btn:hover {
     background: #edf2f7;
     color: #2d3748;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.action-btn.edit-btn:hover {
+    background: #ebf5ff;
+    color: #3182ce;
+    border-color: #bfdbfe;
+}
+
+.action-btn.delete-btn:hover {
+    background: #fef2f2;
+    color: #dc2626;
+    border-color: #fecaca;
+}
+
+/* Location styling */
+.location-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.location-cell i {
+    color: #64748b;
+}
+
+/* Rating colors */
+.otani-rating-a {
+    background-color: #dcfce7;
+    color: #15803d;
+}
+
+.otani-rating-b {
+    background-color: #e0f2fe;
+    color: #0369a1;
+}
+
+.otani-rating-c {
+    background-color: #fef9c3;
+    color: #854d0e;
+}
+
+.otani-rating-d {
+    background-color: #fee2e2;
+    color: #b91c1c;
 }
 
 /* Responsive adjustments */
@@ -597,34 +658,19 @@ function showMessage(message, type = 'success') {
     
     .companies-table td,
     .companies-table th {
-        padding: 0.75rem;
+        padding: 1rem 0.75rem;
     }
     
     .table-badge {
-        padding: 0.2rem 0.5rem;
+        padding: 0.25rem 0.65rem;
         font-size: 0.75rem;
     }
-}
 
-/* Add styles for Otani Rating badges */
-.otani-rating-a {
-    background-color: #10B981;
-    color: white;
-}
-
-.otani-rating-b {
-    background-color: #3B82F6;
-    color: white;
-}
-
-.otani-rating-c {
-    background-color: #F59E0B;
-    color: white;
-}
-
-.otani-rating-d {
-    background-color: #EF4444;
-    color: white;
+    .action-btn {
+        padding: 0.5rem;
+        width: 32px;
+        height: 32px;
+    }
 }
 </style>
 {% endblock %}
