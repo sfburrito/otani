@@ -35,24 +35,169 @@ login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 
 # Initialize database tables
-with app.app_context():
-    app.logger.info("Creating database tables...")
+def init_db():
+    """Initialize the database."""
     try:
+        app.logger.info('Creating database tables...')
         db.create_all()
-        app.logger.info("Database tables created successfully!")
+        app.logger.info('Database tables created successfully!')
         
-        # Verify tables exist
-        engine = db.get_engine()
-        inspector = db.inspect(engine)
-        tables = inspector.get_table_names()
-        app.logger.info(f"Found tables: {tables}")
+        # List all tables
+        app.logger.info('Found tables: %s', db.engine.table_names())
+
+        # Create test user if it doesn't exist
+        test_user = User.query.filter_by(email='test@example.com').first()
+        if not test_user:
+            test_user = User(
+                email='test@example.com'
+            )
+            test_user.set_password('password')
+            db.session.add(test_user)
+            
+            # Sample companies data
+            companies = [
+                {
+                    'name': 'NeuraTech AI',
+                    'industry': 'AI/ML',
+                    'stage': 'Series B',
+                    'website': 'https://neuratech.ai',
+                    'email': 'contact@neuratech.ai',
+                    'description': 'Developing advanced neural networks for enterprise decision making.',
+                    'rating': 'A',
+                    'location': 'North America'
+                },
+                {
+                    'name': 'GreenFlow Energy',
+                    'industry': 'Cleantech',
+                    'stage': 'Series A',
+                    'website': 'https://greenflow.energy',
+                    'email': 'info@greenflow.energy',
+                    'description': 'Revolutionary energy storage solutions for renewable power.',
+                    'rating': 'B',
+                    'location': 'Europe'
+                },
+                {
+                    'name': 'CyberShield',
+                    'industry': 'Cybersecurity',
+                    'stage': 'Growth',
+                    'website': 'https://cybershield.io',
+                    'email': 'security@cybershield.io',
+                    'description': 'Next-generation zero-trust security platform.',
+                    'rating': 'A',
+                    'location': 'North America'
+                },
+                {
+                    'name': 'HealthAI Labs',
+                    'industry': 'Healthcare',
+                    'stage': 'Series C+',
+                    'website': 'https://healthai.med',
+                    'email': 'partnerships@healthai.med',
+                    'description': 'AI-powered diagnostic tools for healthcare providers.',
+                    'rating': 'A',
+                    'location': 'Asia-Pacific'
+                },
+                {
+                    'name': 'EduVerse',
+                    'industry': 'EdTech',
+                    'stage': 'Seed',
+                    'website': 'https://eduverse.education',
+                    'email': 'hello@eduverse.education',
+                    'description': 'Virtual reality platform for immersive education.',
+                    'rating': 'B',
+                    'location': 'Europe'
+                },
+                {
+                    'name': 'PayFlow',
+                    'industry': 'Fintech',
+                    'stage': 'Series B',
+                    'website': 'https://payflow.finance',
+                    'email': 'support@payflow.finance',
+                    'description': 'Blockchain-based cross-border payment solution.',
+                    'rating': 'B',
+                    'location': 'Asia-Pacific'
+                },
+                {
+                    'name': 'CloudStack Enterprise',
+                    'industry': 'Enterprise',
+                    'stage': 'Late Stage',
+                    'website': 'https://cloudstack.tech',
+                    'email': 'enterprise@cloudstack.tech',
+                    'description': 'Enterprise-grade cloud infrastructure management.',
+                    'rating': 'A',
+                    'location': 'North America'
+                },
+                {
+                    'name': 'GameVerse Studios',
+                    'industry': 'Gaming',
+                    'stage': 'Series A',
+                    'website': 'https://gameverse.games',
+                    'email': 'studio@gameverse.games',
+                    'description': 'Web3 gaming platform with play-to-earn mechanics.',
+                    'rating': 'C',
+                    'location': 'Latin America'
+                },
+                {
+                    'name': 'ShopSmart',
+                    'industry': 'E-commerce',
+                    'stage': 'Growth',
+                    'website': 'https://shopsmart.market',
+                    'email': 'retail@shopsmart.market',
+                    'description': 'AI-powered personalized shopping experience platform.',
+                    'rating': 'B',
+                    'location': 'Middle East and Africa'
+                },
+                {
+                    'name': 'SocialCommerce',
+                    'industry': 'Consumer',
+                    'stage': 'Series B',
+                    'website': 'https://socialcommerce.app',
+                    'email': 'hello@socialcommerce.app',
+                    'description': 'Social media integrated e-commerce platform.',
+                    'rating': 'A',
+                    'location': 'Asia-Pacific'
+                }
+            ]
+            
+            app.logger.info(f'Creating dummy companies for user {test_user.id}')
+            
+            for company_data in companies:
+                company = Company(user_id=test_user.id, **company_data)
+                db.session.add(company)
+            
+            try:
+                db.session.commit()
+                app.logger.info('Successfully added test user and dummy companies')
+            except Exception as e:
+                db.session.rollback()
+                app.logger.error(f'Error adding test data: {str(e)}')
+                raise
         
-        if 'user_preferences' not in tables:
-            app.logger.error("user_preferences table was not created!")
-        
+        # Create user preferences if they don't exist
+        if test_user and not test_user.preferences:
+            preferences = UserPreferences(
+                user_id=test_user.id,
+                investment_stages=['seed', 'series_a', 'series_b'],
+                industry_sectors=['ai_ml', 'fintech', 'healthcare'],
+                geographic_focus=['north_america', 'europe'],
+                investment_sizes=['1m_5m', '5m_20m'],
+                additional_preferences='Looking for companies with strong IP and experienced founding teams.'
+            )
+            db.session.add(preferences)
+            try:
+                db.session.commit()
+                app.logger.info('Successfully added user preferences')
+            except Exception as e:
+                db.session.rollback()
+                app.logger.error(f'Error adding preferences: {str(e)}')
+                raise
+
     except Exception as e:
-        app.logger.error(f"Error creating database tables: {str(e)}")
-        app.logger.error(traceback.format_exc())
+        app.logger.error(f'Error during database initialization: {str(e)}')
+        traceback.print_exc()
+        raise
+
+with app.app_context():
+    init_db()
 
 # Define models
 class User(UserMixin, db.Model):
@@ -498,137 +643,6 @@ def internal_error(error):
     app.logger.error(traceback.format_exc())
     db.session.rollback()
     return render_template('500.html'), 500
-
-def create_dummy_companies():
-    # Only create dummy companies if none exist
-    if Company.query.count() == 0:
-        companies = [
-            {
-                'name': 'TechFlow AI',
-                'industry': 'AI/Machine Learning',
-                'stage': 'Series A',
-                'website': 'https://techflow.ai',
-                'email': 'contact@techflow.ai',
-                'description': 'TechFlow AI is revolutionizing enterprise workflow automation with their cutting-edge AI platform. Their solution has shown a 40% improvement in process efficiency across Fortune 500 clients.',
-                'rating': 'A'
-            },
-            {
-                'name': 'GreenScape',
-                'industry': 'Cleantech',
-                'stage': 'Seed',
-                'website': 'https://greenscape.eco',
-                'email': 'hello@greenscape.eco',
-                'description': 'GreenScape is developing breakthrough carbon capture technology using novel biomaterials. Early tests show 3x more efficient carbon sequestration compared to traditional methods.',
-                'rating': 'B'
-            },
-            {
-                'name': 'FinSecure',
-                'industry': 'Fintech',
-                'stage': 'Series B',
-                'website': 'https://finsecure.com',
-                'email': 'info@finsecure.com',
-                'description': 'FinSecure provides enterprise-grade blockchain security solutions for financial institutions. Already securing over $2B in digital assets for major banks.',
-                'rating': 'A'
-            }
-        ]
-        
-        # Get the first user or create one if none exists
-        user = User.query.first()
-        if not user:
-            app.logger.error('No users found in database')
-            return
-            
-        app.logger.info(f'Creating dummy companies for user {user.id}')
-        
-        for company_data in companies:
-            company = Company(user_id=user.id, **company_data)
-            db.session.add(company)
-        
-        try:
-            db.session.commit()
-            app.logger.info('Added dummy companies successfully')
-        except Exception as e:
-            db.session.rollback()
-            app.logger.error(f'Error adding dummy companies: {str(e)}')
-
-# Initialize database and create dummy companies
-with app.app_context():
-    try:
-        # Create tables
-        db.create_all()
-        app.logger.info("Database tables created successfully!")
-        
-        # Verify tables exist
-        engine = db.get_engine()
-        inspector = db.inspect(engine)
-        tables = inspector.get_table_names()
-        app.logger.info(f"Found tables: {tables}")
-        
-        # Create test user if it doesn't exist
-        test_user = User.query.filter_by(email='test@example.com').first()
-        if not test_user:
-            test_user = User(
-                email='test@example.com'
-            )
-            test_user.set_password('password')
-            db.session.add(test_user)
-            db.session.commit()
-            app.logger.info("Test user created successfully!")
-            
-            # Create test preferences
-            test_preferences = UserPreferences(
-                user_id=test_user.id,
-                investment_stages='["Seed", "Series A"]',
-                industry_sectors='["AI/ML", "Fintech"]',
-                geographic_focus='["North America", "Europe"]',
-                investment_sizes='["$1M-$5M", "$5M-$10M"]',
-                additional_preferences='Looking for strong founding teams with technical expertise.'
-            )
-            db.session.add(test_preferences)
-            db.session.commit()
-            app.logger.info("Test preferences created successfully!")
-            
-            # Create test companies
-            companies = [
-                {
-                    'name': 'TechCorp AI',
-                    'industry': 'AI/ML',
-                    'stage': 'Series A',
-                    'website': 'https://techcorp.ai',
-                    'email': 'contact@techcorp.ai',
-                    'description': 'Building next-gen AI solutions',
-                    'rating': 'A'
-                },
-                {
-                    'name': 'FinTech Solutions',
-                    'industry': 'Fintech',
-                    'stage': 'Seed',
-                    'website': 'https://fintech.solutions',
-                    'email': 'info@fintech.solutions',
-                    'description': 'Revolutionizing financial services',
-                    'rating': 'B'
-                },
-                {
-                    'name': 'Health Analytics',
-                    'industry': 'Healthcare',
-                    'stage': 'Series B',
-                    'website': 'https://health-analytics.com',
-                    'email': 'contact@health-analytics.com',
-                    'description': 'AI-powered healthcare analytics',
-                    'rating': 'A'
-                }
-            ]
-            
-            for company_data in companies:
-                company = Company(user_id=test_user.id, **company_data)
-                db.session.add(company)
-            
-            db.session.commit()
-            app.logger.info("Test companies created successfully!")
-            
-    except Exception as e:
-        app.logger.error(f"Error during database initialization: {str(e)}")
-        app.logger.error(traceback.format_exc())
 
 if __name__ == '__main__':
     app.run(debug=True)
