@@ -81,25 +81,25 @@
             
             // Create row content with proper column widths
             const rowContent = `
-                <td style="width: 20%">
+                <td class="company-name">
                     <span class="table-badge">${company.name || ''}</span>
                 </td>
-                <td style="width: 15%">
+                <td class="company-industry">
                     <span class="table-badge">${company.industry || ''}</span>
                 </td>
-                <td style="width: 15%">
+                <td class="company-stage">
                     <span class="table-badge">${company.stage || ''}</span>
                 </td>
-                <td style="width: 15%">
+                <td class="company-location">
                     <span class="table-badge">${company.location || ''}</span>
                 </td>
-                <td style="width: 12%; text-align: center">
+                <td class="company-otani-rating">
                     <span class="rating-badge otani-rating-${(company.otani_rating || 'D').toLowerCase()}">${company.otani_rating || 'D'}</span>
                 </td>
-                <td style="width: 12%; text-align: center">
+                <td class="company-rating">
                     <span class="rating-badge rating-${(company.rating || '').toLowerCase()}">${company.rating || ''}</span>
                 </td>
-                <td style="width: 11%; text-align: center">
+                <td class="company-actions">
                     <div class="table-actions">
                         ${company.website ? `
                             <a href="${company.website}" 
