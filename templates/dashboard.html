@@ -435,14 +435,16 @@ function savePreferences() {
     })
     .then(response => response.json())
     .then(data => {
-        if (data.success) {
-            showMessage('Preferences saved successfully!');
+        if (data.message) {
+            showMessage(data.message);
+        } else if (data.error) {
+            showMessage(data.error, 'error');
         } else {
             showMessage('Failed to save preferences', 'error');
         }
     })
     .catch(error => {
-        console.error('Error saving preferences:', error);
+        console.error('Error:', error);
         showMessage('Failed to save preferences', 'error');
     });
 }
