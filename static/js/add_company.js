@@ -282,9 +282,25 @@
                 }
             });
 
-            // Only attach one submit handler to the form
+            // Handle form submission
             elements.addCompanyForm.addEventListener('submit', handleSubmit);
             debugLog('Form submit handler attached');
+        }
+
+        // Add click handler for the submit button since it's outside the form
+        if (elements.addCompanyButton) {
+            elements.addCompanyButton.addEventListener('click', () => {
+                debugLog('Add company button clicked');
+                if (elements.addCompanyForm) {
+                    // Trigger form submission
+                    const submitEvent = new Event('submit', {
+                        bubbles: true,
+                        cancelable: true
+                    });
+                    elements.addCompanyForm.dispatchEvent(submitEvent);
+                }
+            });
+            debugLog('Button click handler attached');
         }
 
         debugLog('Initialization complete');
