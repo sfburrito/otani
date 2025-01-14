@@ -554,33 +554,51 @@ def add_company():
 @app.route('/get_preferences', methods=['GET'])
 @login_required
 def get_preferences():
-    app.logger.info('=== Getting Preferences ===')
-    app.logger.info(f'User ID: {current_user.id}')
-    
-    preferences = current_user.preferences
-    app.logger.info(f'Raw preferences object: {preferences.__dict__ if preferences else None}')
-    
-    if not preferences:
-        app.logger.info('No preferences found, returning defaults')
-        return {
-            'investment_stages': [],
-            'industry_sectors': [],
-            'geographic_focus': [],
-            'investment_sizes': [],
-            'additional_preferences': ''
+    """Get user preferences."""
+    try:
+        app.logger.info("=== Getting Preferences ===")
+        app.logger.info(f"User ID: {current_user.id}")
+        
+        preferences = UserPreferences.query.filter_by(user_id=current_user.id).first()
+        
+        if not preferences:
+            app.logger.info("No preferences found, creating default preferences")
+            preferences = UserPreferences(
+                user_id=current_user.id,
+                investment_stages=json.dumps([]),
+                industry_sectors=json.dumps([]),
+                geographic_focus=json.dumps([]),
+                investment_sizes=json.dumps([]),
+                additional_preferences=''
+            )
+            db.session.add(preferences)
+            db.session.commit()
+        
+        app.logger.info(f"Raw preferences object: {preferences.__dict__}")
+        
+        def parse_json_or_string(value):
+            if not value:
+                return []
+            try:
+                return json.loads(value)
+            except json.JSONDecodeError:
+                return [value] if value else []
+        
+        preferences_dict = {
+            'investment_stages': parse_json_or_string(preferences.investment_stages),
+            'industry_sectors': parse_json_or_string(preferences.industry_sectors),
+            'geographic_focus': parse_json_or_string(preferences.geographic_focus),
+            'investment_sizes': parse_json_or_string(preferences.investment_sizes),
+            'additional_preferences': preferences.additional_preferences or ''
         }
-    
-    result = {
-        'investment_stages': json.loads(preferences.investment_stages) if preferences.investment_stages else [],
-        'industry_sectors': json.loads(preferences.industry_sectors) if preferences.industry_sectors else [],
-        'geographic_focus': json.loads(preferences.geographic_focus) if preferences.geographic_focus else [],
-        'investment_sizes': json.loads(preferences.investment_sizes) if preferences.investment_sizes else [],
-        'additional_preferences': preferences.additional_preferences or ''
-    }
-    
-    app.logger.info('=== Returning Preferences ===')
-    app.logger.info(f'Result: {result}')
-    return result
+        
+        app.logger.info(f"Returning preferences: {preferences_dict}")
+        return jsonify(preferences_dict)
+        
+    except Exception as e:
+        app.logger.error(f"Error getting preferences: {str(e)}")
+        app.logger.error("Full traceback:", exc_info=True)
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/save_preferences', methods=['POST'])
 @login_required
