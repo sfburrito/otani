@@ -34,7 +34,83 @@ db = SQLAlchemy(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 
-# Initialize database tables
+# Define models
+class User(UserMixin, db.Model):
+    __tablename__ = 'users'
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    password_hash = db.Column(db.String(256))  # Increased from 128 to 256 for scrypt hashes
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    companies = db.relationship('Company', backref='analyst', lazy=True)
+    preferences = db.relationship('UserPreferences', backref='owner', lazy=True, uselist=False)
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'email': self.email
+        }
+
+class UserPreferences(db.Model):
+    __tablename__ = 'user_preferences'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, unique=True)
+    investment_stages = db.Column(db.String(500))
+    industry_sectors = db.Column(db.String(500))
+    geographic_focus = db.Column(db.String(500))
+    investment_sizes = db.Column(db.String(500))
+    additional_preferences = db.Column(db.Text)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    def to_dict(self):
+        return {
+            'investment_stages': json.loads(self.investment_stages) if self.investment_stages else [],
+            'industry_sectors': json.loads(self.industry_sectors) if self.industry_sectors else [],
+            'geographic_focus': json.loads(self.geographic_focus) if self.geographic_focus else [],
+            'investment_sizes': json.loads(self.investment_sizes) if self.investment_sizes else [],
+            'additional_preferences': self.additional_preferences
+        }
+
+class Company(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    industry = db.Column(db.String(50))
+    stage = db.Column(db.String(50))
+    website = db.Column(db.String(200))
+    email = db.Column(db.String(100))
+    description = db.Column(db.Text)
+    rating = db.Column(db.String(1))
+    location = db.Column(db.String(100), nullable=True)  # New field, nullable to handle existing records
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'industry': self.industry,
+            'stage': self.stage,
+            'website': self.website,
+            'email': self.email,
+            'description': self.description,
+            'rating': self.rating,
+            'location': self.location,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+            'updated_at': self.updated_at.isoformat() if self.updated_at else None
+        }
+
+@login_manager.user_loader
+def load_user(id):
+    return User.query.get(int(id))
+
 def init_db():
     """Initialize the database."""
     try:
@@ -178,10 +254,10 @@ def init_db():
         if test_user and not test_user.preferences:
             preferences = UserPreferences(
                 user_id=test_user.id,
-                investment_stages=['seed', 'series_a', 'series_b'],
-                industry_sectors=['ai_ml', 'fintech', 'healthcare'],
-                geographic_focus=['north_america', 'europe'],
-                investment_sizes=['1m_5m', '5m_20m'],
+                investment_stages=json.dumps(['seed', 'series_a', 'series_b']),
+                industry_sectors=json.dumps(['ai_ml', 'fintech', 'healthcare']),
+                geographic_focus=json.dumps(['north_america', 'europe']),
+                investment_sizes=json.dumps(['1m_5m', '5m_20m']),
                 additional_preferences='Looking for companies with strong IP and experienced founding teams.'
             )
             db.session.add(preferences)
@@ -198,70 +274,9 @@ def init_db():
         traceback.print_exc()
         raise
 
+# Initialize database
 with app.app_context():
     init_db()
-
-# Define models
-class User(UserMixin, db.Model):
-    __tablename__ = 'users'
-    id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    password_hash = db.Column(db.String(256))  # Increased from 128 to 256 for scrypt hashes
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    companies = db.relationship('Company', backref='analyst', lazy=True)
-    preferences = db.relationship('UserPreferences', backref='owner', lazy=True, uselist=False)
-
-    def set_password(self, password):
-        self.password_hash = generate_password_hash(password)
-
-    def check_password(self, password):
-        return check_password_hash(self.password_hash, password)
-
-class UserPreferences(db.Model):
-    __tablename__ = 'user_preferences'
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, unique=True)
-    investment_stages = db.Column(db.String(500))
-    industry_sectors = db.Column(db.String(500))
-    geographic_focus = db.Column(db.String(500))
-    investment_sizes = db.Column(db.String(500))
-    additional_preferences = db.Column(db.Text)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-
-class Company(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    industry = db.Column(db.String(50))
-    stage = db.Column(db.String(50))
-    website = db.Column(db.String(200))
-    email = db.Column(db.String(100))
-    description = db.Column(db.Text)
-    rating = db.Column(db.String(1))
-    location = db.Column(db.String(100), nullable=True)  # New field, nullable to handle existing records
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'name': self.name,
-            'industry': self.industry,
-            'stage': self.stage,
-            'website': self.website,
-            'email': self.email,
-            'description': self.description,
-            'rating': self.rating,
-            'location': self.location,
-            'created_at': self.created_at.isoformat() if self.created_at else None,
-            'updated_at': self.updated_at.isoformat() if self.updated_at else None
-        }
-
-@login_manager.user_loader
-def load_user(id):
-    return User.query.get(int(id))
 
 # Routes
 @app.route('/')
@@ -356,10 +371,10 @@ def dashboard():
         
         # Convert preferences to dictionary
         preferences_dict = {
-            'investment_stages': preferences.investment_stages.split(',') if preferences.investment_stages else [],
-            'industry_sectors': preferences.industry_sectors.split(',') if preferences.industry_sectors else [],
-            'geographic_focus': preferences.geographic_focus.split(',') if preferences.geographic_focus else [],
-            'investment_sizes': preferences.investment_sizes.split(',') if preferences.investment_sizes else [],
+            'investment_stages': json.loads(preferences.investment_stages) if preferences.investment_stages else [],
+            'industry_sectors': json.loads(preferences.industry_sectors) if preferences.industry_sectors else [],
+            'geographic_focus': json.loads(preferences.geographic_focus) if preferences.geographic_focus else [],
+            'investment_sizes': json.loads(preferences.investment_sizes) if preferences.investment_sizes else [],
             'additional_preferences': preferences.additional_preferences or ''
         }
         
@@ -494,10 +509,10 @@ def get_preferences():
         }
     
     result = {
-        'investment_stages': preferences.investment_stages.split(',') if preferences.investment_stages else [],
-        'industry_sectors': preferences.industry_sectors.split(',') if preferences.industry_sectors else [],
-        'geographic_focus': preferences.geographic_focus.split(',') if preferences.geographic_focus else [],
-        'investment_sizes': preferences.investment_sizes.split(',') if preferences.investment_sizes else [],
+        'investment_stages': json.loads(preferences.investment_stages) if preferences.investment_stages else [],
+        'industry_sectors': json.loads(preferences.industry_sectors) if preferences.industry_sectors else [],
+        'geographic_focus': json.loads(preferences.geographic_focus) if preferences.geographic_focus else [],
+        'investment_sizes': json.loads(preferences.investment_sizes) if preferences.investment_sizes else [],
         'additional_preferences': preferences.additional_preferences or ''
     }
     
@@ -539,10 +554,10 @@ def save_preferences():
         app.logger.info('Creating new preferences object')
         preferences = UserPreferences(
             user_id=current_user.id,
-            investment_stages=','.join(data['investment_stages']),
-            industry_sectors=','.join(data['industry_sectors']),
-            geographic_focus=','.join(data['geographic_focus']),
-            investment_sizes=','.join(data['investment_sizes']),
+            investment_stages=json.dumps(data['investment_stages']),
+            industry_sectors=json.dumps(data['industry_sectors']),
+            geographic_focus=json.dumps(data['geographic_focus']),
+            investment_sizes=json.dumps(data['investment_sizes']),
             additional_preferences=data.get('additional_preferences', '')
         )
         
