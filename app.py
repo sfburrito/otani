@@ -42,8 +42,10 @@ def init_db():
         db.create_all()
         app.logger.info('Database tables created successfully!')
         
-        # List all tables
-        app.logger.info('Found tables: %s', db.engine.table_names())
+        # List all tables using SQLAlchemy inspector
+        inspector = db.inspect(db.engine)
+        tables = inspector.get_table_names()
+        app.logger.info('Found tables: %s', tables)
 
         # Create test user if it doesn't exist
         test_user = User.query.filter_by(email='test@example.com').first()
