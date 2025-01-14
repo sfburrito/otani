@@ -68,53 +68,68 @@
     // Open company detail modal
     function openCompanyDetail(company) {
         console.log('Opening company detail:', company);
+        
+        // Get the modal
         const modal = document.getElementById('companyDetailsModal');
-        if (!modal) return;
-
-        currentCompanyId = company.id;
-
-        // Update modal content
-        elements.name.textContent = company.name || '';
-        elements.industry.textContent = company.industry || '';
-        elements.stage.textContent = company.stage || '';
-        elements.location.textContent = company.location || 'Location not specified';
-        elements.description.textContent = company.description || '';
-
-        // Update rating
-        if (company.rating) {
-            elements.rating.innerHTML = `<span class="rating-badge ${company.rating.toLowerCase()}">${company.rating}</span>`;
-        } else {
-            elements.rating.innerHTML = '';
+        if (!modal) {
+            console.error('Company detail modal not found');
+            return;
         }
 
-        // Update website
-        if (company.website) {
-            elements.website.href = company.website;
-            elements.website.textContent = company.website;
-        } else {
-            elements.website.textContent = 'Not provided';
+        try {
+            // Update modal content
+            if (company.name) {
+                const nameElement = document.getElementById('modal-company-name');
+                if (nameElement) nameElement.textContent = company.name;
+            }
+
+            if (company.industry) {
+                const industryElement = document.getElementById('modal-company-industry');
+                if (industryElement) industryElement.textContent = company.industry;
+            }
+
+            if (company.stage) {
+                const stageElement = document.getElementById('modal-company-stage');
+                if (stageElement) stageElement.textContent = company.stage;
+            }
+
+            if (company.location) {
+                const locationElement = document.getElementById('modal-company-location');
+                if (locationElement) locationElement.textContent = company.location;
+            }
+
+            if (company.website) {
+                const websiteElement = document.getElementById('modal-company-website');
+                if (websiteElement) {
+                    websiteElement.href = company.website;
+                    websiteElement.textContent = company.website;
+                }
+            }
+
+            if (company.email) {
+                const emailElement = document.getElementById('modal-company-email');
+                if (emailElement) {
+                    emailElement.href = `mailto:${company.email}`;
+                    emailElement.textContent = company.email;
+                }
+            }
+
+            if (company.description) {
+                const descElement = document.getElementById('modal-company-description');
+                if (descElement) descElement.textContent = company.description;
+            }
+
+            if (company.rating) {
+                const ratingElement = document.getElementById('modal-company-rating');
+                if (ratingElement) ratingElement.textContent = company.rating;
+            }
+
+            // Show the modal
+            const bsModal = new bootstrap.Modal(modal);
+            bsModal.show();
+        } catch (error) {
+            console.error('Error updating modal content:', error);
         }
-
-        // Update email
-        if (company.email) {
-            elements.email.href = `mailto:${company.email}`;
-            elements.email.textContent = company.email;
-        } else {
-            elements.email.textContent = 'Not provided';
-        }
-
-        // Update timestamps
-        const created = new Date(company.created_at);
-        const updated = new Date(company.updated_at);
-        elements.modal.querySelector('.company-created').textContent = created.toLocaleString();
-        elements.modal.querySelector('.company-updated').textContent = updated.toLocaleString();
-
-        // Store company ID for delete operation
-        elements.modal.dataset.companyId = company.id;
-
-        // Show modal
-        const bsModal = new bootstrap.Modal(modal);
-        bsModal.show();
     }
 
     // Close company detail modal
