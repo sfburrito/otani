@@ -2,7 +2,7 @@ from flask import Flask, render_template, redirect, url_for, flash, request, sen
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import datetime
+from datetime import datetime, timedelta
 import os
 import logging
 import sys
@@ -274,6 +274,20 @@ def add_company():
             if not data.get(field):
                 app.logger.error(f"Missing required field: {field}")
                 return jsonify({"error": f"Missing required field: {field}"}), 400
+
+        # Check for duplicate company within last 5 seconds
+        five_seconds_ago = datetime.utcnow() - timedelta(seconds=5)
+        recent_company = Company.query.filter_by(
+            user_id=current_user.id,
+            name=data['name']
+        ).filter(Company.created_at >= five_seconds_ago).first()
+
+        if recent_company:
+            app.logger.warning(f"Duplicate submission detected for company {data['name']}")
+            return jsonify({
+                "message": "Company already added",
+                "company": recent_company.to_dict()
+            }), 200
 
         # Create new company
         new_company = Company(

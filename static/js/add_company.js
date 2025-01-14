@@ -9,6 +9,8 @@
     };
 
     let isSubmitting = false;
+    let lastSubmissionTime = 0;
+    const DEBOUNCE_DELAY = 2000; // 2 seconds
 
     // Modal functions
     function openAddCompanyModal() {
@@ -92,7 +94,16 @@
     }
 
     // Handle form submission
-    async function handleSubmit() {
+    async function handleSubmit(event) {
+        if (event) event.preventDefault();
+
+        // Check if enough time has passed since last submission
+        const now = Date.now();
+        if (now - lastSubmissionTime < DEBOUNCE_DELAY) {
+            console.log('Submission too soon after last submission');
+            return;
+        }
+
         if (isSubmitting || !elements.addCompanyForm || !elements.addCompanyButton) {
             console.log('Form submission already in progress or missing elements');
             return;
@@ -107,6 +118,7 @@
         
         try {
             isSubmitting = true;
+            lastSubmissionTime = now;
             elements.addCompanyButton.disabled = true;
             elements.addCompanyButton.innerHTML = '<span class="loading-spinner"></span>Adding...';
 
@@ -138,10 +150,10 @@
                 elements.addCompanyButton.disabled = false;
                 elements.addCompanyButton.innerHTML = originalText;
             }
-            // Only reset isSubmitting after a delay to prevent double submissions
+            // Only reset isSubmitting after a delay
             setTimeout(() => {
                 isSubmitting = false;
-            }, 1000);
+            }, DEBOUNCE_DELAY);
         }
     }
 
@@ -192,9 +204,7 @@
             });
 
             // Prevent form submission and handle it through the button click
-            elements.addCompanyForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-            });
+            elements.addCompanyForm.addEventListener('submit', handleSubmit);
         }
 
         // Add click handler for the submit button
