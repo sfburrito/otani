@@ -420,12 +420,27 @@ def dashboard():
                 # If it's a string, wrap it in a list
                 return [value] if value else []
         
-        # Get all companies for the current user
+        # Get all companies for the current user and convert to dictionaries
         companies = Company.query.filter_by(user_id=current_user.id).all()
+        companies_list = []
+        for company in companies:
+            company_dict = {
+                'id': company.id,
+                'name': company.name,
+                'industry': company.industry,
+                'stage': company.stage,
+                'website': company.website,
+                'email': company.email,
+                'description': company.description,
+                'rating': company.rating,
+                'location': company.location,
+                'user_id': company.user_id
+            }
+            companies_list.append(company_dict)
         
         return render_template(
             'dashboard.html',
-            companies=companies,
+            companies=companies_list,
             preferences={
                 'investment_stages': parse_json_or_string(preferences.investment_stages),
                 'industry_sectors': parse_json_or_string(preferences.industry_sectors),
