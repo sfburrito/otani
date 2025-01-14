@@ -1,53 +1,43 @@
+// Cache DOM elements
+const elements = {
+    addCompanyModal: null,
+    addCompanyForm: null,
+    flashMessages: null,
+    companiesTableBody: null
+};
+
 // Modal functions
 function openAddCompanyModal() {
-    const modal = document.getElementById('addCompanyModal');
-    if (modal) {
-        modal.style.display = 'block';
+    if (elements.addCompanyModal) {
+        elements.addCompanyModal.style.display = 'block';
         document.body.style.overflow = 'hidden';
     }
 }
 
 function closeAddCompanyModal() {
-    const modal = document.getElementById('addCompanyModal');
-    if (modal) {
-        modal.style.display = 'none';
+    if (elements.addCompanyModal) {
+        elements.addCompanyModal.style.display = 'none';
         document.body.style.overflow = '';
-        // Reset form
-        const form = document.getElementById('addCompanyForm');
-        if (form) form.reset();
+        if (elements.addCompanyForm) elements.addCompanyForm.reset();
     }
 }
-
-// Close modal when clicking outside
-document.addEventListener('click', function(event) {
-    if (event.target.classList.contains('modal-overlay')) {
-        const modal = event.target.closest('.modal');
-        if (modal && modal.id === 'addCompanyModal') {
-            closeAddCompanyModal();
-        }
-    }
-});
 
 // Function to add a new company row to the table
 function addCompanyToTable(company) {
     console.log('Adding company to table:', company);
-    const tbody = document.querySelector('.companies-table tbody');
-    if (!tbody) return;
+    if (!elements.companiesTableBody) return;
     
     const newRow = document.createElement('tr');
     newRow.className = 'clickable-row';
-    newRow.onclick = function() {
-        console.log('Row clicked:', company);
-        // Removed openCompanyDetails function call
-    };
+    newRow.onclick = () => window.openCompanyDetail?.(company);
     
     newRow.innerHTML = `
         <td class="rating-col text-left">
-            <span class="rating-badge ${company.rating.toLowerCase()}">${company.rating}</span>
+            <span class="rating-badge ${company.rating?.toLowerCase() || ''}">${company.rating || ''}</span>
         </td>
-        <td class="text-left">${company.name}</td>
-        <td class="text-left">${company.industry}</td>
-        <td class="text-left">${company.stage}</td>
+        <td class="text-left">${company.name || ''}</td>
+        <td class="text-left">${company.industry || ''}</td>
+        <td class="text-left">${company.stage || ''}</td>
         <td class="icon-cell" onclick="event.stopPropagation()">
             ${company.website ? `<a href="${company.website}" target="_blank" rel="noopener noreferrer"><i class="fas fa-external-link-alt"></i></a>` : ''}
         </td>
@@ -59,75 +49,60 @@ function addCompanyToTable(company) {
         </td>
     `;
     
-    tbody.appendChild(newRow);
+    elements.companiesTableBody.appendChild(newRow);
 }
 
-// Initialize form once DOM is loaded
+// Show messages
+function showMessage(message, type = 'success') {
+    if (!elements.flashMessages) return;
+    
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `alert alert-${type}`;
+    messageDiv.textContent = message;
+    elements.flashMessages.appendChild(messageDiv);
+    
+    // Remove after 5 seconds
+    setTimeout(() => messageDiv.remove(), 5000);
+}
+
+// Initialize form
 function initializeForm() {
-    const addCompanyForm = document.getElementById('addCompanyForm');
-    if (!addCompanyForm) return; // Exit if form doesn't exist
+    if (!elements.addCompanyForm) return;
     
-    // Remove any existing event listeners by cloning the form
-    const newForm = addCompanyForm.cloneNode(true);
-    newForm.id = 'addCompanyForm'; // Ensure ID is preserved
-    addCompanyForm.parentNode.replaceChild(newForm, addCompanyForm);
+    const inputs = elements.addCompanyForm.querySelectorAll('input, textarea, select');
+    const submitButton = document.querySelector('button[form="addCompanyForm"]');
+    let isSubmitting = false;
     
-    // Add event listeners for form validation
-    newForm.querySelectorAll('input, textarea, select').forEach(input => {
-        input.addEventListener('input', () => {
-            console.log(`Input changed - ${input.name}: ${input.value}`);
+    // Add input event listeners using event delegation
+    elements.addCompanyForm.addEventListener('input', (e) => {
+        const input = e.target;
+        if (input.matches('input, textarea, select')) {
             input.classList.remove('invalid');
             const errorSpan = document.getElementById(`${input.id}-error`);
-            if (errorSpan) {
-                errorSpan.textContent = '';
-            }
-        });
+            if (errorSpan) errorSpan.textContent = '';
+        }
     });
     
-    let isSubmitting = false; // Move isSubmitting inside the form initialization
-    
-    newForm.addEventListener('submit', async (e) => {
+    elements.addCompanyForm.addEventListener('submit', async (e) => {
         e.preventDefault();
+        if (isSubmitting) return;
         
-        // Prevent double submission
-        if (isSubmitting) {
-            console.log('Form is already being submitted');
-            return;
-        }
-        
-        console.log('Form submission started');
-        
-        if (!newForm.checkValidity()) {
-            console.log('Form validation failed');
+        if (!elements.addCompanyForm.checkValidity()) {
             showFormErrors();
             return;
         }
 
-        const submitButton = document.querySelector('button[form="addCompanyForm"]');
         if (!submitButton) return;
-        
         const originalText = submitButton.textContent;
         
         try {
             isSubmitting = true;
-            
-            // Show loading state
             submitButton.disabled = true;
             submitButton.innerHTML = '<span class="loading-spinner"></span>Adding...';
 
-            // Get form data
-            const formData = new FormData(newForm);
-            const data = {};
+            const formData = new FormData(elements.addCompanyForm);
+            const data = Object.fromEntries(formData.entries());
             
-            // Log each form field
-            for (let [key, value] of formData.entries()) {
-                console.log(`Form field - ${key}: ${value}`);
-                data[key] = value;
-            }
-            
-            console.log('Sending data to server:', JSON.stringify(data, null, 2));
-
-            // Send request to server
             const response = await fetch('/add_company', {
                 method: 'POST',
                 headers: {
@@ -136,78 +111,39 @@ function initializeForm() {
                 },
                 body: JSON.stringify(data)
             });
-
-            console.log('Response status:', response.status);
             
             const result = await response.json();
-            console.log('Parsed response:', result);
+            if (!response.ok) throw new Error(result.error || 'Failed to add company');
 
-            if (!response.ok) {
-                throw new Error(result.error || 'Failed to add company');
-            }
-
-            // Add the new company to the table
             addCompanyToTable(result.company);
-
-            // Show success message
-            showSuccessMessage('Company added successfully!');
-            
-            // Reset form and close modal
-            newForm.reset();
+            showMessage('Company added successfully!');
+            elements.addCompanyForm.reset();
             closeAddCompanyModal();
 
         } catch (error) {
             console.error('Error adding company:', error);
-            showErrorMessage(error.message || 'Failed to add company');
+            showMessage(error.message || 'Failed to add company', 'error');
         } finally {
-            // Reset submission flag and button state
             isSubmitting = false;
-            submitButton.disabled = false;
-            submitButton.textContent = originalText;
+            if (submitButton) {
+                submitButton.disabled = false;
+                submitButton.textContent = originalText;
+            }
         }
     });
 }
 
 // Show form validation errors
 function showFormErrors() {
-    const form = document.getElementById('addCompanyForm');
-    if (!form) return;
+    if (!elements.addCompanyForm) return;
     
-    const inputs = form.querySelectorAll('input, textarea, select');
-    
-    inputs.forEach(input => {
+    elements.addCompanyForm.querySelectorAll('input, textarea, select').forEach(input => {
         if (!input.validity.valid) {
             input.classList.add('invalid');
             const errorSpan = document.getElementById(`${input.id}-error`);
-            if (errorSpan) {
-                errorSpan.textContent = input.validationMessage;
-            }
+            if (errorSpan) errorSpan.textContent = input.validationMessage;
         }
     });
-}
-
-// Show success message
-function showSuccessMessage(message) {
-    const flashMessages = document.querySelector('.flash-messages');
-    if (!flashMessages) return;
-    
-    const messageDiv = document.createElement('div');
-    messageDiv.className = 'alert alert-success';
-    messageDiv.textContent = message;
-    flashMessages.appendChild(messageDiv);
-    setTimeout(() => messageDiv.remove(), 5000);
-}
-
-// Show error message
-function showErrorMessage(message) {
-    const flashMessages = document.querySelector('.flash-messages');
-    if (!flashMessages) return;
-    
-    const messageDiv = document.createElement('div');
-    messageDiv.className = 'alert alert-error';
-    messageDiv.textContent = message;
-    flashMessages.appendChild(messageDiv);
-    setTimeout(() => messageDiv.remove(), 5000);
 }
 
 // Format currency input
@@ -219,17 +155,26 @@ function formatCurrency(value) {
     return '$' + parts.join('.');
 }
 
-// Initialize modals when DOM is loaded
+// Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize close buttons for add company modal
-    const addCompanyModal = document.getElementById('addCompanyModal');
-    if (addCompanyModal) {
-        const closeButton = addCompanyModal.querySelector('.modal-close');
-        if (closeButton) {
-            closeButton.addEventListener('click', closeAddCompanyModal);
-        }
+    // Cache DOM elements
+    elements.addCompanyModal = document.getElementById('addCompanyModal');
+    elements.addCompanyForm = document.getElementById('addCompanyForm');
+    elements.flashMessages = document.querySelector('.flash-messages');
+    elements.companiesTableBody = document.querySelector('.companies-table tbody');
+    
+    // Add event listeners
+    if (elements.addCompanyModal) {
+        // Use event delegation for modal clicks
+        elements.addCompanyModal.addEventListener('click', (e) => {
+            if (e.target.matches('.modal-close, .modal-close *')) {
+                closeAddCompanyModal();
+            } else if (e.target.matches('.modal-overlay')) {
+                closeAddCompanyModal();
+            }
+        });
     }
     
-    // Initialize the form
+    // Initialize form
     initializeForm();
 });
