@@ -76,7 +76,7 @@ function updateSelectedText(select) {
 async function loadPreferences() {
     try {
         console.log('Loading preferences...');
-        const response = await fetch('/api/preferences');
+        const response = await fetch('/get_preferences');
         
         console.log('Load response status:', response.status);
         if (!response.ok) {
@@ -184,7 +184,7 @@ function savePreferences() {
     saveButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
     saveButton.disabled = true;
     
-    fetch('/api/preferences', {
+    fetch('/save_preferences', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
