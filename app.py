@@ -123,148 +123,161 @@ def init_db():
         tables = inspector.get_table_names()
         app.logger.info('Found tables: %s', tables)
 
-        # Create test user if it doesn't exist
-        test_user = User.query.filter_by(email='test@example.com').first()
-        if not test_user:
-            test_user = User(
-                email='test@example.com'
-            )
-            test_user.set_password('password')
-            db.session.add(test_user)
-            
-            # Initialize preferences for test user
-            test_preferences = UserPreferences(
-                user_id=test_user.id,
-                investment_stages=json.dumps([]),
-                industry_sectors=json.dumps([]),
-                geographic_focus=json.dumps([]),
-                investment_sizes=json.dumps([]),
-                additional_preferences=''
-            )
-            db.session.add(test_preferences)
-            
-            # Sample companies data
-            companies = [
-                {
-                    'name': 'NeuraTech AI',
-                    'industry': 'AI/ML',
-                    'stage': 'Series B',
-                    'website': 'https://neuratech.ai',
-                    'email': 'contact@neuratech.ai',
-                    'description': 'Developing advanced neural networks for enterprise decision making.',
-                    'rating': 'A',
-                    'location': 'North America'
-                },
-                {
-                    'name': 'GreenFlow Energy',
-                    'industry': 'Cleantech',
-                    'stage': 'Series A',
-                    'website': 'https://greenflow.energy',
-                    'email': 'info@greenflow.energy',
-                    'description': 'Revolutionary energy storage solutions for renewable power.',
-                    'rating': 'B',
-                    'location': 'Europe'
-                },
-                {
-                    'name': 'CyberShield',
-                    'industry': 'Cybersecurity',
-                    'stage': 'Growth',
-                    'website': 'https://cybershield.io',
-                    'email': 'security@cybershield.io',
-                    'description': 'Next-generation zero-trust security platform.',
-                    'rating': 'A',
-                    'location': 'North America'
-                },
-                {
-                    'name': 'HealthAI Labs',
-                    'industry': 'Healthcare',
-                    'stage': 'Series C+',
-                    'website': 'https://healthai.med',
-                    'email': 'partnerships@healthai.med',
-                    'description': 'AI-powered diagnostic tools for healthcare providers.',
-                    'rating': 'A',
-                    'location': 'Asia-Pacific'
-                },
-                {
-                    'name': 'EduVerse',
-                    'industry': 'EdTech',
-                    'stage': 'Seed',
-                    'website': 'https://eduverse.education',
-                    'email': 'hello@eduverse.education',
-                    'description': 'Virtual reality platform for immersive education.',
-                    'rating': 'B',
-                    'location': 'Europe'
-                },
-                {
-                    'name': 'PayFlow',
-                    'industry': 'Fintech',
-                    'stage': 'Series B',
-                    'website': 'https://payflow.finance',
-                    'email': 'support@payflow.finance',
-                    'description': 'Blockchain-based cross-border payment solution.',
-                    'rating': 'B',
-                    'location': 'Asia-Pacific'
-                },
-                {
-                    'name': 'CloudStack Enterprise',
-                    'industry': 'Enterprise',
-                    'stage': 'Late Stage',
-                    'website': 'https://cloudstack.tech',
-                    'email': 'enterprise@cloudstack.tech',
-                    'description': 'Enterprise-grade cloud infrastructure management.',
-                    'rating': 'A',
-                    'location': 'North America'
-                },
-                {
-                    'name': 'GameVerse Studios',
-                    'industry': 'Gaming',
-                    'stage': 'Series A',
-                    'website': 'https://gameverse.games',
-                    'email': 'studio@gameverse.games',
-                    'description': 'Web3 gaming platform with play-to-earn mechanics.',
-                    'rating': 'C',
-                    'location': 'Latin America'
-                },
-                {
-                    'name': 'ShopSmart',
-                    'industry': 'E-commerce',
-                    'stage': 'Growth',
-                    'website': 'https://shopsmart.market',
-                    'email': 'retail@shopsmart.market',
-                    'description': 'AI-powered personalized shopping experience platform.',
-                    'rating': 'B',
-                    'location': 'Middle East and Africa'
-                },
-                {
-                    'name': 'SocialCommerce',
-                    'industry': 'Consumer',
-                    'stage': 'Series B',
-                    'website': 'https://socialcommerce.app',
-                    'email': 'hello@socialcommerce.app',
-                    'description': 'Social media integrated e-commerce platform.',
-                    'rating': 'A',
-                    'location': 'Asia-Pacific'
-                }
-            ]
-            
-            app.logger.info(f'Creating dummy companies for user {test_user.id}')
-            
-            for company_data in companies:
-                company = Company(user_id=test_user.id, **company_data)
-                db.session.add(company)
-            
-            try:
+        # Initialize users
+        users_to_init = [
+            {
+                'email': 'test@example.com',
+                'password': 'password'
+            },
+            {
+                'email': 'ttanaka@translinkcapital.com',
+                'password': 'password'  # You should change this in production
+            }
+        ]
+
+        for user_data in users_to_init:
+            user = User.query.filter_by(email=user_data['email']).first()
+            if not user:
+                user = User(email=user_data['email'])
+                user.set_password(user_data['password'])
+                db.session.add(user)
+                db.session.commit()  # Commit to get the user ID
+
+                # Initialize preferences
+                preferences = UserPreferences(
+                    user_id=user.id,
+                    investment_stages=json.dumps([]),
+                    industry_sectors=json.dumps([]),
+                    geographic_focus=json.dumps([]),
+                    investment_sizes=json.dumps([]),
+                    additional_preferences=''
+                )
+                db.session.add(preferences)
                 db.session.commit()
-                app.logger.info('Successfully added test user and dummy companies')
-            except Exception as e:
-                db.session.rollback()
-                app.logger.error(f'Error adding test data: {str(e)}')
-                raise
+
+                if user_data['email'] == 'test@example.com':
+                    # Sample companies data
+                    companies = [
+                        {
+                            'name': 'NeuraTech AI',
+                            'industry': 'AI/ML',
+                            'stage': 'Series B',
+                            'website': 'https://neuratech.ai',
+                            'email': 'contact@neuratech.ai',
+                            'description': 'Developing advanced neural networks for enterprise decision making.',
+                            'rating': 'A',
+                            'location': 'North America'
+                        },
+                        {
+                            'name': 'GreenFlow Energy',
+                            'industry': 'Cleantech',
+                            'stage': 'Series A',
+                            'website': 'https://greenflow.energy',
+                            'email': 'info@greenflow.energy',
+                            'description': 'Revolutionary energy storage solutions for renewable power.',
+                            'rating': 'B',
+                            'location': 'Europe'
+                        },
+                        {
+                            'name': 'CyberShield',
+                            'industry': 'Cybersecurity',
+                            'stage': 'Growth',
+                            'website': 'https://cybershield.io',
+                            'email': 'security@cybershield.io',
+                            'description': 'Next-generation zero-trust security platform.',
+                            'rating': 'A',
+                            'location': 'North America'
+                        },
+                        {
+                            'name': 'HealthAI Labs',
+                            'industry': 'Healthcare',
+                            'stage': 'Series C+',
+                            'website': 'https://healthai.med',
+                            'email': 'partnerships@healthai.med',
+                            'description': 'AI-powered diagnostic tools for healthcare providers.',
+                            'rating': 'A',
+                            'location': 'Asia-Pacific'
+                        },
+                        {
+                            'name': 'EduVerse',
+                            'industry': 'EdTech',
+                            'stage': 'Seed',
+                            'website': 'https://eduverse.education',
+                            'email': 'hello@eduverse.education',
+                            'description': 'Virtual reality platform for immersive education.',
+                            'rating': 'B',
+                            'location': 'Europe'
+                        },
+                        {
+                            'name': 'PayFlow',
+                            'industry': 'Fintech',
+                            'stage': 'Series B',
+                            'website': 'https://payflow.finance',
+                            'email': 'support@payflow.finance',
+                            'description': 'Blockchain-based cross-border payment solution.',
+                            'rating': 'B',
+                            'location': 'Asia-Pacific'
+                        },
+                        {
+                            'name': 'CloudStack Enterprise',
+                            'industry': 'Enterprise',
+                            'stage': 'Late Stage',
+                            'website': 'https://cloudstack.tech',
+                            'email': 'enterprise@cloudstack.tech',
+                            'description': 'Enterprise-grade cloud infrastructure management.',
+                            'rating': 'A',
+                            'location': 'North America'
+                        },
+                        {
+                            'name': 'GameVerse Studios',
+                            'industry': 'Gaming',
+                            'stage': 'Series A',
+                            'website': 'https://gameverse.games',
+                            'email': 'studio@gameverse.games',
+                            'description': 'Web3 gaming platform with play-to-earn mechanics.',
+                            'rating': 'C',
+                            'location': 'Latin America'
+                        },
+                        {
+                            'name': 'ShopSmart',
+                            'industry': 'E-commerce',
+                            'stage': 'Growth',
+                            'website': 'https://shopsmart.market',
+                            'email': 'retail@shopsmart.market',
+                            'description': 'AI-powered personalized shopping experience platform.',
+                            'rating': 'B',
+                            'location': 'Middle East and Africa'
+                        },
+                        {
+                            'name': 'SocialCommerce',
+                            'industry': 'Consumer',
+                            'stage': 'Series B',
+                            'website': 'https://socialcommerce.app',
+                            'email': 'hello@socialcommerce.app',
+                            'description': 'Social media integrated e-commerce platform.',
+                            'rating': 'A',
+                            'location': 'Asia-Pacific'
+                        }
+                    ]
+                    
+                    app.logger.info(f'Creating dummy companies for user {user.id}')
+                    
+                    for company_data in companies:
+                        company = Company(user_id=user.id, **company_data)
+                        db.session.add(company)
+                    
+                    try:
+                        db.session.commit()
+                        app.logger.info('Successfully added test user and dummy companies')
+                    except Exception as e:
+                        db.session.rollback()
+                        app.logger.error(f'Error adding test data: {str(e)}')
+                        raise
         
         # Create user preferences if they don't exist
-        if test_user and not test_user.preferences:
+        if user and not user.preferences:
             preferences = UserPreferences(
-                user_id=test_user.id,
+                user_id=user.id,
                 investment_stages=json.dumps(['seed', 'series_a', 'series_b']),
                 industry_sectors=json.dumps(['ai_ml', 'fintech', 'healthcare']),
                 geographic_focus=json.dumps(['north_america', 'europe']),
