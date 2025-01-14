@@ -3,11 +3,12 @@
     const elements = {
         addCompanyModal: null,
         addCompanyForm: null,
+        addCompanyButton: null,
         flashMessages: null,
         companiesTableBody: null
     };
 
-    let isSubmitting = false; // Move isSubmitting to module scope
+    let isSubmitting = false;
 
     // Modal functions
     function openAddCompanyModal() {
@@ -23,7 +24,7 @@
             document.body.style.overflow = '';
             if (elements.addCompanyForm) {
                 elements.addCompanyForm.reset();
-                isSubmitting = false; // Reset submission state when closing modal
+                isSubmitting = false;
             }
         }
     }
@@ -35,7 +36,7 @@
         
         const newRow = document.createElement('tr');
         newRow.className = 'clickable-row';
-        newRow.dataset.companyId = company.id; // Add company ID for deletion
+        newRow.dataset.companyId = company.id;
         newRow.onclick = () => window.openCompanyDetail?.(company);
         
         newRow.innerHTML = `
@@ -74,80 +75,7 @@
         messageDiv.textContent = message;
         elements.flashMessages.appendChild(messageDiv);
         
-        // Remove after 5 seconds
         setTimeout(() => messageDiv.remove(), 5000);
-    }
-
-    // Initialize form
-    function initializeForm() {
-        if (!elements.addCompanyForm) return;
-        
-        const submitButton = document.querySelector('button[form="addCompanyForm"]');
-        
-        // Add input event listeners using event delegation
-        elements.addCompanyForm.addEventListener('input', (e) => {
-            const input = e.target;
-            if (input.matches('input, textarea, select')) {
-                input.classList.remove('invalid');
-                const errorSpan = document.getElementById(`${input.id}-error`);
-                if (errorSpan) errorSpan.textContent = '';
-            }
-        });
-        
-        elements.addCompanyForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            if (isSubmitting) {
-                console.log('Form submission already in progress');
-                return;
-            }
-            
-            if (!elements.addCompanyForm.checkValidity()) {
-                showFormErrors();
-                return;
-            }
-
-            if (!submitButton) return;
-            const originalText = submitButton.textContent;
-            
-            try {
-                isSubmitting = true;
-                submitButton.disabled = true;
-                submitButton.innerHTML = '<span class="loading-spinner"></span>Adding...';
-
-                const formData = new FormData(elements.addCompanyForm);
-                const data = Object.fromEntries(formData.entries());
-                
-                const response = await fetch('/add_company', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify(data)
-                });
-                
-                const result = await response.json();
-                if (!response.ok) throw new Error(result.error || 'Failed to add company');
-
-                addCompanyToTable(result.company);
-                showMessage('Company added successfully!');
-                elements.addCompanyForm.reset();
-                closeAddCompanyModal();
-
-            } catch (error) {
-                console.error('Error adding company:', error);
-                showMessage(error.message || 'Failed to add company', 'error');
-            } finally {
-                if (submitButton) {
-                    submitButton.disabled = false;
-                    submitButton.textContent = originalText;
-                }
-                // Only reset isSubmitting after a delay to prevent double submissions
-                setTimeout(() => {
-                    isSubmitting = false;
-                }, 1000);
-            }
-        });
     }
 
     // Show form validation errors
@@ -161,6 +89,60 @@
                 if (errorSpan) errorSpan.textContent = input.validationMessage;
             }
         });
+    }
+
+    // Handle form submission
+    async function handleSubmit() {
+        if (isSubmitting || !elements.addCompanyForm || !elements.addCompanyButton) {
+            console.log('Form submission already in progress or missing elements');
+            return;
+        }
+
+        if (!elements.addCompanyForm.checkValidity()) {
+            showFormErrors();
+            return;
+        }
+
+        const originalText = elements.addCompanyButton.innerHTML;
+        
+        try {
+            isSubmitting = true;
+            elements.addCompanyButton.disabled = true;
+            elements.addCompanyButton.innerHTML = '<span class="loading-spinner"></span>Adding...';
+
+            const formData = new FormData(elements.addCompanyForm);
+            const data = Object.fromEntries(formData.entries());
+            
+            const response = await fetch('/add_company', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+            
+            const result = await response.json();
+            if (!response.ok) throw new Error(result.error || 'Failed to add company');
+
+            addCompanyToTable(result.company);
+            showMessage('Company added successfully!');
+            elements.addCompanyForm.reset();
+            closeAddCompanyModal();
+
+        } catch (error) {
+            console.error('Error adding company:', error);
+            showMessage(error.message || 'Failed to add company', 'error');
+        } finally {
+            if (elements.addCompanyButton) {
+                elements.addCompanyButton.disabled = false;
+                elements.addCompanyButton.innerHTML = originalText;
+            }
+            // Only reset isSubmitting after a delay to prevent double submissions
+            setTimeout(() => {
+                isSubmitting = false;
+            }, 1000);
+        }
     }
 
     // Format currency input
@@ -177,12 +159,12 @@
         // Cache DOM elements
         elements.addCompanyModal = document.getElementById('addCompanyModal');
         elements.addCompanyForm = document.getElementById('addCompanyForm');
+        elements.addCompanyButton = document.getElementById('addCompanyButton');
         elements.flashMessages = document.querySelector('.flash-messages');
         elements.companiesTableBody = document.querySelector('.companies-table tbody');
         
         // Add event listeners
         if (elements.addCompanyModal) {
-            // Use event delegation for modal clicks
             elements.addCompanyModal.addEventListener('click', (e) => {
                 if (e.target.matches('.modal-close, .modal-close *')) {
                     closeAddCompanyModal();
@@ -191,16 +173,34 @@
                 }
             });
 
-            // Handle escape key
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape' && elements.addCompanyModal.style.display === 'block') {
                     closeAddCompanyModal();
                 }
             });
         }
-        
-        // Initialize form
-        initializeForm();
+
+        // Add input event listeners using event delegation
+        if (elements.addCompanyForm) {
+            elements.addCompanyForm.addEventListener('input', (e) => {
+                const input = e.target;
+                if (input.matches('input, textarea, select')) {
+                    input.classList.remove('invalid');
+                    const errorSpan = document.getElementById(`${input.id}-error`);
+                    if (errorSpan) errorSpan.textContent = '';
+                }
+            });
+
+            // Prevent form submission and handle it through the button click
+            elements.addCompanyForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+            });
+        }
+
+        // Add click handler for the submit button
+        if (elements.addCompanyButton) {
+            elements.addCompanyButton.addEventListener('click', handleSubmit);
+        }
     });
 
     // Expose functions to window
