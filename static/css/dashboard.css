@@ -70,6 +70,7 @@
     border-bottom: 1px solid #edf2f7 !important;
     color: #4a5568 !important;
     font-size: 0.875rem !important;
+    vertical-align: middle !important;
 }
 
 /* Badge Styles */
@@ -86,8 +87,12 @@
 }
 
 /* Action Buttons */
+.dashboard-container .companies-table .company-actions {
+    text-align: center !important;
+}
+
 .dashboard-container .companies-table .table-actions {
-    display: flex !important;
+    display: inline-flex !important;
     gap: 0.5rem !important;
     justify-content: center !important;
 }
@@ -114,200 +119,6 @@
 }
 
 .dashboard-container .companies-table .action-btn i {
-    font-size: 0.875rem !important;
-}
-
-/* Rating Badges */
-.rating-badge {
-    display: inline-flex;
-    align-items: center;
-    width: 55px;
-    height: 28px;
-    border-radius: 4px;
-    padding: 4px 6px;
-    font-weight: 600;
-    font-size: 14px;
-    color: white;
-    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
-    transition: transform 0.2s ease;
-    justify-content: center;
-}
-
-.rating-badge:hover {
-    transform: scale(1.05);
-}
-
-/* Rating Colors - Pastel Palette */
-.rating-badge.a {
-    background-color: #7AC17D;
-    background-image: linear-gradient(135deg, #7AC17D, #68B56B);
-}
-
-.rating-badge.b {
-    background-color: #97CD91;
-    background-image: linear-gradient(135deg, #97CD91, #89C183);
-}
-
-.rating-badge.c {
-    background-color: #FFD175;
-    background-image: linear-gradient(135deg, #FFD175, #FFC861);
-}
-
-.rating-badge.d {
-    background-color: #FF9B7D;
-    background-image: linear-gradient(135deg, #FF9B7D, #FF8A68);
-}
-
-.rating-badge.f {
-    background-color: #FF8A8A;
-    background-image: linear-gradient(135deg, #FF8A8A, #FF7575);
-}
-
-/* Companies Section Styles */
-.dashboard-container .companies-section {
-    margin-top: 2rem;
-}
-
-.dashboard-container .table-responsive {
-    overflow-x: auto;
-    margin: 1rem 0;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    background: white;
-}
-
-.dashboard-container .companies-table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-    margin: 0;
-}
-
-.dashboard-container .companies-table thead th {
-    background: #f8f9fa;
-    color: #344767;
-    font-weight: 600;
-    padding: 0.875rem;
-    text-align: left;
-    border-bottom: 2px solid #edf2f7;
-    white-space: nowrap;
-    font-size: 0.875rem;
-}
-
-.dashboard-container .companies-table thead th i {
-    margin-right: 0.5rem;
-    color: #64748b;
-    font-size: 0.875rem;
-}
-
-.dashboard-container .companies-table tbody tr {
-    transition: all 0.2s ease;
-}
-
-.dashboard-container .companies-table tbody tr:nth-child(even) {
-    background-color: #fafbfc;
-}
-
-.dashboard-container .companies-table tbody tr:hover {
-    background-color: #f1f4f8;
-}
-
-.dashboard-container .companies-table td {
-    padding: 0.75rem 0.875rem;
-    border-bottom: 1px solid #edf2f7;
-    color: #4a5568;
-    vertical-align: middle;
-    font-size: 0.875rem;
-}
-
-.dashboard-container .companies-table td:first-child {
-    font-weight: 500;
-    color: #2d3748;
-    font-size: 0.875rem;
-}
-
-/* Badge styles */
-.dashboard-container .table-badge {
-    display: inline-flex !important;
-    align-items: center !important;
-    padding: 0.25rem 0.75rem !important;
-    border-radius: 20px !important;
-    font-size: 0.75rem !important;
-    font-weight: 500 !important;
-    line-height: 1.5 !important;
-    text-align: center !important;
-    white-space: nowrap !important;
-    background: #f1f5f9 !important;
-    color: #475569 !important;
-}
-
-/* Rating badges */
-.dashboard-container .rating-badge,
-.dashboard-container .otani-rating-badge {
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    min-width: 32px !important;
-    height: 24px !important;
-    padding: 0 0.5rem !important;
-    border-radius: 4px !important;
-    font-size: 0.75rem !important;
-    font-weight: 600 !important;
-    color: white !important;
-    text-align: center !important;
-}
-
-/* Rating colors */
-.dashboard-container .rating-badge.rating-a,
-.dashboard-container .rating-badge.otani-rating-a {
-    background-color: #22c55e !important;
-}
-
-.dashboard-container .rating-badge.rating-b,
-.dashboard-container .rating-badge.otani-rating-b {
-    background-color: #3b82f6 !important;
-}
-
-.dashboard-container .rating-badge.rating-c,
-.dashboard-container .rating-badge.otani-rating-c {
-    background-color: #f59e0b !important;
-}
-
-.dashboard-container .rating-badge.rating-d,
-.dashboard-container .rating-badge.otani-rating-d {
-    background-color: #ef4444 !important;
-}
-
-/* Actions column styling */
-.dashboard-container .table-actions {
-    display: flex !important;
-    gap: 0.5rem !important;
-    justify-content: center !important;
-}
-
-.dashboard-container .action-btn {
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    width: 28px !important;
-    height: 28px !important;
-    border-radius: 6px !important;
-    background: #f8fafc !important;
-    border: 1px solid #e2e8f0 !important;
-    color: #64748b !important;
-    cursor: pointer !important;
-    transition: all 0.2s ease !important;
-    padding: 0 !important;
-    text-decoration: none !important;
-}
-
-.dashboard-container .action-btn:hover {
-    background: #edf2f7 !important;
-    color: #2d3748 !important;
-}
-
-.dashboard-container .action-btn i {
     font-size: 0.875rem !important;
 }
 

@@ -81,7 +81,9 @@
             
             // Create row content
             const rowContent = `
-                <td class="company-name">${company.name || ''}</td>
+                <td class="company-name">
+                    <span class="table-badge">${company.name || ''}</span>
+                </td>
                 <td class="company-industry">
                     <span class="table-badge">${company.industry || ''}</span>
                 </td>
@@ -97,7 +99,7 @@
                 <td class="company-rating text-center">
                     <span class="rating-badge rating-${(company.rating || '').toLowerCase()}">${company.rating || ''}</span>
                 </td>
-                <td class="company-actions">
+                <td class="company-actions text-center">
                     <div class="table-actions">
                         ${company.website ? `
                             <a href="${company.website}" 
