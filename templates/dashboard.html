@@ -11,10 +11,12 @@
             </div>
             <div class="header-actions">
                 <button class="btn btn-primary" onclick="savePreferences()">
-                    <i class="fas fa-save"></i> Save Preferences
+                    <i class="fas fa-save" aria-hidden="true"></i>
+                    <span>Save Preferences</span>
                 </button>
                 <button class="btn btn-secondary" onclick="resetPreferences()">
-                    <i class="fas fa-undo"></i> Reset
+                    <i class="fas fa-undo" aria-hidden="true"></i>
+                    <span>Reset</span>
                 </button>
             </div>
         </div>
@@ -164,7 +166,8 @@
         </div>
         <div class="header-actions">
             <button class="btn btn-primary" onclick="openAddCompanyModal()">
-                <i class="fas fa-plus"></i> Add Company
+                <i class="fas fa-plus" aria-hidden="true"></i>
+                <span>Add Company</span>
             </button>
         </div>
     </div>
@@ -222,11 +225,13 @@
 
         <div class="pagination">
             <button class="btn btn-outline btn-sm" id="prevPage" aria-label="Previous page">
-                <i class="fas fa-chevron-left"></i>
+                <i class="fas fa-chevron-left" aria-hidden="true"></i>
+                <span>Previous</span>
             </button>
             <span id="pageInfo">Page <span id="currentPage">1</span> of <span id="totalPages">1</span></span>
             <button class="btn btn-outline btn-sm" id="nextPage" aria-label="Next page">
-                <i class="fas fa-chevron-right"></i>
+                <i class="fas fa-chevron-right" aria-hidden="true"></i>
+                <span>Next</span>
             </button>
         </div>
     </div>
@@ -239,7 +244,8 @@
         <div class="modal-header">
             <h2>Add New Company</h2>
             <button class="modal-close close-modal" onclick="closeAddCompanyModal()">
-                <i class="fas fa-times"></i>
+                <i class="fas fa-times" aria-hidden="true"></i>
+                <span>Close</span>
             </button>
         </div>
         <div class="modal-body">
@@ -311,8 +317,14 @@
             </form>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-outline" onclick="closeAddCompanyModal()">Cancel</button>
-            <button type="submit" class="btn btn-primary" form="addCompanyForm">Add Company</button>
+            <button type="button" class="btn btn-outline" onclick="closeAddCompanyModal()">
+                <i class="fas fa-times" aria-hidden="true"></i>
+                <span>Cancel</span>
+            </button>
+            <button type="submit" class="btn btn-primary" form="addCompanyForm">
+                <i class="fas fa-plus" aria-hidden="true"></i>
+                <span>Add Company</span>
+            </button>
         </div>
     </div>
 </div>
