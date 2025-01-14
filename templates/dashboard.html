@@ -193,21 +193,21 @@
                 </thead>
                 <tbody id="companiesTableBody">
                     {% for company in companies %}
-                    <tr>
+                    <tr onclick="openCompanyDetail({{ company|tojson|safe }})" class="clickable-row">
                         <td class="rating-col text-left">
                             <span class="rating-badge {{ company.rating.lower() }}">{{ company.rating }}</span>
                         </td>
                         <td class="text-left">{{ company.name }}</td>
                         <td class="text-left">{{ company.industry }}</td>
                         <td class="text-left">{{ company.stage }}</td>
-                        <td class="icon-cell">
+                        <td class="icon-cell" onclick="event.stopPropagation()">
                             {% if company.website %}
                             <a href="{{ company.website }}" target="_blank" rel="noopener noreferrer">
                                 <i class="fas fa-external-link-alt"></i>
                             </a>
                             {% endif %}
                         </td>
-                        <td class="icon-cell">
+                        <td class="icon-cell" onclick="event.stopPropagation()">
                             {% if company.email %}
                             <a href="mailto:{{ company.email }}">
                                 <i class="fas fa-envelope"></i>

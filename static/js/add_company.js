@@ -209,3 +209,95 @@ function formatCurrency(value) {
     parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     return '$' + parts.join('.');
 }
+
+// Company Detail Modal Functions
+function openCompanyDetail(company) {
+    // Update modal content
+    document.getElementById('companyDetailName').textContent = company.name;
+    document.getElementById('companyDetailIndustry').textContent = company.industry;
+    document.getElementById('companyDetailStage').textContent = company.stage;
+    
+    // Set up rating badge
+    const ratingSpan = document.getElementById('companyDetailRating');
+    ratingSpan.innerHTML = `<span class="rating-badge ${company.rating.toLowerCase()}">${company.rating}</span>`;
+    
+    // Set up links
+    const websiteLink = document.getElementById('companyDetailWebsite');
+    if (company.website) {
+        websiteLink.href = company.website;
+        websiteLink.textContent = company.website;
+        websiteLink.classList.remove('hidden');
+    } else {
+        websiteLink.classList.add('hidden');
+    }
+    
+    const emailLink = document.getElementById('companyDetailEmail');
+    if (company.email) {
+        emailLink.href = `mailto:${company.email}`;
+        emailLink.textContent = company.email;
+        emailLink.classList.remove('hidden');
+    } else {
+        emailLink.classList.add('hidden');
+    }
+    
+    // Set description
+    document.getElementById('companyDetailDescription').textContent = company.description;
+    
+    // Load notes if they exist
+    const notes = localStorage.getItem(`company_notes_${company.id}`);
+    document.getElementById('companyNotes').value = notes || '';
+    
+    // Store current company ID for notes saving
+    document.getElementById('companyDetailModal').dataset.companyId = company.id;
+    
+    // Show modal
+    document.getElementById('companyDetailModal').classList.add('active');
+    document.body.style.overflow = 'hidden'; // Prevent scrolling
+}
+
+function closeCompanyDetailModal() {
+    document.getElementById('companyDetailModal').classList.remove('active');
+    document.body.style.overflow = ''; // Restore scrolling
+}
+
+function saveCompanyNotes() {
+    const modal = document.getElementById('companyDetailModal');
+    const companyId = modal.dataset.companyId;
+    const notes = document.getElementById('companyNotes').value;
+    
+    // Save to localStorage
+    localStorage.setItem(`company_notes_${companyId}`, notes);
+    
+    // Show success message
+    const flashMessages = document.querySelector('.flash-messages');
+    const message = document.createElement('div');
+    message.className = 'flash-message success';
+    message.innerHTML = `
+        Notes saved successfully
+        <button class="close-flash">&times;</button>
+    `;
+    flashMessages.appendChild(message);
+    
+    // Remove message after 3 seconds
+    setTimeout(() => {
+        message.style.opacity = '0';
+        setTimeout(() => message.remove(), 300);
+    }, 3000);
+}
+
+// Close modal when clicking overlay
+document.addEventListener('DOMContentLoaded', function() {
+    const modal = document.getElementById('companyDetailModal');
+    if (modal) {
+        modal.querySelector('.modal-overlay').addEventListener('click', closeCompanyDetailModal);
+    }
+    
+    // Close flash messages
+    document.addEventListener('click', function(e) {
+        if (e.target.matches('.close-flash')) {
+            const message = e.target.parentElement;
+            message.style.opacity = '0';
+            setTimeout(() => message.remove(), 300);
+        }
+    });
+});
