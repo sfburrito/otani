@@ -182,13 +182,13 @@
             <table class="companies-table">
                 <thead>
                     <tr>
-                        <th><i class="fas fa-building"></i> Name</th>
-                        <th><i class="fas fa-industry"></i> Industry</th>
-                        <th><i class="fas fa-chart-line"></i> Stage</th>
-                        <th><i class="fas fa-map-marker-alt"></i> Location</th>
-                        <th><i class="fas fa-star"></i> Otani Rating</th>
-                        <th><i class="fas fa-user-check"></i> Your Rating</th>
-                        <th><i class="fas fa-cog"></i> Actions</th>
+                        <th style="width: 20%"><i class="fas fa-building"></i> Name</th>
+                        <th style="width: 15%"><i class="fas fa-industry"></i> Industry</th>
+                        <th style="width: 15%"><i class="fas fa-chart-line"></i> Stage</th>
+                        <th style="width: 15%"><i class="fas fa-map-marker-alt"></i> Location</th>
+                        <th style="width: 12%"><i class="fas fa-star"></i> Otani Rating</th>
+                        <th style="width: 12%"><i class="fas fa-user-check"></i> Your Rating</th>
+                        <th style="width: 11%; text-align: center"><i class="fas fa-cog"></i> Actions</th>
                     </tr>
                 </thead>
                 <tbody id="companiesTableBody">
@@ -509,7 +509,7 @@ function showMessage(message, type = 'success') {
     background: #f8f9fa;
     color: #344767;
     font-weight: 600;
-    padding: 1.25rem 1rem;
+    padding: 0.875rem 1rem;
     text-align: left;
     border-bottom: 2px solid #edf2f7;
     white-space: nowrap;
@@ -535,7 +535,7 @@ function showMessage(message, type = 'success') {
 }
 
 .companies-table td {
-    padding: 1.25rem 1rem;
+    padding: 0.875rem 1rem;
     border-bottom: 1px solid #edf2f7;
     color: #4a5568;
     vertical-align: middle;
@@ -550,7 +550,7 @@ function showMessage(message, type = 'success') {
 .table-badge {
     display: inline-flex;
     align-items: center;
-    padding: 0.35rem 0.85rem;
+    padding: 0.25rem 0.75rem;
     border-radius: 20px;
     font-size: 0.875rem;
     font-weight: 500;
@@ -559,20 +559,15 @@ function showMessage(message, type = 'success') {
     white-space: nowrap;
 }
 
-.industry-badge {
-    background-color: #ebf5ff;
-    color: #3182ce;
-}
-
-.stage-badge {
-    background-color: #e9ecef;
-    color: #495057;
+.industry-badge, .stage-badge {
+    background-color: #f1f5f9;
+    color: #475569;
 }
 
 .rating-badge {
-    padding: 0.35rem 0.85rem;
+    padding: 0.25rem 0.75rem;
     font-weight: 600;
-    min-width: 80px;
+    min-width: 60px;
     justify-content: center;
 }
 
@@ -588,9 +583,9 @@ function showMessage(message, type = 'success') {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 0.6rem;
-    width: 36px;
-    height: 36px;
+    padding: 0.5rem;
+    width: 32px;
+    height: 32px;
     border-radius: 8px;
     background: #f8fafc;
     border: 1px solid #e2e8f0;
@@ -629,23 +624,23 @@ function showMessage(message, type = 'success') {
     color: #64748b;
 }
 
-/* Rating colors */
-.otani-rating-a {
+/* Rating colors - same style for both Otani and user ratings */
+.rating-a, .otani-rating-a {
     background-color: #dcfce7;
     color: #15803d;
 }
 
-.otani-rating-b {
+.rating-b, .otani-rating-b {
     background-color: #e0f2fe;
     color: #0369a1;
 }
 
-.otani-rating-c {
+.rating-c, .otani-rating-c {
     background-color: #fef9c3;
     color: #854d0e;
 }
 
-.otani-rating-d {
+.rating-d, .otani-rating-d {
     background-color: #fee2e2;
     color: #b91c1c;
 }
@@ -658,18 +653,18 @@ function showMessage(message, type = 'success') {
     
     .companies-table td,
     .companies-table th {
-        padding: 1rem 0.75rem;
+        padding: 0.75rem;
     }
     
     .table-badge {
-        padding: 0.25rem 0.65rem;
+        padding: 0.2rem 0.5rem;
         font-size: 0.75rem;
     }
 
     .action-btn {
-        padding: 0.5rem;
-        width: 32px;
-        height: 32px;
+        padding: 0.4rem;
+        width: 28px;
+        height: 28px;
     }
 }
 </style>
