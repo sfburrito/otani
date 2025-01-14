@@ -1,4 +1,6 @@
 (function() {
+    let initialized = false; // Prevent double initialization
+    
     // Cache DOM elements
     const elements = {
         addCompanyModal: null,
@@ -121,14 +123,15 @@
 
     // Handle form submission
     async function handleSubmit(event) {
+        if (event) {
+            event.preventDefault();
+            event.stopPropagation(); // Prevent event bubbling
+            debugLog('Prevented default form submission and stopped propagation');
+        }
+
         submitCount++;
         const currentSubmit = submitCount;
         debugLog(`Submit attempt #${currentSubmit} started`);
-
-        if (event) {
-            event.preventDefault();
-            debugLog('Prevented default form submission');
-        }
 
         // Check if enough time has passed since last submission
         const now = Date.now();
@@ -189,10 +192,15 @@
                 throw new Error(result.error || 'Failed to add company');
             }
 
-            addCompanyToTable(result.company);
-            showMessage('Company added successfully!');
-            elements.addCompanyForm.reset();
-            closeAddCompanyModal();
+            if (result.message === 'Company already added') {
+                debugLog('Duplicate company detected by server');
+                showMessage('This company was already added', 'warning');
+            } else {
+                addCompanyToTable(result.company);
+                showMessage('Company added successfully!');
+                elements.addCompanyForm.reset();
+                closeAddCompanyModal();
+            }
 
         } catch (error) {
             debugLog('Error during submission:', error);
@@ -223,6 +231,12 @@
 
     // Initialize when DOM is loaded
     document.addEventListener('DOMContentLoaded', function() {
+        if (initialized) {
+            debugLog('Already initialized, skipping');
+            return;
+        }
+        initialized = true;
+        
         debugLog('DOM loaded, initializing form');
         
         // Cache DOM elements
@@ -268,15 +282,9 @@
                 }
             });
 
-            // Prevent form submission and handle it through the button click
+            // Only attach one submit handler to the form
             elements.addCompanyForm.addEventListener('submit', handleSubmit);
             debugLog('Form submit handler attached');
-        }
-
-        // Add click handler for the submit button
-        if (elements.addCompanyButton) {
-            elements.addCompanyButton.addEventListener('click', handleSubmit);
-            debugLog('Button click handler attached');
         }
 
         debugLog('Initialization complete');
