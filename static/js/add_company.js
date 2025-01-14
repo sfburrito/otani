@@ -1,21 +1,35 @@
+// Prevent multiple form submissions
+let isSubmitting = false;
+
 // Modal functions
-function openModal(modalId) {
-    const modal = document.getElementById(modalId);
-    modal.classList.add('active');
-    document.body.style.overflow = 'hidden';
+function openAddCompanyModal() {
+    const modal = document.getElementById('addCompanyModal');
+    if (modal) {
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
 }
 
-function closeModal(modalId) {
-    const modal = document.getElementById(modalId);
-    modal.classList.remove('active');
-    document.body.style.overflow = '';
+function closeAddCompanyModal() {
+    const modal = document.getElementById('addCompanyModal');
+    if (modal) {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+        // Get the form either by original ID or the cloned one
+        const form = document.getElementById('addCompanyForm');
+        if (form) form.reset();
+    }
 }
 
 // Close modal when clicking outside
 document.addEventListener('click', function(event) {
     if (event.target.classList.contains('modal-overlay')) {
         const modal = event.target.closest('.modal');
-        closeModal(modal.id);
+        if (modal && modal.id === 'addCompanyModal') {
+            closeAddCompanyModal();
+        } else if (modal && modal.id === 'companyDetailModal') {
+            closeCompanyDetailModal();
+        }
     }
 });
 
@@ -23,6 +37,8 @@ document.addEventListener('click', function(event) {
 function addCompanyToTable(company) {
     console.log('Adding company to table:', company);
     const tbody = document.querySelector('.companies-table tbody');
+    if (!tbody) return;
+    
     const newRow = document.createElement('tr');
     newRow.className = 'clickable-row';
     newRow.onclick = function() {
@@ -50,9 +66,6 @@ function addCompanyToTable(company) {
     
     tbody.appendChild(newRow);
 }
-
-// Prevent multiple form submissions
-let isSubmitting = false;
 
 // Initialize form once DOM is loaded
 function initializeForm() {
@@ -94,6 +107,8 @@ function initializeForm() {
         }
 
         const submitButton = document.querySelector('button[form="addCompanyForm"]');
+        if (!submitButton) return;
+        
         const originalText = submitButton.textContent;
         
         try {
@@ -142,7 +157,7 @@ function initializeForm() {
             
             // Reset form and close modal
             newForm.reset();
-            closeModal('addCompanyModal');
+            closeAddCompanyModal();
 
         } catch (error) {
             console.error('Error adding company:', error);
@@ -159,6 +174,8 @@ function initializeForm() {
 // Show form validation errors
 function showFormErrors() {
     const form = document.getElementById('addCompanyForm');
+    if (!form) return;
+    
     const inputs = form.querySelectorAll('input, textarea, select');
     
     inputs.forEach(input => {
@@ -175,6 +192,8 @@ function showFormErrors() {
 // Show success message
 function showSuccessMessage(message) {
     const flashMessages = document.querySelector('.flash-messages');
+    if (!flashMessages) return;
+    
     const messageDiv = document.createElement('div');
     messageDiv.className = 'alert alert-success';
     messageDiv.textContent = message;
@@ -185,6 +204,8 @@ function showSuccessMessage(message) {
 // Show error message
 function showErrorMessage(message) {
     const flashMessages = document.querySelector('.flash-messages');
+    if (!flashMessages) return;
+    
     const messageDiv = document.createElement('div');
     messageDiv.className = 'alert alert-error';
     messageDiv.textContent = message;
@@ -206,60 +227,81 @@ function openCompanyDetail(company) {
     console.log('Opening company detail:', company);
     
     // Update modal content
-    document.getElementById('companyDetailName').textContent = company.name;
-    document.getElementById('companyDetailIndustry').textContent = company.industry;
-    document.getElementById('companyDetailStage').textContent = company.stage;
+    const nameElement = document.getElementById('companyDetailName');
+    if (nameElement) nameElement.textContent = company.name || '';
+    
+    const industryElement = document.getElementById('companyDetailIndustry');
+    if (industryElement) industryElement.textContent = company.industry || '';
+    
+    const stageElement = document.getElementById('companyDetailStage');
+    if (stageElement) stageElement.textContent = company.stage || '';
     
     // Set up rating badge
     const ratingSpan = document.getElementById('companyDetailRating');
-    ratingSpan.innerHTML = `<span class="rating-badge ${company.rating.toLowerCase()}">${company.rating}</span>`;
-    
-    // Set up links
-    const websiteLink = document.getElementById('companyDetailWebsite');
-    if (company.website) {
-        websiteLink.href = company.website;
-        websiteLink.textContent = company.website;
-        websiteLink.classList.remove('hidden');
-    } else {
-        websiteLink.classList.add('hidden');
+    if (ratingSpan && company.rating) {
+        ratingSpan.innerHTML = `<span class="rating-badge ${company.rating.toLowerCase()}">${company.rating}</span>`;
     }
     
-    const emailLink = document.getElementById('companyDetailEmail');
-    if (company.email) {
-        emailLink.href = `mailto:${company.email}`;
-        emailLink.textContent = company.email;
-        emailLink.classList.remove('hidden');
-    } else {
-        emailLink.classList.add('hidden');
+    // Set up website
+    const websiteSpan = document.getElementById('companyDetailWebsite');
+    if (websiteSpan) {
+        if (company.website) {
+            websiteSpan.innerHTML = `<a href="${company.website}" target="_blank" rel="noopener noreferrer">${company.website}</a>`;
+        } else {
+            websiteSpan.textContent = 'Not provided';
+        }
+    }
+    
+    // Set up email
+    const emailSpan = document.getElementById('companyDetailEmail');
+    if (emailSpan) {
+        if (company.email) {
+            emailSpan.innerHTML = `<a href="mailto:${company.email}">${company.email}</a>`;
+        } else {
+            emailSpan.textContent = 'Not provided';
+        }
     }
     
     // Set description
-    document.getElementById('companyDetailDescription').textContent = company.description || '';
+    const descriptionElement = document.getElementById('companyDetailDescription');
+    if (descriptionElement) {
+        descriptionElement.textContent = company.description || 'No description available';
+    }
     
     // Load notes if they exist
-    const notes = localStorage.getItem(`company_notes_${company.id}`);
-    document.getElementById('companyNotes').value = notes || '';
+    const notesTextarea = document.getElementById('companyNotes');
+    if (notesTextarea) {
+        const notes = localStorage.getItem(`company_notes_${company.id}`);
+        notesTextarea.value = notes || '';
+    }
     
     // Store current company ID for notes saving
-    document.getElementById('companyDetailModal').dataset.companyId = company.id;
-    
-    // Show modal
-    openModal('companyDetailModal');
+    const modal = document.getElementById('companyDetailModal');
+    if (modal) {
+        modal.dataset.companyId = company.id;
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
 }
 
 function closeCompanyDetailModal() {
-    closeModal('companyDetailModal');
+    const modal = document.getElementById('companyDetailModal');
+    if (modal) {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
 }
 
 function saveCompanyNotes() {
     const modal = document.getElementById('companyDetailModal');
+    if (!modal) return;
+    
     const companyId = modal.dataset.companyId;
-    const notes = document.getElementById('companyNotes').value;
+    const notesTextarea = document.getElementById('companyNotes');
+    if (!notesTextarea) return;
     
-    // Save to localStorage
+    const notes = notesTextarea.value;
     localStorage.setItem(`company_notes_${companyId}`, notes);
-    
-    // Show success message
     showSuccessMessage('Notes saved successfully');
 }
 
@@ -269,7 +311,11 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.modal-close').forEach(button => {
         button.addEventListener('click', function() {
             const modal = this.closest('.modal');
-            closeModal(modal.id);
+            if (modal && modal.id === 'addCompanyModal') {
+                closeAddCompanyModal();
+            } else if (modal && modal.id === 'companyDetailModal') {
+                closeCompanyDetailModal();
+            }
         });
     });
     
