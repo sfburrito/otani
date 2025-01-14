@@ -1,4 +1,123 @@
 /* Rating Badges */
+.dashboard-container .companies-table .rating-badge {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-width: 32px !important;
+    height: 24px !important;
+    padding: 0 0.5rem !important;
+    border-radius: 4px !important;
+    font-size: 0.75rem !important;
+    font-weight: 600 !important;
+    color: white !important;
+    text-align: center !important;
+    text-transform: uppercase !important;
+}
+
+/* Rating Colors */
+.dashboard-container .companies-table .rating-badge.rating-a,
+.dashboard-container .companies-table .rating-badge.otani-rating-a {
+    background-color: #22c55e !important;
+}
+
+.dashboard-container .companies-table .rating-badge.rating-b,
+.dashboard-container .companies-table .rating-badge.otani-rating-b {
+    background-color: #3b82f6 !important;
+}
+
+.dashboard-container .companies-table .rating-badge.rating-c,
+.dashboard-container .companies-table .rating-badge.otani-rating-c {
+    background-color: #f59e0b !important;
+}
+
+.dashboard-container .companies-table .rating-badge.rating-d,
+.dashboard-container .companies-table .rating-badge.otani-rating-d {
+    background-color: #ef4444 !important;
+}
+
+/* Table Styles */
+.dashboard-container .companies-table {
+    width: 100% !important;
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+    background: white !important;
+    border-radius: 8px !important;
+    overflow: hidden !important;
+}
+
+.dashboard-container .companies-table thead th {
+    background: #f8f9fa !important;
+    color: #344767 !important;
+    font-weight: 600 !important;
+    padding: 1rem !important;
+    text-align: left !important;
+    border-bottom: 2px solid #edf2f7 !important;
+    white-space: nowrap !important;
+    font-size: 0.875rem !important;
+}
+
+.dashboard-container .companies-table tbody tr {
+    transition: background-color 0.2s ease !important;
+    cursor: pointer !important;
+}
+
+.dashboard-container .companies-table tbody tr:hover {
+    background-color: #f8fafc !important;
+}
+
+.dashboard-container .companies-table td {
+    padding: 1rem !important;
+    border-bottom: 1px solid #edf2f7 !important;
+    color: #4a5568 !important;
+    font-size: 0.875rem !important;
+}
+
+/* Badge Styles */
+.dashboard-container .companies-table .table-badge {
+    display: inline-flex !important;
+    align-items: center !important;
+    padding: 0.25rem 0.75rem !important;
+    border-radius: 20px !important;
+    font-size: 0.75rem !important;
+    font-weight: 500 !important;
+    background: #f1f5f9 !important;
+    color: #475569 !important;
+    white-space: nowrap !important;
+}
+
+/* Action Buttons */
+.dashboard-container .companies-table .table-actions {
+    display: flex !important;
+    gap: 0.5rem !important;
+    justify-content: center !important;
+}
+
+.dashboard-container .companies-table .action-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 28px !important;
+    height: 28px !important;
+    border-radius: 6px !important;
+    background: #f8fafc !important;
+    border: 1px solid #e2e8f0 !important;
+    color: #64748b !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    text-decoration: none !important;
+}
+
+.dashboard-container .companies-table .action-btn:hover {
+    background: #edf2f7 !important;
+    color: #2d3748 !important;
+    transform: translateY(-1px) !important;
+}
+
+.dashboard-container .companies-table .action-btn i {
+    font-size: 0.875rem !important;
+}
+
+/* Rating Badges */
 .rating-badge {
     display: inline-flex;
     align-items: center;

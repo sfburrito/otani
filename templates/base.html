@@ -21,14 +21,12 @@
     
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/global.css') }}">
+    {% if request.endpoint == 'dashboard' %}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css', v='1.0.1') }}">
+    {% endif %}
     
     <!-- Custom JavaScript -->
-    {% if request.endpoint == 'dashboard' %}
-    <script src="{{ url_for('static', filename='js/preferences.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/add_company.js') }}"></script>
-    {% endif %}
+    {% block extra_head %}{% endblock %}
 </head>
 <body>
     <nav class="navbar">

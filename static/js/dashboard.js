@@ -1,19 +1,30 @@
 // Dashboard functionality
 (function() {
-    // Cache DOM elements
-    const elements = {
-        companiesTableBody: document.getElementById('companiesTableBody'),
-        companySearch: document.getElementById('companySearch')
-    };
+    let companiesTableBody = null;
+    let companySearch = null;
 
-    // Initialize when DOM is loaded
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log('Initial companies:', window.companies);
-        renderCompanies(window.companies);
+    // Initialize the dashboard
+    function initDashboard(companies) {
+        console.log('Initializing dashboard with companies:', companies);
+        
+        // Cache DOM elements
+        companiesTableBody = document.getElementById('companiesTableBody');
+        companySearch = document.getElementById('companySearch');
+
+        if (!companiesTableBody) {
+            console.error('Companies table body not found');
+            return;
+        }
+
+        // Store companies globally
+        window.companies = companies;
+
+        // Render the initial companies
+        renderCompanies(companies);
 
         // Add search functionality
-        if (elements.companySearch) {
-            elements.companySearch.addEventListener('input', function(e) {
+        if (companySearch) {
+            companySearch.addEventListener('input', function(e) {
                 const searchTerm = e.target.value.toLowerCase();
                 if (!window.companies) {
                     console.error('Companies data not available for search');
@@ -30,21 +41,28 @@
                 renderCompanies(filteredCompanies);
             });
         }
-    });
+    }
 
     // Render companies in the table
     function renderCompanies(companiesData) {
         console.log('Rendering companies:', companiesData);
-        if (!elements.companiesTableBody) {
-            console.error('Companies table body not found');
+        
+        // Re-check table body in case it was not available earlier
+        if (!companiesTableBody) {
+            companiesTableBody = document.getElementById('companiesTableBody');
+        }
+        
+        if (!companiesTableBody) {
+            console.error('Companies table body still not found');
             return;
         }
 
-        elements.companiesTableBody.innerHTML = '';
+        // Clear existing content
+        companiesTableBody.innerHTML = '';
 
         if (!companiesData || companiesData.length === 0) {
             console.log('No companies to display');
-            elements.companiesTableBody.innerHTML = `
+            companiesTableBody.innerHTML = `
                 <tr class="empty-state">
                     <td colspan="7" class="text-center py-4">
                         <p class="text-gray-500">No companies found. Add your first company to get started!</p>
@@ -54,63 +72,72 @@
             return;
         }
 
+        // Create and append each row
         companiesData.forEach(company => {
             console.log('Creating row for company:', company);
             const row = document.createElement('tr');
-            row.className = 'clickable-row';
-            row.dataset.companyId = company.id;
-            row.onclick = () => window.openCompanyDetail?.(company);
-
-            // Create the row HTML with debugging classes
-            const rowHtml = `
-                <td class="company-name text-left">${company.name || ''}</td>
-                <td class="company-industry text-left">
-                    <span class="table-badge badge-debug">${company.industry || ''}</span>
+            row.className = 'company-row';
+            row.setAttribute('data-company-id', company.id);
+            
+            // Create row content
+            const rowContent = `
+                <td class="company-name">${company.name || ''}</td>
+                <td class="company-industry">
+                    <span class="table-badge">${company.industry || ''}</span>
                 </td>
-                <td class="company-stage text-left">
-                    <span class="table-badge badge-debug">${company.stage || ''}</span>
+                <td class="company-stage">
+                    <span class="table-badge">${company.stage || ''}</span>
                 </td>
-                <td class="company-location text-left">
-                    <span class="table-badge badge-debug">${company.location || ''}</span>
+                <td class="company-location">
+                    <span class="table-badge">${company.location || ''}</span>
                 </td>
                 <td class="company-otani-rating text-center">
-                    <span class="rating-badge otani-rating-${company.otani_rating?.toLowerCase() || 'd'} rating-debug">${company.otani_rating || 'D'}</span>
+                    <span class="rating-badge otani-rating-${(company.otani_rating || 'D').toLowerCase()}">${company.otani_rating || 'D'}</span>
                 </td>
                 <td class="company-rating text-center">
-                    <span class="rating-badge rating-${company.rating?.toLowerCase() || ''} rating-debug">${company.rating || ''}</span>
+                    <span class="rating-badge rating-${(company.rating || '').toLowerCase()}">${company.rating || ''}</span>
                 </td>
-                <td class="company-actions text-center">
+                <td class="company-actions">
                     <div class="table-actions">
-                        ${company.website ? `<a href="${company.website}" target="_blank" rel="noopener noreferrer" class="action-btn action-debug" onclick="event.stopPropagation()"><i class="fas fa-external-link-alt"></i></a>` : ''}
-                        ${company.email ? `<a href="mailto:${company.email}" class="action-btn action-debug" onclick="event.stopPropagation()"><i class="fas fa-envelope"></i></a>` : ''}
+                        ${company.website ? `
+                            <a href="${company.website}" 
+                               target="_blank" 
+                               rel="noopener noreferrer" 
+                               class="action-btn" 
+                               onclick="event.stopPropagation()"
+                               title="Visit Website">
+                                <i class="fas fa-external-link-alt"></i>
+                            </a>` : ''}
+                        ${company.email ? `
+                            <a href="mailto:${company.email}" 
+                               class="action-btn" 
+                               onclick="event.stopPropagation()"
+                               title="Send Email">
+                                <i class="fas fa-envelope"></i>
+                            </a>` : ''}
                     </div>
                 </td>
             `;
 
-            // Log the generated HTML for debugging
-            console.log('Generated row HTML:', rowHtml);
+            // Set the row content
+            row.innerHTML = rowContent;
 
-            row.innerHTML = rowHtml;
-            elements.companiesTableBody.appendChild(row);
-
-            // Log applied styles for debugging
-            const badges = row.querySelectorAll('.badge-debug');
-            badges.forEach(badge => {
-                console.log('Badge computed styles:', window.getComputedStyle(badge));
+            // Add click handler
+            row.addEventListener('click', () => {
+                console.log('Row clicked:', company);
+                if (typeof window.openCompanyDetail === 'function') {
+                    window.openCompanyDetail(company);
+                } else {
+                    console.error('openCompanyDetail function not found');
+                }
             });
 
-            const ratings = row.querySelectorAll('.rating-debug');
-            ratings.forEach(rating => {
-                console.log('Rating computed styles:', window.getComputedStyle(rating));
-            });
-
-            const actions = row.querySelectorAll('.action-debug');
-            actions.forEach(action => {
-                console.log('Action computed styles:', window.getComputedStyle(action));
-            });
+            // Add the row to the table
+            companiesTableBody.appendChild(row);
         });
     }
 
     // Expose functions to window
+    window.initDashboard = initDashboard;
     window.renderCompanies = renderCompanies;
 })();

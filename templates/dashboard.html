@@ -1,5 +1,13 @@
 {% extends "base.html" %}
 
+{% block extra_head %}
+<!-- Load scripts in correct order -->
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+<script src="{{ url_for('static', filename='js/company_details.js') }}"></script>
+<script src="{{ url_for('static', filename='js/add_company.js') }}"></script>
+<script src="{{ url_for('static', filename='js/preferences.js') }}"></script>
+{% endblock %}
+
 {% block content %}
 <div class="dashboard-container">
     <div class="flash-messages"></div>
@@ -320,19 +328,16 @@
 
 {% include 'company_details_modal.html' %}
 
-<script src="{{ url_for('static', filename='js/company_details.js') }}"></script>
-<script src="{{ url_for('static', filename='js/add_company.js') }}"></script>
-<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
-
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     try {
         // Get companies from the template context and make it globally available
         window.companies = {{ companies|tojson|safe }};
-        console.log('Initial companies:', window.companies);
+        console.log('Dashboard init - companies:', window.companies);
         
         // Initialize preferences from server data with safe defaults
         const serverPreferences = {{ preferences|tojson|safe if preferences else '{"investment_stages": [], "industry_sectors": [], "geographic_focus": [], "investment_sizes": [], "additional_preferences": ""}' }};
+        console.log('Dashboard init - preferences:', serverPreferences);
 
         // Set initial values for each preference
         setSelectedOptions('Select stages', serverPreferences.investment_stages);
@@ -343,51 +348,16 @@ document.addEventListener('DOMContentLoaded', function() {
         // Set additional preferences
         document.getElementById('additionalPrefs').value = serverPreferences.additional_preferences;
 
-        // Render companies using the dashboard.js function
-        window.renderCompanies(window.companies);
+        // Initialize the dashboard
+        if (typeof window.initDashboard === 'function') {
+            window.initDashboard(window.companies);
+        } else {
+            console.error('Dashboard initialization function not found');
+        }
     } catch (error) {
         console.error('Error initializing dashboard:', error);
     }
 });
-
-// Render companies in the table
-function renderCompanies(companies) {
-    console.log('Rendering companies:', companies);
-    const tableBody = document.getElementById('companiesTableBody');
-    if (!tableBody) return;
-
-    tableBody.innerHTML = '';
-    companies.forEach(company => {
-        console.log('Creating row for company:', company);
-        const row = document.createElement('tr');
-        row.setAttribute('data-company-id', company.id);
-        row.onclick = function() {
-            console.log('Row clicked:', company);
-            openCompanyDetail(company);
-        };
-
-        row.innerHTML = `
-            <td class="company-name text-left">${company.name}</td>
-            <td class="company-industry text-left">${company.industry}</td>
-            <td class="company-stage text-left">${company.stage}</td>
-            <td class="company-location text-left">${company.location}</td>
-            <td class="company-otani-rating text-center">
-                <span class="otani-rating otani-rating-${company.otani_rating?.toLowerCase() || 'd'}">${company.otani_rating || 'D'}</span>
-            </td>
-            <td class="company-rating text-center">
-                <span class="rating-badge ${company.rating?.toLowerCase() || ''}">${company.rating || ''}</span>
-            </td>
-            <td class="company-actions text-center">
-                <div class="action-buttons">
-                    ${company.website ? `<a href="${company.website}" target="_blank" rel="noopener noreferrer" class="action-button" onclick="event.stopPropagation()"><i class="fas fa-external-link-alt"></i></a>` : ''}
-                    ${company.email ? `<a href="mailto:${company.email}" class="action-button" onclick="event.stopPropagation()"><i class="fas fa-envelope"></i></a>` : ''}
-                </div>
-            </td>
-        `;
-
-        tableBody.appendChild(row);
-    });
-}
 
 function updateSelectedText(select) {
     const selectedOptions = Array.from(select.querySelectorAll('input:checked'));
@@ -398,25 +368,24 @@ function updateSelectedText(select) {
         selectedText.textContent = placeholder;
     } else {
         const selectedLabels = selectedOptions.map(option => {
-            // Get the label text by finding the parent label element
-            const label = option.closest('.option-item');
+            const label = option.closest('label');
             return label ? label.textContent.trim() : '';
-        }).filter(text => text); // Remove any empty strings
-        
+        }).filter(Boolean);
         selectedText.textContent = selectedLabels.join(', ');
     }
 }
 
 function setSelectedOptions(selectPlaceholder, selectedValues) {
-    const select = document.querySelector(`[data-placeholder="${selectPlaceholder}"]`);
-    if (!select) return;
-    
-    selectedValues.forEach(value => {
-        const input = select.querySelector(`input[value="${value}"]`);
-        if (input) input.checked = true;
+    const selects = document.querySelectorAll('.custom-select');
+    selects.forEach(select => {
+        if (select.dataset.placeholder === selectPlaceholder) {
+            const options = select.querySelectorAll('input[type="checkbox"]');
+            options.forEach(option => {
+                option.checked = selectedValues.includes(option.value);
+            });
+            updateSelectedText(select);
+        }
     });
-    
-    updateSelectedText(select);
 }
 
 function savePreferences() {
@@ -435,51 +404,48 @@ function savePreferences() {
         },
         body: JSON.stringify(preferences)
     })
-    .then(response => response.json())
-    .then(data => {
-        if (data.message) {
-            showMessage(data.message);
-        } else if (data.error) {
-            showMessage(data.error, 'error');
+    .then(response => {
+        if (response.ok) {
+            showMessage('Preferences saved successfully');
         } else {
-            showMessage('Failed to save preferences', 'error');
+            showMessage('Error saving preferences', 'error');
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        showMessage('Failed to save preferences', 'error');
+        showMessage('Error saving preferences', 'error');
     });
 }
 
 function getSelectedValues(placeholder) {
-    const select = document.querySelector(`[data-placeholder="${placeholder}"]`);
-    if (!select) return [];
-    return Array.from(select.querySelectorAll('input:checked')).map(input => input.value);
+    const select = Array.from(document.querySelectorAll('.custom-select')).find(el => el.dataset.placeholder === placeholder);
+    const checkedBoxes = select ? Array.from(select.querySelectorAll('input:checked')) : [];
+    return checkedBoxes.map(box => box.value);
 }
 
 function resetPreferences() {
-    document.querySelectorAll('.custom-select input[type="checkbox"]').forEach(input => {
-        input.checked = false;
-    });
-    
-    document.querySelectorAll('.custom-select').forEach(select => {
+    const selects = document.querySelectorAll('.custom-select');
+    selects.forEach(select => {
+        const options = select.querySelectorAll('input[type="checkbox"]');
+        options.forEach(option => {
+            option.checked = false;
+        });
         updateSelectedText(select);
     });
     
     document.getElementById('additionalPrefs').value = '';
-    showMessage('Preferences reset successfully!');
 }
 
 function showMessage(message, type = 'success') {
     const flashMessages = document.querySelector('.flash-messages');
-    if (!flashMessages) return;
-    
     const messageDiv = document.createElement('div');
     messageDiv.className = `alert alert-${type}`;
     messageDiv.textContent = message;
     flashMessages.appendChild(messageDiv);
     
-    setTimeout(() => messageDiv.remove(), 5000);
+    setTimeout(() => {
+        messageDiv.remove();
+    }, 3000);
 }
 </script>
 {% endblock %}
