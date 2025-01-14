@@ -365,7 +365,14 @@ def dashboard():
         # Get or create user preferences
         preferences = current_user.preferences
         if not preferences:
-            preferences = UserPreferences(user_id=current_user.id)
+            preferences = UserPreferences(
+                user_id=current_user.id,
+                investment_stages=json.dumps([]),
+                industry_sectors=json.dumps([]),
+                geographic_focus=json.dumps([]),
+                investment_sizes=json.dumps([]),
+                additional_preferences=''
+            )
             db.session.add(preferences)
             db.session.commit()
         
