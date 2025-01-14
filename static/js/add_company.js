@@ -64,16 +64,14 @@
                 <span class="rating-badge ${company.rating?.toLowerCase() || ''}">${company.rating || ''}</span>
             </td>
             <td class="text-left">${company.name || ''}</td>
-            <td class="text-left">${company.industry || ''}</td>
             <td class="text-left">${company.stage || ''}</td>
+            <td class="text-left">${company.industry || ''}</td>
+            <td class="text-left">${company.location || ''}</td>
             <td class="icon-cell" onclick="event.stopPropagation()">
                 ${company.website ? `<a href="${company.website}" target="_blank" rel="noopener noreferrer"><i class="fas fa-external-link-alt"></i></a>` : ''}
             </td>
             <td class="icon-cell" onclick="event.stopPropagation()">
                 ${company.email ? `<a href="mailto:${company.email}"><i class="fas fa-envelope"></i></a>` : ''}
-            </td>
-            <td class="description-col text-left">
-                <div class="description-content">${company.description || ''}</div>
             </td>
         `;
         
@@ -123,100 +121,71 @@
 
     // Handle form submission
     async function handleSubmit(event) {
-        if (event) {
-            event.preventDefault();
-            event.stopPropagation(); // Prevent event bubbling
-            debugLog('Prevented default form submission and stopped propagation');
-        }
-
-        submitCount++;
-        const currentSubmit = submitCount;
-        debugLog(`Submit attempt #${currentSubmit} started`);
-
-        // Check if enough time has passed since last submission
-        const now = Date.now();
-        const timeSinceLastSubmission = now - lastSubmissionTime;
-        debugLog(`Time since last submission: ${timeSinceLastSubmission}ms`);
-
-        if (timeSinceLastSubmission < DEBOUNCE_DELAY) {
-            debugLog(`Submission too soon (${timeSinceLastSubmission}ms < ${DEBOUNCE_DELAY}ms)`);
-            return;
-        }
-
+        event.preventDefault();
+        debugLog('Form submission started');
+        
         if (isSubmitting) {
-            debugLog('Form submission already in progress');
+            debugLog('Already submitting, preventing duplicate submission');
             return;
         }
-
-        if (!elements.addCompanyForm || !elements.addCompanyButton) {
-            debugLog('Error: Required elements not found', {
-                formFound: !!elements.addCompanyForm,
-                buttonFound: !!elements.addCompanyButton
-            });
+        
+        const currentTime = Date.now();
+        if (currentTime - lastSubmissionTime < DEBOUNCE_DELAY) {
+            debugLog('Submission too soon after last submission, preventing');
+            showMessage('Please wait a moment before submitting again', 'warning');
             return;
         }
-
-        if (!elements.addCompanyForm.checkValidity()) {
-            debugLog('Form validation failed');
-            showFormErrors();
-            return;
-        }
-
-        const originalText = elements.addCompanyButton.innerHTML;
-        debugLog('Starting submission process');
+        
+        isSubmitting = true;
+        submitCount++;
+        const currentSubmitCount = submitCount;
+        debugLog(`Submit attempt #${currentSubmitCount}`);
         
         try {
-            isSubmitting = true;
-            lastSubmissionTime = now;
-            elements.addCompanyButton.disabled = true;
-            elements.addCompanyButton.innerHTML = '<span class="loading-spinner"></span>Adding...';
-
-            const formData = new FormData(elements.addCompanyForm);
-            const data = Object.fromEntries(formData.entries());
-            debugLog('Form data prepared:', data);
+            const formData = {
+                name: elements.addCompanyForm.querySelector('#name').value,
+                industry: elements.addCompanyForm.querySelector('#industry').value,
+                stage: elements.addCompanyForm.querySelector('#stage').value,
+                location: elements.addCompanyForm.querySelector('#location').value,
+                website: elements.addCompanyForm.querySelector('#website').value,
+                email: elements.addCompanyForm.querySelector('#email').value,
+                description: elements.addCompanyForm.querySelector('#description').value,
+                rating: elements.addCompanyForm.querySelector('#rating').value
+            };
             
-            debugLog('Sending POST request to /add_company');
+            debugLog('Form data:', formData);
+            
             const response = await fetch('/add_company', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Accept': 'application/json'
                 },
-                body: JSON.stringify(data)
+                body: JSON.stringify(formData)
             });
             
-            const result = await response.json();
-            debugLog('Received response:', result);
-
-            if (!response.ok) {
-                throw new Error(result.error || 'Failed to add company');
-            }
-
-            if (result.message === 'Company already added') {
-                debugLog('Duplicate company detected by server');
-                showMessage('This company was already added', 'warning');
+            const data = await response.json();
+            debugLog('Server response:', data);
+            
+            if (response.ok) {
+                if (data.message === "Company already added") {
+                    showMessage('This company was already added', 'warning');
+                } else {
+                    showMessage('Company added successfully', 'success');
+                    addCompanyToTable(data.company);
+                    closeAddCompanyModal();
+                    elements.addCompanyForm.reset();
+                }
             } else {
-                addCompanyToTable(result.company);
-                showMessage('Company added successfully!');
-                elements.addCompanyForm.reset();
-                closeAddCompanyModal();
+                showMessage(data.error || 'Failed to add company', 'error');
             }
-
+            
         } catch (error) {
-            debugLog('Error during submission:', error);
-            console.error('Error adding company:', error);
-            showMessage(error.message || 'Failed to add company', 'error');
+            console.error('Error:', error);
+            showMessage('An error occurred while adding the company', 'error');
         } finally {
-            debugLog(`Submit attempt #${currentSubmit} finished`);
-            if (elements.addCompanyButton) {
-                elements.addCompanyButton.disabled = false;
-                elements.addCompanyButton.innerHTML = originalText;
-            }
-            // Only reset isSubmitting after a delay
-            setTimeout(() => {
-                isSubmitting = false;
-                debugLog(`Reset submission state for attempt #${currentSubmit}`);
-            }, DEBOUNCE_DELAY);
+            isSubmitting = false;
+            lastSubmissionTime = Date.now();
+            debugLog(`Submit attempt #${currentSubmitCount} completed`);
         }
     }
 

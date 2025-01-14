@@ -11,6 +11,8 @@ from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 import json
 import uuid
+import random
+from flask_migrate import Migrate
 
 # Configure logging
 logging.basicConfig(
@@ -30,6 +32,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialize extensions
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 
@@ -58,7 +61,6 @@ class User(UserMixin, db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    username = db.Column(db.String(80), unique=True, nullable=False)
     password_hash = db.Column(db.String(256))  # Increased from 128 to 256 for scrypt hashes
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -84,18 +86,18 @@ class UserPreferences(db.Model):
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
 class Company(db.Model):
-    __tablename__ = 'companies'  # Explicitly set table name
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     name = db.Column(db.String(100), nullable=False)
     industry = db.Column(db.String(50))
     stage = db.Column(db.String(50))
     website = db.Column(db.String(200))
-    email = db.Column(db.String(120))
+    email = db.Column(db.String(100))
     description = db.Column(db.Text)
     rating = db.Column(db.String(1))
+    location = db.Column(db.String(100), nullable=True)  # New field, nullable to handle existing records
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
     def to_dict(self):
         return {
@@ -107,6 +109,7 @@ class Company(db.Model):
             'email': self.email,
             'description': self.description,
             'rating': self.rating,
+            'location': self.location,
             'created_at': self.created_at.isoformat() if self.created_at else None,
             'updated_at': self.updated_at.isoformat() if self.updated_at else None
         }
@@ -127,7 +130,6 @@ def register():
     if request.method == 'POST':
         try:
             email = request.form.get('email')
-            username = request.form.get('username')
             password = request.form.get('password')
             confirm_password = request.form.get('confirm_password')
 
@@ -148,7 +150,7 @@ def register():
 
             # Create new user
             app.logger.info('Creating new user...')
-            new_user = User(email=email, username=username)
+            new_user = User(email=email)
             new_user.set_password(password)
             
             app.logger.info('Adding user to database...')
@@ -271,7 +273,7 @@ def add_company():
             return jsonify({"error": "No data provided"}), 400
 
         # Validate required fields
-        required_fields = ['name', 'industry', 'stage']
+        required_fields = ['name', 'industry', 'stage', 'location']
         for field in required_fields:
             if not data.get(field):
                 app.logger.error(f"[{request_id}] Missing required field: {field}")
@@ -305,6 +307,7 @@ def add_company():
             email=data.get('email', ''),
             description=data.get('description', ''),
             rating=data.get('rating', ''),
+            location=data.get('location', ''),
             user_id=current_user.id
         )
 
@@ -446,6 +449,32 @@ def delete_company(company_id):
         app.logger.error(f'Error deleting company: {str(e)}')
         return {'error': 'Failed to delete company'}, 500
 
+@app.route('/update_company_locations', methods=['POST'])
+@login_required
+def update_company_locations():
+    if current_user.email != 'ttanaka@translinkcapital.com':
+        return jsonify({"error": "Unauthorized"}), 403
+        
+    try:
+        locations = [
+            'San Francisco, CA', 'New York, NY', 'Boston, MA', 'Seattle, WA',
+            'Los Angeles, CA', 'Austin, TX', 'Chicago, IL', 'Miami, FL',
+            'Denver, CO', 'Portland, OR', 'Washington, DC', 'San Diego, CA',
+            'Houston, TX', 'Atlanta, GA', 'Phoenix, AZ', 'Dallas, TX'
+        ]
+        
+        companies = Company.query.filter_by(user_id=current_user.id).all()
+        for company in companies:
+            if not company.location:
+                company.location = random.choice(locations)
+        
+        db.session.commit()
+        return jsonify({"message": "Company locations updated successfully"}), 200
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+
 @app.route('/static/<path:filename>')
 def serve_static(filename):
     app.logger.info(f'Serving static file: {filename}')
@@ -514,16 +543,7 @@ def create_dummy_companies():
         app.logger.info(f'Creating dummy companies for user {user.id}')
         
         for company_data in companies:
-            company = Company(
-                user_id=user.id,
-                name=company_data['name'],
-                industry=company_data['industry'],
-                stage=company_data['stage'],
-                website=company_data['website'],
-                email=company_data['email'],
-                description=company_data['description'],
-                rating=company_data['rating']
-            )
+            company = Company(user_id=user.id, **company_data)
             db.session.add(company)
         
         try:
@@ -550,8 +570,7 @@ with app.app_context():
         test_user = User.query.filter_by(email='test@example.com').first()
         if not test_user:
             test_user = User(
-                email='test@example.com',
-                username='test_user'
+                email='test@example.com'
             )
             test_user.set_password('password')
             db.session.add(test_user)
