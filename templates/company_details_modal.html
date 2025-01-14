@@ -1,7 +1,7 @@
 <!-- Company Details Modal -->
 <div id="companyDetailModal" class="modal">
     <div class="modal-overlay"></div>
-    <div class="modal-container modern-startup">
+    <div class="modal-container company-details-modal modern-startup">
         <div class="modal-header startup-header">
             <div class="company-header">
                 <h2 id="companyDetailName" class="company-title"></h2>
@@ -15,58 +15,58 @@
                 <i class="fas fa-times"></i>
             </button>
         </div>
+        
         <div class="modal-body startup-body">
-            <div class="company-details modern-details">
-                <div class="detail-section">
-                    <div class="detail-group">
-                        <div class="detail-item">
-                            <i class="fas fa-globe detail-icon"></i>
-                            <div class="detail-content">
-                                <label class="detail-label">Website</label>
-                                <div id="companyDetailWebsite" class="detail-value website-value"></div>
-                            </div>
+            <div class="detail-section">
+                <div class="detail-group">
+                    <div class="detail-item">
+                        <i class="fas fa-globe detail-icon"></i>
+                        <div class="detail-content">
+                            <label class="detail-label">Website</label>
+                            <div id="companyDetailWebsite" class="detail-value"></div>
                         </div>
-                        <div class="detail-item">
-                            <i class="fas fa-envelope detail-icon"></i>
-                            <div class="detail-content">
-                                <label class="detail-label">Email</label>
-                                <div id="companyDetailEmail" class="detail-value"></div>
-                            </div>
+                    </div>
+                    <div class="detail-item">
+                        <i class="fas fa-envelope detail-icon"></i>
+                        <div class="detail-content">
+                            <label class="detail-label">Email</label>
+                            <div id="companyDetailEmail" class="detail-value"></div>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <div class="detail-section description-section">
-                    <h3 class="section-title">
-                        <i class="fas fa-info-circle"></i>
-                        About
-                    </h3>
-                    <div id="companyDetailDescription" class="detail-value description-value"></div>
-                </div>
+            <div class="detail-section">
+                <h3 class="section-title">
+                    <i class="fas fa-info-circle"></i>
+                    About
+                </h3>
+                <div id="companyDetailDescription" class="detail-value description-value"></div>
+            </div>
 
-                <div class="detail-section notes-section">
-                    <h3 class="section-title">
-                        <i class="fas fa-sticky-note"></i>
-                        Notes
-                    </h3>
-                    <textarea id="companyNotes" class="detail-notes modern-textarea" placeholder="Add your notes about this company..."></textarea>
-                </div>
+            <div class="detail-section">
+                <h3 class="section-title">
+                    <i class="fas fa-sticky-note"></i>
+                    Notes
+                </h3>
+                <textarea id="companyNotes" class="modern-textarea" placeholder="Add your notes about this company..."></textarea>
             </div>
         </div>
+
         <div class="modal-footer startup-footer">
             <div class="footer-actions">
                 <button type="button" class="btn btn-danger" onclick="confirmDeleteCompany()">
                     <i class="fas fa-trash"></i>
-                    <span>Delete Company</span>
+                    Delete Company
                 </button>
                 <div class="footer-right">
                     <button type="button" class="btn btn-outline" onclick="closeCompanyDetailModal()">
                         <i class="fas fa-times"></i>
-                        <span>Close</span>
+                        Close
                     </button>
-                    <button type="button" class="btn btn-primary save-notes" onclick="saveCompanyNotes()">
+                    <button type="button" class="btn btn-primary" onclick="saveCompanyNotes()">
                         <i class="fas fa-save"></i>
-                        <span>Save Notes</span>
+                        Save Notes
                     </button>
                 </div>
             </div>
@@ -79,7 +79,10 @@
     <div class="modal-overlay"></div>
     <div class="modal-container delete-confirm-modal">
         <div class="modal-header">
-            <h3>Confirm Deletion</h3>
+            <h3>
+                <i class="fas fa-exclamation-triangle"></i>
+                Confirm Deletion
+            </h3>
             <button class="modal-close" onclick="closeDeleteConfirmModal()">
                 <i class="fas fa-times"></i>
             </button>
@@ -90,11 +93,11 @@
         <div class="modal-footer">
             <button type="button" class="btn btn-outline" onclick="closeDeleteConfirmModal()">
                 <i class="fas fa-times"></i>
-                <span>Cancel</span>
+                Cancel
             </button>
             <button type="button" class="btn btn-danger" onclick="deleteCompany()">
                 <i class="fas fa-trash"></i>
-                <span>Delete</span>
+                Delete
             </button>
         </div>
     </div>

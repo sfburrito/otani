@@ -361,6 +361,7 @@ function renderCompanies(companies) {
         console.log('Creating row for company:', company);
         const tr = document.createElement('tr');
         tr.className = 'clickable-row';
+        tr.dataset.companyId = company.id;  // Add this line to set the company ID
         tr.onclick = function() {
             console.log('Row clicked:', company);
             openCompanyDetail(company);
