@@ -61,19 +61,19 @@
         
         newRow.innerHTML = `
             <td class="company-name text-left">${company.name || ''}</td>
-            <td class="company-industry text-left">${company.industry || ''}</td>
-            <td class="company-stage text-left">${company.stage || ''}</td>
-            <td class="company-location text-left">${company.location || ''}</td>
+            <td class="company-industry text-left"><span class="table-badge">${company.industry || ''}</span></td>
+            <td class="company-stage text-left"><span class="table-badge">${company.stage || ''}</span></td>
+            <td class="company-location text-left"><span class="table-badge">${company.location || ''}</span></td>
             <td class="company-otani-rating text-center">
-                <span class="otani-rating otani-rating-${company.otani_rating?.toLowerCase() || 'd'}">${company.otani_rating || 'D'}</span>
+                <span class="rating-badge otani-rating-${company.otani_rating?.toLowerCase() || 'd'}">${company.otani_rating || 'D'}</span>
             </td>
             <td class="company-rating text-center">
-                <span class="rating-badge ${company.rating?.toLowerCase() || ''}">${company.rating || ''}</span>
+                <span class="rating-badge rating-${company.rating?.toLowerCase() || ''}">${company.rating || ''}</span>
             </td>
             <td class="company-actions text-center">
-                <div class="action-buttons">
-                    ${company.website ? `<a href="${company.website}" target="_blank" rel="noopener noreferrer" class="action-button" onclick="event.stopPropagation()"><i class="fas fa-external-link-alt"></i></a>` : ''}
-                    ${company.email ? `<a href="mailto:${company.email}" class="action-button" onclick="event.stopPropagation()"><i class="fas fa-envelope"></i></a>` : ''}
+                <div class="table-actions">
+                    ${company.website ? `<a href="${company.website}" target="_blank" rel="noopener noreferrer" class="action-btn" onclick="event.stopPropagation()"><i class="fas fa-external-link-alt"></i></a>` : ''}
+                    ${company.email ? `<a href="mailto:${company.email}" class="action-btn" onclick="event.stopPropagation()"><i class="fas fa-envelope"></i></a>` : ''}
                 </div>
             </td>
         `;
