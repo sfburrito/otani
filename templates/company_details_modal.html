@@ -1,41 +1,85 @@
 <!-- Company Details Modal -->
-<div class="modal" id="companyDetailsModal" tabindex="-1" role="dialog" aria-labelledby="companyDetailsModalLabel" aria-hidden="true">
+<div class="modal modern-startup" id="companyDetailsModal" tabindex="-1" role="dialog" aria-labelledby="companyDetailsModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="companyDetailsModalLabel">Company Details</h5>
-                <button type="button" class="btn-close" onclick="closeModal()">Close</button>
+            <div class="modal-header startup-header">
+                <div class="company-header">
+                    <h2 id="modal-company-name" class="company-title"></h2>
+                    <div class="company-badges">
+                        <span id="modal-company-industry" class="badge industry-badge"></span>
+                        <span id="modal-company-stage" class="badge stage-badge"></span>
+                        <span id="modal-company-rating" class="badge rating-badge"></span>
+                    </div>
+                </div>
+                <button type="button" class="modal-close modern-close" onclick="closeCompanyDetailModal()">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <h6>Basic Information</h6>
-                        <p><strong>Name:</strong> <span id="modal-company-name"></span></p>
-                        <p><strong>Industry:</strong> <span id="modal-company-industry"></span></p>
-                        <p><strong>Stage:</strong> <span id="modal-company-stage"></span></p>
-                        <p><strong>Location:</strong> <span id="modal-company-location"></span></p>
-                    </div>
-                    <div class="col-md-6">
-                        <h6>Contact Information</h6>
-                        <p><strong>Website:</strong> <a id="modal-company-website" href="#" target="_blank"></a></p>
-                        <p><strong>Email:</strong> <a id="modal-company-email" href="#"></a></p>
+            <div class="modal-body startup-body">
+                <div class="detail-section">
+                    <div class="detail-group">
+                        <div class="detail-item">
+                            <i class="fas fa-globe detail-icon"></i>
+                            <div class="detail-content">
+                                <label class="detail-label">Website</label>
+                                <div class="detail-value">
+                                    <a id="modal-company-website" href="#" target="_blank"></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-envelope detail-icon"></i>
+                            <div class="detail-content">
+                                <label class="detail-label">Email</label>
+                                <div class="detail-value">
+                                    <a id="modal-company-email" href="#"></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-map-marker detail-icon"></i>
+                            <div class="detail-content">
+                                <label class="detail-label">Location</label>
+                                <div id="modal-company-location" class="detail-value"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="row mt-3">
-                    <div class="col-12">
-                        <h6>Description</h6>
-                        <p id="modal-company-description"></p>
-                    </div>
+
+                <div class="detail-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-info-circle"></i>
+                        About
+                    </h3>
+                    <div id="modal-company-description" class="detail-value description-value"></div>
                 </div>
-                <div class="row mt-3">
-                    <div class="col-12">
-                        <h6>Rating</h6>
-                        <p id="modal-company-rating"></p>
-                    </div>
+
+                <div class="detail-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-sticky-note"></i>
+                        Notes
+                    </h3>
+                    <textarea id="companyNotes" class="modern-textarea" placeholder="Add your notes about this company..."></textarea>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" onclick="closeModal()">Close</button>
+
+            <div class="modal-footer startup-footer">
+                <div class="footer-actions">
+                    <button type="button" class="btn btn-danger" onclick="confirmDeleteCompany()">
+                        <i class="fas fa-trash"></i>
+                        Delete Company
+                    </button>
+                    <div class="footer-right">
+                        <button type="button" class="btn btn-outline" onclick="closeCompanyDetailModal()">
+                            <i class="fas fa-times"></i>
+                            Close
+                        </button>
+                        <button type="button" class="btn btn-primary" onclick="saveCompanyNotes()">
+                            <i class="fas fa-save"></i>
+                            Save Notes
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -44,18 +88,16 @@
 <!-- Delete Confirmation Modal -->
 <div id="deleteConfirmModal" class="modal">
     <div class="modal-overlay"></div>
-    <div class="modal-container delete-confirm-modal">
+    <div class="modal-container">
         <div class="modal-header">
-            <h3>
-                <i class="fas fa-exclamation-triangle"></i>
-                Confirm Deletion
-            </h3>
-            <button class="modal-close" onclick="closeDeleteConfirmModal()">
+            <h2>Confirm Delete</h2>
+            <button class="modal-close close-modal" onclick="closeDeleteConfirmModal()">
                 <i class="fas fa-times"></i>
             </button>
         </div>
         <div class="modal-body">
-            <p>Are you sure you want to delete <span id="deleteCompanyName"></span>? This action cannot be undone.</p>
+            <p>Are you sure you want to delete <span id="deleteCompanyName"></span>?</p>
+            <p class="text-danger">This action cannot be undone.</p>
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-outline" onclick="closeDeleteConfirmModal()">
@@ -64,13 +106,14 @@
             </button>
             <button type="button" class="btn btn-danger" onclick="deleteCompany()">
                 <i class="fas fa-trash"></i>
-                Delete
+                Delete Company
             </button>
         </div>
     </div>
 </div>
 
 <style>
+/* Modal Base Styles */
 .modal {
     display: none;
     position: fixed;
@@ -91,7 +134,7 @@
 .modal-dialog {
     position: relative;
     width: auto;
-    margin: 0.5rem;
+    margin: 1.75rem auto;
     pointer-events: none;
     transform: translate(0, -50px);
     transition: transform 0.3s ease-out;
@@ -111,50 +154,229 @@
     z-index: 1040;
 }
 
-.modal-content {
-    position: relative;
+/* Modern Startup Theme */
+.modern-startup .modal-content {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    border: none;
+}
+
+.modern-startup .startup-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid #eef2f7;
+}
+
+.modern-startup .company-header {
     display: flex;
     flex-direction: column;
-    width: 100%;
-    pointer-events: auto;
-    background-color: #fff;
-    background-clip: padding-box;
-    border: 1px solid rgba(0, 0, 0, 0.2);
-    border-radius: 0.3rem;
-    outline: 0;
+    gap: 0.5rem;
 }
 
-.modal-header {
+.modern-startup .company-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #2d3748;
+    margin: 0;
+}
+
+.modern-startup .company-badges {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.modern-startup .badge {
+    padding: 0.35rem 0.75rem;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.modern-startup .industry-badge {
+    background-color: #ebf8ff;
+    color: #3182ce;
+}
+
+.modern-startup .stage-badge {
+    background-color: #f0fff4;
+    color: #38a169;
+}
+
+.modern-startup .rating-badge {
+    background-color: #fff5f5;
+    color: #e53e3e;
+}
+
+.modern-startup .startup-body {
+    padding: 1.5rem;
+}
+
+.modern-startup .detail-section {
+    margin-bottom: 2rem;
+}
+
+.modern-startup .detail-group {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.modern-startup .detail-item {
     display: flex;
     align-items: flex-start;
-    justify-content: space-between;
-    padding: 1rem;
-    border-bottom: 1px solid #dee2e6;
-    border-top-left-radius: calc(0.3rem - 1px);
-    border-top-right-radius: calc(0.3rem - 1px);
+    gap: 1rem;
 }
 
-.modal-body {
-    position: relative;
-    flex: 1 1 auto;
-    padding: 1rem;
+.modern-startup .detail-icon {
+    color: #4a5568;
+    font-size: 1.25rem;
+    margin-top: 0.25rem;
 }
 
-.modal-footer {
+.modern-startup .detail-content {
+    flex: 1;
+}
+
+.modern-startup .detail-label {
+    font-size: 0.875rem;
+    color: #718096;
+    margin-bottom: 0.25rem;
+    display: block;
+}
+
+.modern-startup .detail-value {
+    color: #2d3748;
+    font-size: 1rem;
+}
+
+.modern-startup .detail-value a {
+    color: #4299e1;
+    text-decoration: none;
+}
+
+.modern-startup .detail-value a:hover {
+    text-decoration: underline;
+}
+
+.modern-startup .section-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 1rem;
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
-    justify-content: flex-end;
+    gap: 0.5rem;
+}
+
+.modern-startup .section-title i {
+    color: #4a5568;
+    font-size: 1.125rem;
+}
+
+.modern-startup .description-value {
+    line-height: 1.6;
+    color: #4a5568;
+}
+
+.modern-startup .modern-textarea {
+    width: 100%;
+    min-height: 120px;
     padding: 0.75rem;
-    border-top: 1px solid #dee2e6;
-    border-bottom-right-radius: calc(0.3rem - 1px);
-    border-bottom-left-radius: calc(0.3rem - 1px);
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    resize: vertical;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: #2d3748;
+    transition: border-color 0.15s ease-in-out;
+}
+
+.modern-startup .modern-textarea:focus {
+    outline: none;
+    border-color: #4299e1;
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15);
+}
+
+.modern-startup .startup-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #eef2f7;
+}
+
+.modern-startup .footer-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.modern-startup .footer-right {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.modern-startup .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s ease-in-out;
+}
+
+.modern-startup .btn i {
+    font-size: 1rem;
+}
+
+.modern-startup .btn-primary {
+    background-color: #4299e1;
+    color: white;
+    border: none;
+}
+
+.modern-startup .btn-primary:hover {
+    background-color: #3182ce;
+}
+
+.modern-startup .btn-outline {
+    background-color: white;
+    color: #4a5568;
+    border: 1px solid #e2e8f0;
+}
+
+.modern-startup .btn-outline:hover {
+    background-color: #f7fafc;
+}
+
+.modern-startup .btn-danger {
+    background-color: #f56565;
+    color: white;
+    border: none;
+}
+
+.modern-startup .btn-danger:hover {
+    background-color: #e53e3e;
+}
+
+.modern-startup .modal-close {
+    background: none;
+    border: none;
+    color: #718096;
+    cursor: pointer;
+    padding: 0.5rem;
+    transition: color 0.15s ease-in-out;
+}
+
+.modern-startup .modal-close:hover {
+    color: #4a5568;
 }
 
 @media (min-width: 576px) {
     .modal-dialog {
         max-width: 500px;
-        margin: 1.75rem auto;
     }
 }
 
@@ -166,13 +388,28 @@
 </style>
 
 <script>
-function closeModal() {
+function closeCompanyDetailModal() {
     document.getElementById("companyDetailsModal").classList.remove("show");
     document.body.classList.remove("modal-open");
+}
+
+function confirmDeleteCompany() {
+    document.getElementById("deleteConfirmModal").classList.add("show");
+    document.body.classList.add("modal-open");
 }
 
 function closeDeleteConfirmModal() {
     document.getElementById("deleteConfirmModal").classList.remove("show");
     document.body.classList.remove("modal-open");
+}
+
+function deleteCompany() {
+    // Add your delete company logic here
+    console.log("Delete company button clicked");
+}
+
+function saveCompanyNotes() {
+    // Add your save company notes logic here
+    console.log("Save company notes button clicked");
 }
 </script>
