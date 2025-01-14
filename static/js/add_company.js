@@ -60,18 +60,18 @@
         newRow.onclick = () => window.openCompanyDetail?.(company);
         
         newRow.innerHTML = `
-            <td class="rating-col text-left">
-                <span class="rating-badge ${company.rating?.toLowerCase() || ''}">${company.rating || ''}</span>
+            <td class="company-name text-left">${company.name || ''}</td>
+            <td class="company-industry text-left">${company.industry || ''}</td>
+            <td class="company-stage text-left">${company.stage || ''}</td>
+            <td class="company-location text-left">${company.location || ''}</td>
+            <td class="company-rating text-center">
+                <span class="otani-rating otani-rating-${company.otani_rating?.toLowerCase() || 'd'}">${company.otani_rating || 'D'}</span>
             </td>
-            <td class="text-left">${company.name || ''}</td>
-            <td class="text-left">${company.stage || ''}</td>
-            <td class="text-left">${company.industry || ''}</td>
-            <td class="text-left">${company.location || ''}</td>
-            <td class="icon-cell" onclick="event.stopPropagation()">
-                ${company.website ? `<a href="${company.website}" target="_blank" rel="noopener noreferrer"><i class="fas fa-external-link-alt"></i></a>` : ''}
-            </td>
-            <td class="icon-cell" onclick="event.stopPropagation()">
-                ${company.email ? `<a href="mailto:${company.email}"><i class="fas fa-envelope"></i></a>` : ''}
+            <td class="company-actions text-center">
+                <div class="action-buttons">
+                    ${company.website ? `<a href="${company.website}" target="_blank" rel="noopener noreferrer" class="action-button" onclick="event.stopPropagation()"><i class="fas fa-external-link-alt"></i></a>` : ''}
+                    ${company.email ? `<a href="mailto:${company.email}" class="action-button" onclick="event.stopPropagation()"><i class="fas fa-envelope"></i></a>` : ''}
+                </div>
             </td>
         `;
         
