@@ -1,16 +1,129 @@
+/* Layout Styles
+ * This file contains all layout-related styles including:
+ * - Containers
+ * - Grid systems
+ * - Spacing utilities
+ * - Flexbox utilities
+ */
+
+@import 'variables.css';
+
+/* Main Layout */
 .main-content {
-    padding-top: calc(var(--navbar-height) + 0.5rem) !important;  /* Reduced from 1rem to 0.5rem */
+    padding-top: calc(var(--navbar-height) + 0.5rem);
     min-height: calc(100vh - var(--navbar-height));
-    background-color: var(--white);  /* Changed from light-gray to white */
-    max-width: 1200px;  /* Match navbar max-width */
+    background-color: var(--white);
+    max-width: 1200px;
     margin-left: auto;
     margin-right: auto;
 }
 
+/* Containers */
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
 .dashboard-container {
-    margin-top: -0.5rem;  /* Increased negative margin to pull up more, previously -1rem */
-    padding: 0 2.5rem;  /* Match navbar padding */
-    max-width: 1200px;  /* Match navbar max-width */
+    margin-top: -0.5rem;
+    padding: 0 2.5rem;
+    max-width: 1200px;
     margin-left: auto;
     margin-right: auto;
 }
+
+/* Grid System */
+.grid {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.grid-2 {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.grid-3 {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.grid-4 {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+/* Responsive Grid */
+@media (max-width: 1024px) {
+    .grid-4 {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .grid-3, .grid-4 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 640px) {
+    .grid-2, .grid-3, .grid-4 {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Flexbox Utilities */
+.flex {
+    display: flex;
+}
+
+.flex-col {
+    flex-direction: column;
+}
+
+.items-center {
+    align-items: center;
+}
+
+.justify-center {
+    justify-content: center;
+}
+
+.justify-between {
+    justify-content: space-between;
+}
+
+.gap-1 { gap: 0.25rem; }
+.gap-2 { gap: 0.5rem; }
+.gap-3 { gap: 0.75rem; }
+.gap-4 { gap: 1rem; }
+.gap-6 { gap: 1.5rem; }
+.gap-8 { gap: 2rem; }
+
+/* Spacing Utilities */
+.m-0 { margin: 0; }
+.m-1 { margin: 0.25rem; }
+.m-2 { margin: 0.5rem; }
+.m-4 { margin: 1rem; }
+.m-6 { margin: 1.5rem; }
+.m-8 { margin: 2rem; }
+
+.mt-1 { margin-top: 0.25rem; }
+.mt-2 { margin-top: 0.5rem; }
+.mt-4 { margin-top: 1rem; }
+.mt-6 { margin-top: 1.5rem; }
+.mt-8 { margin-top: 2rem; }
+
+.mb-1 { margin-bottom: 0.25rem; }
+.mb-2 { margin-bottom: 0.5rem; }
+.mb-4 { margin-bottom: 1rem; }
+.mb-6 { margin-bottom: 1.5rem; }
+.mb-8 { margin-bottom: 2rem; }
+
+.p-0 { padding: 0; }
+.p-1 { padding: 0.25rem; }
+.p-2 { padding: 0.5rem; }
+.p-4 { padding: 1rem; }
+.p-6 { padding: 1.5rem; }
+.p-8 { padding: 2rem; }
