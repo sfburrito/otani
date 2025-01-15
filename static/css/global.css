@@ -319,31 +319,37 @@ textarea.form-input:focus {
 /* Footer */
 .footer {
     background-color: var(--navy);
-    color: var(--white);
-    padding: 2rem 0 1rem;
-    margin-top: 4rem;
+    color: white;
+    padding: 3rem 0;
+    margin-top: 3rem;
+    width: 100%;
 }
 
 .footer-content {
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
     padding: 0 2rem;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 2rem;
+    display: flex;
+    justify-content: space-between;
 }
 
 .footer-section h3 {
     color: var(--white);
+    font-size: 1.2rem;
     margin-bottom: 1rem;
+    font-family: 'Inter', sans-serif;
 }
 
-.footer-section a {
+.footer-section p,
+.footer-section a,
+.footer-bottom p {
     color: var(--gray);
     text-decoration: none;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    line-height: 1.6;
     display: block;
     margin-bottom: 0.5rem;
-    transition: var(--transition);
 }
 
 .footer-section a:hover {
@@ -352,8 +358,8 @@ textarea.form-input:focus {
 
 .footer-bottom {
     text-align: center;
-    margin-top: 2rem;
     padding-top: 2rem;
+    margin-top: 2rem;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 

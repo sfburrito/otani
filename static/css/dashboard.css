@@ -24,9 +24,10 @@
 
 /* Container Layout */
 .dashboard-container {
-    max-width: 1200px;
-    padding: 0 3rem;
+    max-width: 1400px;
+    padding: 0 2rem;
     margin: 0 auto;
+    width: 100%;
 }
 
 /* Section Layout */
@@ -272,10 +273,10 @@
 }
 
 .navbar-inner {
-    max-width: 1200px;
+    max-width: 1400px;
     width: 100%;
     margin: 0 auto;
-    padding: 0 3rem;
+    padding: 0 2rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -313,6 +314,7 @@
     padding-top: var(--navbar-height);
     position: relative;
     z-index: 1;
+    width: 100%;
 }
 
 /* Mobile Responsive */
@@ -375,9 +377,10 @@
 
 /* Table Styles */
 .dashboard-container {
-    padding: 20px;
-    max-width: 1200px;
+    padding: 2rem;
+    max-width: 1400px;
     margin: 0 auto;
+    width: 100%;
 }
 
 .dashboard-container .companies-table {
@@ -536,6 +539,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 100%;
 }
 
 .hero-content {
@@ -674,6 +678,7 @@
     justify-content: center;
     padding: 2rem;
     background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    width: 100%;
 }
 
 .auth-card {
@@ -920,5 +925,22 @@
     border-radius: 8px;
     padding: 1.5rem;
     margin-top: 2rem;
+    width: 100%;
+}
+
+.footer {
+    background-color: var(--navy);
+    color: white;
+    padding: 3rem 0;
+    margin-top: 3rem;
+    width: 100%;
+}
+
+.footer-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    justify-content: space-between;
     width: 100%;
 }
