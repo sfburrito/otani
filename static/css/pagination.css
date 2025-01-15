@@ -1,0 +1,31 @@
+@import 'variables.css';
+
+/* Pagination Styles */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.pagination .btn {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--gray-200);
+    background: white;
+    color: var(--gray-500);
+    border-radius: 6px;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.pagination .btn:hover {
+    background: var(--gray-100);
+    color: var(--gray-800);
+}
+
+.pagination .page-info {
+    color: var(--gray-500);
+    font-size: 0.875rem;
+}

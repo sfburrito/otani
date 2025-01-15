@@ -1,0 +1,41 @@
+@import 'variables.css';
+
+/* Rating Badges */
+.rating-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 28px;
+    height: 24px;
+    padding: 0 8px;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: white;
+    line-height: 1;
+    text-align: center;
+    text-transform: uppercase;
+    margin: 0 auto;
+}
+
+/* Rating Colors */
+.rating-a, .otani-rating-a { background-color: var(--rating-a); }
+.rating-b, .otani-rating-b { background-color: var(--rating-b); }
+.rating-c, .otani-rating-c { background-color: var(--rating-c); }
+.rating-d, .otani-rating-d { background-color: var(--rating-d); }
+
+/* Text Badge */
+.text-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    background: var(--gray-100);
+    color: var(--gray-600);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1;
+}

@@ -16,7 +16,6 @@
         <div class="section-header">
             <div class="header-title">
                 <h3>Investment Preferences</h3>
-                <p style="color: #666; font-size: 0.9em; margin-top: 5px;">Customize your investment criteria to improve company matches</p>
             </div>
             <div class="header-actions">
                 <button class="btn btn-primary" onclick="savePreferences()">Save Preferences</button>
@@ -203,105 +202,107 @@
 
 <!-- Add Company Modal -->
 <div id="addCompanyModal" class="modal">
-    <div class="modal-overlay"></div>
-    <div class="modal-container">
-        <div class="modal-header">
-            <h2>Add New Company</h2>
-            <button class="modal-close close-modal" onclick="closeAddCompanyModal()">
-                <span>Close</span>
-            </button>
-        </div>
-        <div class="modal-body">
-            <form id="addCompanyForm" class="add-company-form">
-                <div class="form-group">
-                    <label for="name">Company Name *</label>
-                    <input type="text" id="name" name="name" class="form-input" required>
-                    <div class="error-message"></div>
-                </div>
+    <div class="modal-backdrop"></div>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add New Company</h2>
+                <button class="modal-close close-modal" onclick="closeAddCompanyModal()">
+                    <span>Close</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="addCompanyForm" class="add-company-form">
+                    <div class="form-group">
+                        <label for="name">Company Name *</label>
+                        <input type="text" id="name" name="name" class="form-input" required>
+                        <div class="error-message"></div>
+                    </div>
 
-                <div class="form-group">
-                    <label for="industry">Industry *</label>
-                    <select id="industry" name="industry" class="form-input" required>
-                        <option value="">Select Industry</option>
-                        <option value="AI/ML">AI/Machine Learning</option>
-                        <option value="Fintech">Fintech</option>
-                        <option value="Healthcare">Healthcare/Biotech</option>
-                        <option value="Enterprise">Enterprise SaaS</option>
-                        <option value="Consumer">Consumer Tech</option>
-                        <option value="Cleantech">Cleantech/Sustainability</option>
-                        <option value="Cybersecurity">Cybersecurity</option>
-                        <option value="E-commerce">E-commerce</option>
-                        <option value="EdTech">EdTech</option>
-                        <option value="Gaming">Gaming</option>
-                    </select>
-                    <div class="error-message"></div>
-                </div>
+                    <div class="form-group">
+                        <label for="industry">Industry *</label>
+                        <select id="industry" name="industry" class="form-input" required>
+                            <option value="">Select Industry</option>
+                            <option value="AI/ML">AI/Machine Learning</option>
+                            <option value="Fintech">Fintech</option>
+                            <option value="Healthcare">Healthcare/Biotech</option>
+                            <option value="Enterprise">Enterprise SaaS</option>
+                            <option value="Consumer">Consumer Tech</option>
+                            <option value="Cleantech">Cleantech/Sustainability</option>
+                            <option value="Cybersecurity">Cybersecurity</option>
+                            <option value="E-commerce">E-commerce</option>
+                            <option value="EdTech">EdTech</option>
+                            <option value="Gaming">Gaming</option>
+                        </select>
+                        <div class="error-message"></div>
+                    </div>
 
-                <div class="form-group">
-                    <label for="stage">Stage *</label>
-                    <select id="stage" name="stage" class="form-input" required>
-                        <option value="">Select Stage</option>
-                        <option value="Seed">Seed</option>
-                        <option value="Series A">Series A</option>
-                        <option value="Series B">Series B</option>
-                        <option value="Series C+">Series C+</option>
-                        <option value="Growth">Growth</option>
-                        <option value="Late Stage">Late Stage</option>
-                    </select>
-                    <div class="error-message"></div>
-                </div>
+                    <div class="form-group">
+                        <label for="stage">Stage *</label>
+                        <select id="stage" name="stage" class="form-input" required>
+                            <option value="">Select Stage</option>
+                            <option value="Seed">Seed</option>
+                            <option value="Series A">Series A</option>
+                            <option value="Series B">Series B</option>
+                            <option value="Series C+">Series C+</option>
+                            <option value="Growth">Growth</option>
+                            <option value="Late Stage">Late Stage</option>
+                        </select>
+                        <div class="error-message"></div>
+                    </div>
 
-                <div class="form-group">
-                    <label for="location">Location *</label>
-                    <select id="location" name="location" class="form-input" required>
-                        <option value="">Select Location</option>
-                        <option value="North America">North America</option>
-                        <option value="Europe">Europe</option>
-                        <option value="Asia-Pacific">Asia-Pacific</option>
-                        <option value="Latin America">Latin America</option>
-                        <option value="Middle East and Africa">Middle East and Africa</option>
-                    </select>
-                    <div class="error-message"></div>
-                </div>
+                    <div class="form-group">
+                        <label for="location">Location *</label>
+                        <select id="location" name="location" class="form-input" required>
+                            <option value="">Select Location</option>
+                            <option value="North America">North America</option>
+                            <option value="Europe">Europe</option>
+                            <option value="Asia-Pacific">Asia-Pacific</option>
+                            <option value="Latin America">Latin America</option>
+                            <option value="Middle East and Africa">Middle East and Africa</option>
+                        </select>
+                        <div class="error-message"></div>
+                    </div>
 
-                <div class="form-group">
-                    <label for="website">Website</label>
-                    <input type="url" id="website" name="website" class="form-input" placeholder="https://example.com">
-                    <div class="error-message"></div>
-                </div>
+                    <div class="form-group">
+                        <label for="website">Website</label>
+                        <input type="url" id="website" name="website" class="form-input" placeholder="https://example.com">
+                        <div class="error-message"></div>
+                    </div>
 
-                <div class="form-group">
-                    <label for="email">Contact Email</label>
-                    <input type="email" id="email" name="email" class="form-input" placeholder="contact@example.com">
-                    <div class="error-message"></div>
-                </div>
+                    <div class="form-group">
+                        <label for="email">Contact Email</label>
+                        <input type="email" id="email" name="email" class="form-input" placeholder="contact@example.com">
+                        <div class="error-message"></div>
+                    </div>
 
-                <div class="form-group">
-                    <label for="description">Description</label>
-                    <textarea id="description" name="description" class="form-input" rows="4"></textarea>
-                    <div class="error-message"></div>
-                </div>
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea id="description" name="description" class="form-input" rows="4"></textarea>
+                        <div class="error-message"></div>
+                    </div>
 
-                <div class="form-group">
-                    <label for="rating">Rating</label>
-                    <select id="rating" name="rating" class="form-input">
-                        <option value="">Select Rating</option>
-                        <option value="A">A - Excellent</option>
-                        <option value="B">B - Good</option>
-                        <option value="C">C - Fair</option>
-                        <option value="D">D - Poor</option>
-                    </select>
-                    <div class="error-message"></div>
-                </div>
-            </form>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-outline" onclick="closeAddCompanyModal()">
-                <span>Cancel</span>
-            </button>
-            <button type="button" class="btn btn-primary" id="addCompanyButton">
-                <span>Add Company</span>
-            </button>
+                    <div class="form-group">
+                        <label for="rating">Rating</label>
+                        <select id="rating" name="rating" class="form-input">
+                            <option value="">Select Rating</option>
+                            <option value="A">A - Excellent</option>
+                            <option value="B">B - Good</option>
+                            <option value="C">C - Fair</option>
+                            <option value="D">D - Poor</option>
+                        </select>
+                        <div class="error-message"></div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline" onclick="closeAddCompanyModal()">
+                    <span>Cancel</span>
+                </button>
+                <button type="submit" class="btn btn-primary" form="addCompanyForm">
+                    <span>Add Company</span>
+                </button>
+            </div>
         </div>
     </div>
 </div>

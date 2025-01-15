@@ -1,0 +1,80 @@
+/* Common styles for both sections */
+.preferences-panel,
+.companies-section {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+/* Preferences panel specific */
+.preferences-panel {
+    padding: 1.5rem;
+}
+
+/* Companies section specific */
+.companies-section {
+    margin-top: 2rem;
+    padding: 1.5rem;
+}
+
+/* Section headers */
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 1.5rem;
+}
+
+/* Additional preferences */
+.additional-preferences {
+    margin-top: 2rem;
+    width: 100%;
+    max-width: 100%;
+}
+
+.additional-preferences textarea {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* Banner */
+.banner {
+    background-color: #0A2342;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Footer */
+.footer {
+    background-color: #0A2342;
+    color: white;
+    padding: 1rem 2rem;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+    margin-top: 2rem;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+.footer-bottom {
+    width: 100%;
+    text-align: center;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}

@@ -1,8 +1,9 @@
 <!-- Company Details Modal -->
-<div class="modal modern-startup" id="companyDetailsModal" tabindex="-1" role="dialog" aria-labelledby="companyDetailsModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
+<div class="modal" id="companyDetailsModal">
+    <div class="modal-backdrop"></div>
+    <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header startup-header">
+            <div class="modal-header">
                 <div class="company-header">
                     <h2 id="modal-company-name" class="company-title"></h2>
                     <div class="company-badges">
@@ -11,7 +12,7 @@
                         <span id="modal-company-rating" class="badge rating-badge"></span>
                     </div>
                 </div>
-                <button type="button" class="modal-close modern-close" onclick="closeCompanyDetailModal()">
+                <button type="button" class="btn-close" onclick="closeCompanyDetailModal()">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
@@ -37,7 +38,7 @@
                             </div>
                         </div>
                         <div class="detail-item">
-                            <i class="fas fa-map-marker detail-icon"></i>
+                            <i class="fas fa-map-marker-alt detail-icon"></i>
                             <div class="detail-content">
                                 <label class="detail-label">Location</label>
                                 <div id="modal-company-location" class="detail-value"></div>
@@ -59,26 +60,24 @@
                         <i class="fas fa-sticky-note"></i>
                         Notes
                     </h3>
-                    <textarea id="companyNotes" class="modern-textarea" placeholder="Add your notes about this company..."></textarea>
+                    <textarea id="companyNotes" class="form-input" placeholder="Add your notes about this company..."></textarea>
                 </div>
             </div>
 
-            <div class="modal-footer startup-footer">
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" onclick="confirmDeleteCompany()">
+                    <i class="fas fa-trash"></i>
+                    Delete Company
+                </button>
                 <div class="footer-actions">
-                    <button type="button" class="btn btn-danger" onclick="confirmDeleteCompany()">
-                        <i class="fas fa-trash"></i>
-                        Delete Company
+                    <button type="button" class="btn btn-outline" onclick="closeCompanyDetailModal()">
+                        <i class="fas fa-times"></i>
+                        Close
                     </button>
-                    <div class="footer-right">
-                        <button type="button" class="btn btn-outline" onclick="closeCompanyDetailModal()">
-                            <i class="fas fa-times"></i>
-                            Close
-                        </button>
-                        <button type="button" class="btn btn-primary" onclick="saveCompanyNotes()">
-                            <i class="fas fa-save"></i>
-                            Save Notes
-                        </button>
-                    </div>
+                    <button type="button" class="btn btn-primary" onclick="saveCompanyNotes()">
+                        <i class="fas fa-save"></i>
+                        Save Notes
+                    </button>
                 </div>
             </div>
         </div>
@@ -91,18 +90,25 @@
     <div class="modal-container">
         <div class="modal-header">
             <h2>Confirm Delete</h2>
+            <button type="button" class="btn-close" onclick="closeDeleteConfirmModal()">
+                <i class="fas fa-times"></i>
+            </button>
         </div>
         <div class="modal-body">
             <p>Are you sure you want to delete <span id="deleteCompanyName"></span>?</p>
             <p class="text-danger">This action cannot be undone.</p>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-outline" onclick="closeDeleteConfirmModal()">
-                <span>Cancel</span>
-            </button>
-            <button type="button" class="btn btn-danger" onclick="deleteCompany()">
-                <span>Delete Company</span>
-            </button>
+            <div class="footer-actions">
+                <button type="button" class="btn btn-outline" onclick="closeDeleteConfirmModal()">
+                    <i class="fas fa-times"></i>
+                    Cancel
+                </button>
+                <button type="button" class="btn btn-danger" onclick="deleteCompany()">
+                    <i class="fas fa-trash"></i>
+                    Delete
+                </button>
+            </div>
         </div>
     </div>
 </div>
@@ -298,7 +304,7 @@
     color: #4a5568;
 }
 
-.modern-startup .modern-textarea {
+.modern-startup .form-input {
     width: 100%;
     min-height: 120px;
     padding: 0.75rem;
@@ -311,7 +317,7 @@
     transition: border-color 0.15s ease-in-out;
 }
 
-.modern-startup .modern-textarea:focus {
+.modern-startup .form-input:focus {
     outline: none;
     border-color: #4299e1;
     box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15);
