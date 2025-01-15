@@ -256,7 +256,7 @@
 
 /* Navigation Bar */
 .navbar {
-    background-color: #0f172a;
+    background-color: var(--navy);
     color: white;
     padding: 1rem 3rem;
     display: flex;
