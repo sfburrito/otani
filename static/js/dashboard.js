@@ -66,9 +66,9 @@
         if (!companiesData || companiesData.length === 0) {
             console.log('No companies to display');
             companiesTableBody.innerHTML = `
-                <tr class="empty-state">
-                    <td colspan="6" class="text-center py-4">
-                        <p class="text-gray-500">No companies found. Add your first company to get started!</p>
+                <tr>
+                    <td colspan="6" class="text-center">
+                        <p>No companies found. Add your first company to get started!</p>
                     </td>
                 </tr>
             `;
@@ -77,12 +77,12 @@
 
         // Create and append each row
         companiesData.forEach(company => {
-            console.log('Creating row for company:', company);
             const row = document.createElement('tr');
             row.setAttribute('data-company-id', company.id);
+            row.style.cursor = 'pointer';
             
-            // Create row content with minimal structure
-            const rowContent = `
+            // Create row content with consistent styling
+            row.innerHTML = `
                 <td><div class="text-badge">${company.name || ''}</div></td>
                 <td><div class="text-badge">${company.industry || ''}</div></td>
                 <td><div class="text-badge">${company.stage || ''}</div></td>
@@ -91,12 +91,8 @@
                 <td><div class="rating-badge rating-${(company.rating || '').toLowerCase()}">${company.rating || ''}</div></td>
             `;
 
-            // Set the row content
-            row.innerHTML = rowContent;
-
             // Add click handler
             row.addEventListener('click', () => {
-                console.log('Row clicked:', company);
                 if (typeof window.openCompanyDetail === 'function') {
                     window.openCompanyDetail(company);
                 } else {
@@ -172,9 +168,22 @@
         return badge ? badge.textContent.trim().toLowerCase() : '';
     }
 
+    function addCompanyToTable(company) {
+        const companiesTableBody = document.getElementById('companiesTableBody');
+        if (!companiesTableBody) return;
+
+        // Add to companies array
+        if (!window.companies) window.companies = [];
+        window.companies.push(company);
+
+        // Re-render the entire table to ensure consistent styling
+        renderCompanies(window.companies);
+    }
+
     // Expose functions to window
     window.initDashboard = initDashboard;
     window.renderCompanies = renderCompanies;
+    window.addCompanyToTable = addCompanyToTable;
 })();
 
 // Initialize sorting when table is populated
