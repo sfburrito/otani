@@ -82,16 +82,16 @@
             // Create row content with proper column widths and explicit styling for stage
             const rowContent = `
                 <td class="company-name">
-                    <span class="table-badge">${company.name || ''}</span>
+                    <div class="table-badge" style="margin: 0 !important; height: 20px !important; line-height: 20px !important;">${company.name || ''}</div>
                 </td>
                 <td class="company-industry">
-                    <span class="table-badge">${company.industry || ''}</span>
+                    <div class="table-badge" style="margin: 0 !important; height: 20px !important; line-height: 20px !important;">${company.industry || ''}</div>
                 </td>
                 <td class="company-stage" style="background: none !important;">
-                    <span class="table-badge">${company.stage || ''}</span>
+                    <div class="table-badge" style="margin: 0 !important; height: 20px !important; line-height: 20px !important;">${company.stage || ''}</div>
                 </td>
                 <td class="company-location">
-                    <span class="table-badge">${company.location || ''}</span>
+                    <div class="table-badge" style="margin: 0 !important; height: 20px !important; line-height: 20px !important;">${company.location || ''}</div>
                 </td>
                 <td class="company-otani-rating">
                     <span class="rating-badge otani-rating-${(company.otani_rating || 'D').toLowerCase()}">${company.otani_rating || 'D'}</span>
