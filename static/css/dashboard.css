@@ -1,7 +1,7 @@
 /* Global Container */
 :root {
-    --container-width: 1200px;
-    --container-padding: 2rem;
+    --container-width: 95%;
+    --container-padding: 1rem;
     --navbar-height: 60px;
 }
 
@@ -32,7 +32,6 @@
 /* Container Layout */
 .container, .dashboard-container {
     max-width: var(--container-width);
-    padding: 0 var(--container-padding);
     margin: 0 auto;
     width: 100%;
 }
@@ -59,6 +58,7 @@
     display: flex;
     gap: 1rem;
     align-items: center;
+    justify-content: flex-end;
 }
 
 /* Table Container */
@@ -284,9 +284,7 @@
 }
 
 .navbar-inner {
-    max-width: var(--container-width);
-    width: 100%;
-    padding: 0 var(--container-padding);
+    width: var(--container-width);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -322,8 +320,6 @@
 /* Main Content Adjustment */
 .main-content {
     padding-top: var(--navbar-height);
-    position: relative;
-    z-index: 1;
     width: 100%;
 }
 
@@ -947,10 +943,8 @@
 }
 
 .footer-content {
-    max-width: var(--container-width);
-    width: 100%;
+    width: var(--container-width);
     margin: 0 auto;
-    padding: 0 var(--container-padding);
     display: flex;
     justify-content: space-between;
 }
