@@ -79,45 +79,18 @@
             row.className = 'company-row';
             row.setAttribute('data-company-id', company.id);
             
-            // Create row content with proper column widths and explicit styling for stage
+            // Create row content with simpler structure
             const rowContent = `
-                <td class="company-name">
-                    <div class="table-badge" style="margin: 0 !important; height: 20px !important; line-height: 20px !important;">${company.name || ''}</div>
-                </td>
-                <td class="company-industry">
-                    <div class="table-badge" style="margin: 0 !important; height: 20px !important; line-height: 20px !important;">${company.industry || ''}</div>
-                </td>
-                <td class="company-stage" style="background: none !important;">
-                    <div class="table-badge" style="margin: 0 !important; height: 20px !important; line-height: 20px !important;">${company.stage || ''}</div>
-                </td>
-                <td class="company-location">
-                    <div class="table-badge" style="margin: 0 !important; height: 20px !important; line-height: 20px !important;">${company.location || ''}</div>
-                </td>
-                <td class="company-otani-rating">
-                    <span class="rating-badge otani-rating-${(company.otani_rating || 'D').toLowerCase()}">${company.otani_rating || 'D'}</span>
-                </td>
-                <td class="company-rating">
-                    <span class="rating-badge rating-${(company.rating || '').toLowerCase()}">${company.rating || ''}</span>
-                </td>
-                <td class="company-actions">
-                    <div class="table-actions">
-                        ${company.website ? `
-                            <a href="${company.website}" 
-                               target="_blank" 
-                               rel="noopener noreferrer" 
-                               class="action-btn" 
-                               onclick="event.stopPropagation()"
-                               title="Visit Website">
-                                <i class="fas fa-external-link-alt"></i>
-                            </a>` : ''}
-                        ${company.email ? `
-                            <a href="mailto:${company.email}" 
-                               class="action-btn" 
-                               onclick="event.stopPropagation()"
-                               title="Send Email">
-                                <i class="fas fa-envelope"></i>
-                            </a>` : ''}
-                    </div>
+                <td class="col-name"><div class="text-badge">${company.name || ''}</div></td>
+                <td class="col-industry"><div class="text-badge">${company.industry || ''}</div></td>
+                <td class="col-stage"><div class="text-badge">${company.stage || ''}</div></td>
+                <td class="col-location"><div class="text-badge">${company.location || ''}</div></td>
+                <td class="col-otani-rating"><div class="rating-badge otani-rating-${(company.otani_rating || 'D').toLowerCase()}">${company.otani_rating || 'D'}</div></td>
+                <td class="col-rating"><div class="rating-badge rating-${(company.rating || '').toLowerCase()}">${company.rating || ''}</div></td>
+                <td class="col-actions">
+                    <button class="action-btn" onclick="openCompanyDetails('${company.id}')">
+                        <i class="fas fa-external-link-alt"></i>
+                    </button>
                 </td>
             `;
 

@@ -1,248 +1,218 @@
 /* Rating Badges */
-.dashboard-container .companies-table .rating-badge {
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    min-width: 32px !important;
-    height: 24px !important;
-    padding: 0 0.5rem !important;
-    border-radius: 4px !important;
-    font-size: 0.75rem !important;
-    font-weight: 600 !important;
-    color: white !important;
-    text-align: center !important;
-    text-transform: uppercase !important;
+.rating-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    height: 24px;
+    padding: 0 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: white;
+    text-align: center;
+    text-transform: uppercase;
 }
 
 /* Rating Colors */
-.dashboard-container .companies-table .rating-badge.rating-a,
-.dashboard-container .companies-table .rating-badge.otani-rating-a {
-    background-color: #22c55e !important;
-}
-
-.dashboard-container .companies-table .rating-badge.rating-b,
-.dashboard-container .companies-table .rating-badge.otani-rating-b {
-    background-color: #3b82f6 !important;
-}
-
-.dashboard-container .companies-table .rating-badge.rating-c,
-.dashboard-container .companies-table .rating-badge.otani-rating-c {
-    background-color: #f59e0b !important;
-}
-
-.dashboard-container .companies-table .rating-badge.rating-d,
-.dashboard-container .companies-table .rating-badge.otani-rating-d {
-    background-color: #ef4444 !important;
-}
+.rating-a, .otani-rating-a { background-color: #22c55e; }
+.rating-b, .otani-rating-b { background-color: #3b82f6; }
+.rating-c, .otani-rating-c { background-color: #f59e0b; }
+.rating-d, .otani-rating-d { background-color: #ef4444; }
 
 /* Table Container */
-.dashboard-container .table-container {
-    width: 100% !important;
-    overflow-x: auto !important;
-    background: white !important;
-    border-radius: 8px !important;
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1) !important;
-    max-width: 100% !important;
-    -webkit-overflow-scrolling: touch !important;
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+    max-width: 100%;
+    -webkit-overflow-scrolling: touch;
 }
 
 /* Table Base Styles */
-.dashboard-container .companies-table {
-    min-width: 100% !important;
-    width: 100% !important;
-    border-collapse: separate !important;
-    border-spacing: 0 !important;
-    table-layout: fixed !important;
+.companies-table {
+    min-width: 100%;
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    table-layout: fixed;
 }
 
 /* Table Header */
-.dashboard-container .companies-table thead th {
-    background: #f8f9fa !important;
-    color: #344767 !important;
-    font-weight: 600 !important;
-    padding: 0.35rem 1rem !important;
-    text-align: left !important;
-    border-bottom: 2px solid #edf2f7 !important;
-    white-space: nowrap !important;
-    font-size: 0.875rem !important;
-    position: relative !important;
-    height: auto !important;
-    line-height: 1.2 !important;
+.companies-table thead th {
+    background: #f8f9fa;
+    color: #344767;
+    font-weight: 600;
+    padding: 0.35rem 1rem;
+    text-align: left;
+    border-bottom: 2px solid #edf2f7;
+    white-space: nowrap;
+    font-size: 0.875rem;
+    position: relative;
+    height: auto;
+    line-height: 1.2;
 }
 
 /* Column Widths */
-.dashboard-container .companies-table th:first-child,
-.dashboard-container .companies-table td:first-child,
-.dashboard-container .companies-table .company-name {
-    width: 20% !important;
-    min-width: 200px !important;
+.companies-table th:first-child,
+.companies-table td:first-child,
+.company-name {
+    width: 20%;
+    min-width: 200px;
 }
 
-.dashboard-container .companies-table th:nth-child(2),
-.dashboard-container .companies-table td:nth-child(2),
-.dashboard-container .companies-table .company-industry {
-    width: 15% !important;
-    min-width: 150px !important;
+.companies-table th:nth-child(2),
+.companies-table td:nth-child(2),
+.company-industry {
+    width: 15%;
+    min-width: 150px;
 }
 
-.dashboard-container .companies-table th:nth-child(3),
-.dashboard-container .companies-table td:nth-child(3),
-.dashboard-container .companies-table .company-stage {
-    width: 15% !important;
-    min-width: 150px !important;
+.companies-table th:nth-child(3),
+.companies-table td:nth-child(3),
+.company-stage {
+    width: 15%;
+    min-width: 150px;
 }
 
-.dashboard-container .companies-table th:nth-child(4),
-.dashboard-container .companies-table td:nth-child(4),
-.dashboard-container .companies-table .company-location {
-    width: 15% !important;
-    min-width: 150px !important;
+.companies-table th:nth-child(4),
+.companies-table td:nth-child(4),
+.company-location {
+    width: 15%;
+    min-width: 150px;
 }
 
-.dashboard-container .companies-table th:nth-child(5),
-.dashboard-container .companies-table td:nth-child(5),
-.dashboard-container .companies-table .company-otani-rating {
-    width: 12% !important;
-    min-width: 120px !important;
-    text-align: center !important;
+.companies-table th:nth-child(5),
+.companies-table td:nth-child(5),
+.company-otani-rating {
+    width: 12%;
+    min-width: 120px;
+    text-align: center;
 }
 
-.dashboard-container .companies-table th:nth-child(6),
-.dashboard-container .companies-table td:nth-child(6),
-.dashboard-container .companies-table .company-rating {
-    width: 12% !important;
-    min-width: 120px !important;
-    text-align: center !important;
+.companies-table th:nth-child(6),
+.companies-table td:nth-child(6),
+.company-rating {
+    width: 12%;
+    min-width: 120px;
+    text-align: center;
 }
 
-.dashboard-container .companies-table th:nth-child(7),
-.dashboard-container .companies-table td:nth-child(7),
-.dashboard-container .companies-table .company-actions {
-    width: 11% !important;
-    min-width: 110px !important;
-    text-align: center !important;
+.companies-table th:nth-child(7),
+.companies-table td:nth-child(7),
+.company-actions {
+    width: 11%;
+    min-width: 110px;
+    text-align: center;
 }
 
 /* Table Body */
-.dashboard-container .companies-table tbody tr {
-    transition: background-color 0.2s ease !important;
-    cursor: pointer !important;
-    height: 32px !important;
-    max-height: 32px !important;
-    min-height: 32px !important;
+.companies-table tbody tr {
+    transition: background-color 0.2s ease;
+    cursor: pointer;
+    height: 32px;
+    max-height: 32px;
+    min-height: 32px;
 }
 
-.dashboard-container .companies-table tbody tr:hover {
-    background-color: #f8fafc !important;
+.companies-table tbody tr:hover {
+    background-color: #f8fafc;
 }
 
-.dashboard-container .companies-table td {
-    padding: 4px 1rem !important;
-    border-bottom: 1px solid #edf2f7 !important;
-    color: #4a5568 !important;
-    font-size: 0.875rem !important;
-    vertical-align: middle !important;
-    position: relative !important;
-    height: 32px !important;
-    max-height: 32px !important;
-    min-height: 32px !important;
+.companies-table td {
+    padding: 4px 1rem;
+    border-bottom: 1px solid #edf2f7;
+    color: #4a5568;
+    font-size: 0.875rem;
+    vertical-align: middle;
+    position: relative;
+    height: 32px;
+    max-height: 32px;
+    min-height: 32px;
 }
 
 /* Badge Styles */
-.dashboard-container .companies-table .table-badge {
-    display: inline-flex !important;
-    align-items: center !important;
-    padding: 0 0.5rem !important;
-    border-radius: 16px !important;
-    font-size: 0.75rem !important;
-    font-weight: 500 !important;
-    background: #f1f5f9 !important;
-    color: #475569 !important;
-    white-space: nowrap !important;
-    max-width: calc(100% - 1rem) !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-    border: none !important;
-    height: 20px !important;
-    line-height: 20px !important;
-    margin: 0 !important;
+.table-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0 0.5rem;
+    border-radius: 16px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    background: #f1f5f9;
+    color: #475569;
+    white-space: nowrap;
+    max-width: calc(100% - 1rem);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border: none;
+    height: 20px;
+    line-height: 20px;
+    margin: 0;
 }
 
 /* Stage Badge Styles - Stronger Overrides */
-.dashboard-container .companies-table .company-stage .table-badge,
-.dashboard-container .companies-table td.company-stage .table-badge,
-.dashboard-container .companies-table td.company-stage span.table-badge,
-.dashboard-container .companies-table .company-stage span,
-.dashboard-container .companies-table .stage,
-.dashboard-container .companies-table [class*="stage-"],
-.dashboard-container .companies-table td[class*="stage"] *,
-.dashboard-container .companies-table tr td.company-stage span,
-.dashboard-container .companies-table tr td.company-stage .table-badge {
-    display: inline-flex !important;
-    align-items: center !important;
-    padding: 0 0.5rem !important;
-    border-radius: 16px !important;
-    font-size: 0.75rem !important;
-    font-weight: 500 !important;
-    background: #f1f5f9 !important;
-    color: #475569 !important;
-    white-space: nowrap !important;
-    max-width: calc(100% - 1rem) !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-    border: none !important;
-    box-shadow: none !important;
-    -webkit-appearance: none !important;
-    appearance: none !important;
-    line-height: 1.2 !important;
-    height: 1.5rem !important;
-}
-
-/* Rating Badge Styles */
-.dashboard-container .companies-table .rating-badge {
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    min-width: 32px !important;
-    height: 24px !important;
-    padding: 0 0.5rem !important;
-    border-radius: 4px !important;
-    font-size: 0.75rem !important;
-    font-weight: 600 !important;
-    color: white !important;
-    text-transform: uppercase !important;
+.company-stage .table-badge,
+td.company-stage .table-badge,
+td.company-stage span.table-badge,
+.company-stage span,
+.stage,
+[class*="stage-"],
+td[class*="stage"] *,
+tr td.company-stage span,
+tr td.company-stage .table-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0 0.5rem;
+    border-radius: 16px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    background: #f1f5f9;
+    color: #475569;
+    white-space: nowrap;
+    max-width: calc(100% - 1rem);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border: none;
+    box-shadow: none;
+    -webkit-appearance: none;
+    appearance: none;
+    line-height: 1.2;
+    height: 1.5rem;
 }
 
 /* Action Buttons */
-.dashboard-container .companies-table .table-actions {
-    display: inline-flex !important;
-    gap: 0.5rem !important;
-    justify-content: center !important;
+.table-actions {
+    display: inline-flex;
+    gap: 0.5rem;
+    justify-content: center;
 }
 
-.dashboard-container .companies-table .action-btn {
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    width: 28px !important;
-    height: 28px !important;
-    border-radius: 6px !important;
-    background: #f8fafc !important;
-    border: 1px solid #e2e8f0 !important;
-    color: #64748b !important;
-    cursor: pointer !important;
-    transition: all 0.2s ease !important;
-    text-decoration: none !important;
+.action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
 }
 
-.dashboard-container .companies-table .action-btn:hover {
-    background: #edf2f7 !important;
-    color: #2d3748 !important;
-    transform: translateY(-1px) !important;
+.action-btn:hover {
+    background: #edf2f7;
+    color: #2d3748;
+    transform: translateY(-1px);
 }
 
-.dashboard-container .companies-table .action-btn i {
-    font-size: 0.875rem !important;
+.action-btn i {
+    font-size: 0.875rem;
 }
 
 /* Pagination Styles */
@@ -290,7 +260,7 @@
 }
 
 .modal.active {
-    display: flex !important;
+    display: flex;
 }
 
 .modal-overlay {
@@ -347,58 +317,58 @@
 
 /* Mobile Responsive */
 @media (max-width: 768px) {
-    .dashboard-container .companies-table {
+    .companies-table {
         font-size: 0.875rem;
     }
     
-    .dashboard-container .companies-table td,
-    .dashboard-container .companies-table th {
+    .companies-table td,
+    .companies-table th {
         padding: 0.75rem;
     }
     
-    .dashboard-container .table-badge {
+    .table-badge {
         padding: 0.2rem 0.5rem;
         font-size: 0.75rem;
     }
 
-    .dashboard-container .action-btn {
+    .action-btn {
         width: 28px;
         height: 28px;
     }
     
-    .dashboard-container .companies-table thead {
+    .companies-table thead {
         display: none;
     }
     
-    .dashboard-container .companies-table tbody tr {
+    .companies-table tbody tr {
         display: block;
         margin-bottom: 1rem;
         border: 1px solid #dee2e6;
         border-radius: 6px;
-        background: white !important;
+        background: white;
         position: relative;
     }
     
-    .dashboard-container .companies-table td {
+    .companies-table td {
         display: block;
         padding: 12px;
         border: none;
         position: relative;
     }
 
-    .dashboard-container .rating-col {
+    .rating-col {
         position: absolute;
         top: 12px;
         right: 12px;
         width: auto;
-        padding: 0 !important;
+        padding: 0;
     }
 
-    .dashboard-container .rating-col::before {
-        display: none !important;
+    .rating-col::before {
+        display: none;
     }
     
-    .dashboard-container .companies-table td:not(.rating-col)::before {
+    .companies-table td:not(.rating-col)::before {
         content: attr(data-label);
         font-weight: 600;
         margin-bottom: 4px;
@@ -416,10 +386,10 @@
 }
 
 .dashboard-container .companies-table {
-    width: 100% !important;
-    border-collapse: separate !important;
-    border-spacing: 0 !important;
-    margin: 0 !important;
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin: 0;
 }
 
 .dashboard-container .companies-table thead th {
@@ -452,102 +422,102 @@
 }
 
 .dashboard-container .companies-table td {
-    padding: 0.75rem 0.875rem !important;
-    border-bottom: 1px solid #edf2f7 !important;
-    color: #4a5568 !important;
-    vertical-align: middle !important;
-    font-size: 0.875rem !important;
+    padding: 0.75rem 0.875rem;
+    border-bottom: 1px solid #edf2f7;
+    color: #4a5568;
+    vertical-align: middle;
+    font-size: 0.875rem;
 }
 
 .dashboard-container .table-badge {
-    display: inline-flex !important;
-    align-items: center !important;
-    padding: 0.25rem 0.75rem !important;
-    border-radius: 20px !important;
-    font-size: 0.75rem !important;
-    font-weight: 500 !important;
-    line-height: 1.5 !important;
-    text-align: center !important;
-    white-space: nowrap !important;
-    background: #f1f5f9 !important;
-    color: #475569 !important;
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    line-height: 1.5;
+    text-align: center;
+    white-space: nowrap;
+    background: #f1f5f9;
+    color: #475569;
 }
 
 .dashboard-container .rating-badge {
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    min-width: 32px !important;
-    height: 24px !important;
-    padding: 0 0.75rem !important;
-    border-radius: 4px !important;
-    font-size: 0.75rem !important;
-    font-weight: 600 !important;
-    color: white !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    height: 24px;
+    padding: 0 0.75rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: white;
 }
 
 .dashboard-container .rating-a,
 .dashboard-container .otani-rating-a {
-    background-color: #22c55e !important;
+    background-color: #22c55e;
 }
 
 .dashboard-container .rating-b,
 .dashboard-container .otani-rating-b {
-    background-color: #3b82f6 !important;
+    background-color: #3b82f6;
 }
 
 .dashboard-container .rating-c,
 .dashboard-container .otani-rating-c {
-    background-color: #f59e0b !important;
+    background-color: #f59e0b;
 }
 
 .dashboard-container .rating-d,
 .dashboard-container .otani-rating-d {
-    background-color: #ef4444 !important;
+    background-color: #ef4444;
 }
 
 .dashboard-container .table-actions {
-    display: flex !important;
-    gap: 0.5rem !important;
-    justify-content: center !important;
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
 }
 
 .dashboard-container .action-btn {
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    width: 28px !important;
-    height: 28px !important;
-    border-radius: 6px !important;
-    background: #f8fafc !important;
-    border: 1px solid #e2e8f0 !important;
-    color: #64748b !important;
-    cursor: pointer !important;
-    transition: all 0.2s ease !important;
-    padding: 0 !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    padding: 0;
 }
 
 .dashboard-container .action-btn:hover {
-    background: #edf2f7 !important;
-    color: #2d3748 !important;
+    background: #edf2f7;
+    color: #2d3748;
 }
 
 .dashboard-container .action-btn i {
-    font-size: 0.875rem !important;
+    font-size: 0.875rem;
 }
 
 /* Rating Column */
-.dashboard-container .rating-col {
+.rating-col {
     width: 80px;
-    text-align: center !important;
+    text-align: center;
 }
 
 /* Description Column */
-.dashboard-container .description-col {
+.description-col {
     max-width: 300px;
 }
 
-.dashboard-container .description-content {
+.description-content {
     max-height: 2.8em;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -557,13 +527,13 @@
 }
 
 /* Icon Cells */
-.dashboard-container .icon-cell {
+.icon-cell {
     width: 40px;
-    text-align: center !important;
+    text-align: center;
     white-space: nowrap;
 }
 
-.dashboard-container .icon-cell a {
+.icon-cell a {
     color: #6c757d;
     text-decoration: none;
     transition: color 0.2s ease;
@@ -574,17 +544,17 @@
     height: 28px;
 }
 
-.dashboard-container .icon-cell a:hover {
+.icon-cell a:hover {
     color: #0056b3;
 }
 
 /* Text alignment classes */
 .text-left {
-    text-align: left !important;
+    text-align: left;
 }
 
 .text-center {
-    text-align: center !important;
+    text-align: center;
 }
 
 .flash-messages {
@@ -958,10 +928,10 @@
 }
 
 .clickable-row:hover {
-    background-color: #f1f5f9 !important;
+    background-color: #f1f5f9;
 }
 
 /* Hide elements */
 .hidden {
-    display: none !important;
+    display: none;
 }
