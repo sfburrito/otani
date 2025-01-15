@@ -91,9 +91,6 @@
     <div class="modal-container">
         <div class="modal-header">
             <h2>Confirm Delete</h2>
-            <button class="modal-close close-modal" onclick="closeDeleteConfirmModal()">
-                <i class="fas fa-times"></i>
-            </button>
         </div>
         <div class="modal-body">
             <p>Are you sure you want to delete <span id="deleteCompanyName"></span>?</p>
@@ -101,12 +98,10 @@
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-outline" onclick="closeDeleteConfirmModal()">
-                <i class="fas fa-times"></i>
-                Cancel
+                <span>Cancel</span>
             </button>
             <button type="button" class="btn btn-danger" onclick="deleteCompany()">
-                <i class="fas fa-trash"></i>
-                Delete Company
+                <span>Delete Company</span>
             </button>
         </div>
     </div>
@@ -412,28 +407,76 @@
 </style>
 
 <script>
+let currentCompanyId = null;
+
+function openCompanyDetails(companyId) {
+    currentCompanyId = companyId;
+    const company = window.companies.find(c => c.id === companyId);
+    if (!company) return;
+    
+    // Populate modal fields
+    document.getElementById('modal-company-name').textContent = company.name;
+    document.getElementById('modal-company-industry').textContent = company.industry;
+    document.getElementById('modal-company-stage').textContent = company.stage;
+    document.getElementById('modal-company-location').textContent = company.location;
+    document.getElementById('modal-company-rating').textContent = company.rating;
+    
+    // Show modal
+    document.getElementById('companyDetailsModal').style.display = 'block';
+}
+
 function closeCompanyDetailModal() {
-    document.getElementById("companyDetailsModal").classList.remove("show");
-    document.body.classList.remove("modal-open");
+    document.getElementById('companyDetailsModal').style.display = 'none';
 }
 
 function confirmDeleteCompany() {
-    document.getElementById("deleteConfirmModal").classList.add("show");
-    document.body.classList.add("modal-open");
+    document.getElementById('companyDetailsModal').style.display = 'none';
+    document.getElementById('deleteConfirmModal').style.display = 'block';
 }
 
 function closeDeleteConfirmModal() {
-    document.getElementById("deleteConfirmModal").classList.remove("show");
-    document.body.classList.remove("modal-open");
+    document.getElementById('deleteConfirmModal').style.display = 'none';
+    document.getElementById('companyDetailsModal').style.display = 'block';
 }
 
 function deleteCompany() {
-    // Add your delete company logic here
-    console.log("Delete company button clicked");
+    if (!currentCompanyId) return;
+    
+    fetch(`/delete_company/${currentCompanyId}`, {
+        method: 'DELETE',
+    })
+    .then(response => {
+        if (response.ok) {
+            // Remove company from local data
+            window.companies = window.companies.filter(c => c.id !== currentCompanyId);
+            // Re-render table
+            window.renderCompanies(window.companies);
+            // Close modals
+            document.getElementById('deleteConfirmModal').style.display = 'none';
+            document.getElementById('companyDetailsModal').style.display = 'none';
+            // Show success message
+            showMessage('Company deleted successfully');
+        } else {
+            showMessage('Error deleting company', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showMessage('Error deleting company', 'error');
+    });
 }
 
 function saveCompanyNotes() {
     // Add your save company notes logic here
     console.log("Save company notes button clicked");
+}
+
+function showMessage(message, type = 'success') {
+    const flashMessages = document.querySelector('.flash-messages');
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `alert alert-${type}`;
+    messageDiv.textContent = message;
+    flashMessages.appendChild(messageDiv);
+    setTimeout(() => messageDiv.remove(), 3000);
 }
 </script>
