@@ -49,43 +49,18 @@
     // Function to add a new company row to the table
     function addCompanyToTable(company) {
         debugLog('Adding company to table:', company);
-        if (!elements.companiesTableBody) {
-            debugLog('Error: Companies table body not found');
-            return;
+        
+        // Add to global companies array
+        if (!window.companies) window.companies = [];
+        window.companies.push(company);
+        
+        // Use the renderCompanies function from dashboard.js
+        if (typeof window.renderCompanies === 'function') {
+            window.renderCompanies(window.companies);
+            debugLog('Re-rendered table with new company');
+        } else {
+            debugLog('Error: renderCompanies function not found');
         }
-        
-        const newRow = document.createElement('tr');
-        newRow.className = 'clickable-row';
-        newRow.dataset.companyId = company.id;
-        newRow.onclick = () => window.openCompanyDetail?.(company);
-        
-        newRow.innerHTML = `
-            <td class="company-name text-left">${company.name || ''}</td>
-            <td class="company-industry text-left"><span class="table-badge">${company.industry || ''}</span></td>
-            <td class="company-stage text-left"><span class="table-badge">${company.stage || ''}</span></td>
-            <td class="company-location text-left"><span class="table-badge">${company.location || ''}</span></td>
-            <td class="company-otani-rating text-center">
-                <span class="rating-badge otani-rating-${company.otani_rating?.toLowerCase() || 'd'}">${company.otani_rating || 'D'}</span>
-            </td>
-            <td class="company-rating text-center">
-                <span class="rating-badge rating-${company.rating?.toLowerCase() || ''}">${company.rating || ''}</span>
-            </td>
-            <td class="company-actions text-center">
-                <div class="table-actions">
-                    ${company.website ? `<a href="${company.website}" target="_blank" rel="noopener noreferrer" class="action-btn" onclick="event.stopPropagation()"><i class="fas fa-external-link-alt"></i></a>` : ''}
-                    ${company.email ? `<a href="mailto:${company.email}" class="action-btn" onclick="event.stopPropagation()"><i class="fas fa-envelope"></i></a>` : ''}
-                </div>
-            </td>
-        `;
-        
-        // Remove empty state if it exists
-        const emptyState = elements.companiesTableBody.querySelector('.empty-state');
-        if (emptyState) {
-            emptyState.remove();
-        }
-        
-        elements.companiesTableBody.appendChild(newRow);
-        debugLog('Successfully added row to table');
     }
 
     // Show messages
