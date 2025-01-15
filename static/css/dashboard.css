@@ -25,7 +25,7 @@
 /* Container Layout */
 .dashboard-container {
     max-width: 1200px;
-    padding: 2rem 3rem;
+    padding: 0 3rem;
     margin: 0 auto;
 }
 
@@ -268,6 +268,7 @@
     left: 0;
     right: 0;
     z-index: 9999;
+    height: var(--navbar-height);
 }
 
 .navbar-inner {
@@ -309,7 +310,7 @@
 
 /* Main Content Adjustment */
 .main-content {
-    margin-top: calc(var(--navbar-height) + 1rem);
+    padding-top: var(--navbar-height);
     position: relative;
     z-index: 1;
 }
@@ -911,4 +912,13 @@
     overflow: hidden;
     clip: rect(0, 0, 0, 0);
     border: 0;
+}
+
+/* Preferences Panel */
+.preferences-panel {
+    background: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-top: 2rem;
+    width: 100%;
 }
