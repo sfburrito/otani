@@ -24,7 +24,7 @@
 
 /* Container Layout */
 .dashboard-container {
-    max-width: 1400px;
+    max-width: 1200px;
     padding: 0 2rem;
     margin: 0 auto;
     width: 100%;
@@ -261,8 +261,7 @@
     color: white;
     padding: 1rem 0;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    justify-content: center;
     width: 100%;
     position: fixed;
     top: 0;
@@ -273,9 +272,8 @@
 }
 
 .navbar-inner {
-    max-width: 1400px;
+    max-width: 1200px;
     width: 100%;
-    margin: 0 auto;
     padding: 0 2rem;
     display: flex;
     justify-content: space-between;
@@ -378,7 +376,7 @@
 /* Table Styles */
 .dashboard-container {
     padding: 2rem;
-    max-width: 1400px;
+    max-width: 1200px;
     margin: 0 auto;
     width: 100%;
 }
@@ -937,10 +935,10 @@
 }
 
 .footer-content {
-    max-width: 1400px;
+    max-width: 1200px;
+    width: 100%;
     margin: 0 auto;
     padding: 0 2rem;
     display: flex;
     justify-content: space-between;
-    width: 100%;
 }
