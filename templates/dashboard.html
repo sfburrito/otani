@@ -18,17 +18,13 @@
                 <h3>Investment Preferences</h3>
             </div>
             <div class="header-actions">
-                <button class="btn btn-primary" onclick="savePreferences()">
-                    <span>Save Preferences</span>
-                </button>
-                <button class="btn btn-secondary" onclick="resetPreferences()">
-                    <span>Reset</span>
-                </button>
+                <button class="btn btn-primary" onclick="savePreferences()">Save Preferences</button>
+                <button class="btn btn-outline" onclick="resetPreferences()">Reset</button>
             </div>
         </div>
         
         <div class="preferences-grid">
-            <div class="custom-select-container">
+            <div class="preference-group">
                 <label class="preference-label">Investment Stage</label>
                 <div class="custom-select" tabindex="0" data-placeholder="Select stages">
                     <div class="select-trigger">
@@ -56,8 +52,8 @@
                     </div>
                 </div>
             </div>
-
-            <div class="custom-select-container">
+            
+            <div class="preference-group">
                 <label class="preference-label">Industry Sectors</label>
                 <div class="custom-select" tabindex="0" data-placeholder="Select industries">
                     <div class="select-trigger">
@@ -97,8 +93,8 @@
                     </div>
                 </div>
             </div>
-
-            <div class="custom-select-container">
+            
+            <div class="preference-group">
                 <label class="preference-label">Geographic Focus</label>
                 <div class="custom-select" tabindex="0" data-placeholder="Select regions">
                     <div class="select-trigger">
@@ -123,8 +119,8 @@
                     </div>
                 </div>
             </div>
-
-            <div class="custom-select-container">
+            
+            <div class="preference-group">
                 <label class="preference-label">Investment Size</label>
                 <div class="custom-select" tabindex="0" data-placeholder="Select investment sizes">
                     <div class="select-trigger">
@@ -155,7 +151,6 @@
             <label class="preference-label" for="additionalPrefs">Additional Preferences</label>
             <textarea 
                 id="additionalPrefs" 
-                class="preference-textarea" 
                 placeholder="Enter any additional preferences, criteria, or notes not covered above (e.g., specific technologies, founder backgrounds, impact goals). This information will help us better understand your unique investment strategy."
                 rows="4"
             ></textarea>
@@ -168,9 +163,7 @@
                 <h3>Your Companies</h3>
             </div>
             <div class="header-actions">
-                <button class="btn btn-primary" onclick="openAddCompanyModal()">
-                    <span>Add Company</span>
-                </button>
+                <button class="btn btn-primary" onclick="openAddCompanyModal()">Add Company</button>
             </div>
         </div>
 
