@@ -412,7 +412,10 @@ let currentCompanyId = null;
 function openCompanyDetails(companyId) {
     currentCompanyId = companyId;
     const company = window.companies.find(c => c.id === companyId);
-    if (!company) return;
+    if (!company) {
+        console.error('Company not found:', companyId);
+        return;
+    }
     
     // Populate modal fields
     document.getElementById('modal-company-name').textContent = company.name;
@@ -430,6 +433,18 @@ function closeCompanyDetailModal() {
 }
 
 function confirmDeleteCompany() {
+    if (!currentCompanyId) {
+        console.error('No company selected for deletion');
+        return;
+    }
+    
+    const company = window.companies.find(c => c.id === currentCompanyId);
+    if (!company) {
+        console.error('Company not found for deletion:', currentCompanyId);
+        return;
+    }
+
+    // Hide details modal and show delete confirmation
     document.getElementById('companyDetailsModal').style.display = 'none';
     document.getElementById('deleteConfirmModal').style.display = 'block';
 }
@@ -440,28 +455,43 @@ function closeDeleteConfirmModal() {
 }
 
 function deleteCompany() {
-    if (!currentCompanyId) return;
+    if (!currentCompanyId) {
+        console.error('No company ID for deletion');
+        return;
+    }
+
+    console.log('Deleting company:', currentCompanyId);
     
     fetch(`/delete_company/${currentCompanyId}`, {
         method: 'DELETE',
-    })
-    .then(response => {
-        if (response.ok) {
-            // Remove company from local data
-            window.companies = window.companies.filter(c => c.id !== currentCompanyId);
-            // Re-render table
-            window.renderCompanies(window.companies);
-            // Close modals
-            document.getElementById('deleteConfirmModal').style.display = 'none';
-            document.getElementById('companyDetailsModal').style.display = 'none';
-            // Show success message
-            showMessage('Company deleted successfully');
-        } else {
-            showMessage('Error deleting company', 'error');
+        headers: {
+            'Content-Type': 'application/json'
         }
     })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Delete request failed');
+        }
+        return response.json();
+    })
+    .then(data => {
+        // Remove company from local data
+        window.companies = window.companies.filter(c => c.id !== currentCompanyId);
+        
+        // Re-render table
+        if (typeof window.renderCompanies === 'function') {
+            window.renderCompanies(window.companies);
+        }
+        
+        // Close modals
+        document.getElementById('deleteConfirmModal').style.display = 'none';
+        document.getElementById('companyDetailsModal').style.display = 'none';
+        
+        // Show success message
+        showMessage('Company deleted successfully');
+    })
     .catch(error => {
-        console.error('Error:', error);
+        console.error('Error deleting company:', error);
         showMessage('Error deleting company', 'error');
     });
 }
@@ -473,6 +503,8 @@ function saveCompanyNotes() {
 
 function showMessage(message, type = 'success') {
     const flashMessages = document.querySelector('.flash-messages');
+    if (!flashMessages) return;
+    
     const messageDiv = document.createElement('div');
     messageDiv.className = `alert alert-${type}`;
     messageDiv.textContent = message;

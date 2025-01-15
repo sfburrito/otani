@@ -91,13 +91,9 @@
                 <td><div class="rating-badge rating-${(company.rating || '').toLowerCase()}">${company.rating || ''}</div></td>
             `;
 
-            // Add click handler
+            // Add click handler for row
             row.addEventListener('click', () => {
-                if (typeof window.openCompanyDetail === 'function') {
-                    window.openCompanyDetail(company);
-                } else {
-                    console.error('openCompanyDetail function not found');
-                }
+                openCompanyDetails(company.id);
             });
 
             // Add the row to the table
