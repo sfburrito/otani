@@ -67,7 +67,7 @@
             console.log('No companies to display');
             companiesTableBody.innerHTML = `
                 <tr class="empty-state">
-                    <td colspan="7" class="text-center py-4">
+                    <td colspan="6" class="text-center py-4">
                         <p class="text-gray-500">No companies found. Add your first company to get started!</p>
                     </td>
                 </tr>
@@ -89,7 +89,6 @@
                 <td><div class="text-badge">${company.location || ''}</div></td>
                 <td><div class="rating-badge otani-rating-${(company.otani_rating || 'D').toLowerCase()}">${company.otani_rating || 'D'}</div></td>
                 <td><div class="rating-badge rating-${(company.rating || '').toLowerCase()}">${company.rating || ''}</div></td>
-                <td><button class="action-btn" onclick="openCompanyDetails('${company.id}')">View</button></td>
             `;
 
             // Set the row content
