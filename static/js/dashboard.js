@@ -87,7 +87,7 @@
                 <td class="company-industry">
                     <span class="table-badge">${company.industry || ''}</span>
                 </td>
-                <td>
+                <td class="company-stage" style="background: none !important;">
                     <span class="table-badge">${company.stage || ''}</span>
                 </td>
                 <td class="company-location">
