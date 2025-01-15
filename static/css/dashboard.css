@@ -22,6 +22,13 @@
 .rating-c, .otani-rating-c { background-color: #f59e0b; }
 .rating-d, .otani-rating-d { background-color: #ef4444; }
 
+/* Container Layout */
+.dashboard-container {
+    max-width: 1200px;
+    padding: 2rem;
+    margin: 0 auto;
+}
+
 /* Table Container */
 .table-container {
     width: 100%;
