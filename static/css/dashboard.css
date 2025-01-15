@@ -31,7 +31,6 @@
 
 /* Container Layout */
 .container, .dashboard-container {
-    max-width: var(--container-width);
     margin: 0 auto;
     width: 100%;
 }
@@ -271,9 +270,10 @@
 .navbar {
     background-color: var(--navy);
     color: white;
-    padding: 1rem 0;
+    padding: 1rem 3rem;
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
+    align-items: center;
     width: 100%;
     position: fixed;
     top: 0;
@@ -382,21 +382,20 @@
 }
 
 /* Table Styles */
-.container, .dashboard-container {
-    padding: 2rem;
-    max-width: var(--container-width);
+.dashboard-container {
+    padding: 0 3rem;
     margin: 0 auto;
     width: 100%;
 }
 
-.container, .dashboard-container .companies-table {
+.dashboard-container .companies-table {
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
     margin: 0;
 }
 
-.container, .dashboard-container .companies-table thead th {
+.dashboard-container .companies-table thead th {
     background: #f8f9fa;
     color: #344767;
     font-weight: 600;
@@ -408,25 +407,25 @@
     margin: 0;
 }
 
-.container, .dashboard-container .companies-table thead th i {
+.dashboard-container .companies-table thead th i {
     margin-right: 0.5rem;
     color: #64748b;
     font-size: 0.875rem;
 }
 
-.container, .dashboard-container .companies-table tbody tr {
+.dashboard-container .companies-table tbody tr {
     transition: all 0.2s ease;
 }
 
-.container, .dashboard-container .companies-table tbody tr:nth-child(even) {
+.dashboard-container .companies-table tbody tr:nth-child(even) {
     background-color: #fafbfc;
 }
 
-.container, .dashboard-container .companies-table tbody tr:hover {
+.dashboard-container .companies-table tbody tr:hover {
     background-color: #f1f4f8;
 }
 
-.container, .dashboard-container .companies-table td {
+.dashboard-container .companies-table td {
     padding: 0.75rem 0.875rem;
     border-bottom: 1px solid #edf2f7;
     color: #4a5568;
@@ -434,7 +433,7 @@
     font-size: 0.875rem;
 }
 
-.container, .dashboard-container .text-badge {
+.dashboard-container .text-badge {
     display: inline-flex;
     align-items: center;
     padding: 0.25rem 0.75rem;
@@ -448,7 +447,7 @@
     color: #475569;
 }
 
-.container, .dashboard-container .rating-badge {
+.dashboard-container .rating-badge {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -461,23 +460,23 @@
     color: white;
 }
 
-.container, .dashboard-container .rating-a,
-.container, .dashboard-container .otani-rating-a {
+.dashboard-container .rating-a,
+.dashboard-container .otani-rating-a {
     background-color: #22c55e;
 }
 
-.container, .dashboard-container .rating-b,
-.container, .dashboard-container .otani-rating-b {
+.dashboard-container .rating-b,
+.dashboard-container .otani-rating-b {
     background-color: #3b82f6;
 }
 
-.container, .dashboard-container .rating-c,
-.container, .dashboard-container .otani-rating-c {
+.dashboard-container .rating-c,
+.dashboard-container .otani-rating-c {
     background-color: #f59e0b;
 }
 
-.container, .dashboard-container .rating-d,
-.container, .dashboard-container .otani-rating-d {
+.dashboard-container .rating-d,
+.dashboard-container .otani-rating-d {
     background-color: #ef4444;
 }
 
@@ -937,7 +936,7 @@
 .footer {
     background-color: var(--navy);
     color: white;
-    padding: 3rem 0;
+    padding: 3rem;
     margin-top: 3rem;
     width: 100%;
 }
