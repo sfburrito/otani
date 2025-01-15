@@ -132,7 +132,7 @@
 }
 
 .dashboard-container .companies-table td {
-    padding: 1rem !important;
+    padding: 0.5rem 1rem !important;
     border-bottom: 1px solid #edf2f7 !important;
     color: #4a5568 !important;
     font-size: 0.875rem !important;
@@ -144,7 +144,7 @@
 .dashboard-container .companies-table .table-badge {
     display: inline-flex !important;
     align-items: center !important;
-    padding: 0.25rem 0.75rem !important;
+    padding: 0.15rem 0.5rem !important;
     border-radius: 20px !important;
     font-size: 0.75rem !important;
     font-weight: 500 !important;
@@ -169,7 +169,7 @@
 .dashboard-container .companies-table tr td.company-stage .table-badge {
     display: inline-flex !important;
     align-items: center !important;
-    padding: 0.25rem 0.75rem !important;
+    padding: 0.15rem 0.5rem !important;
     border-radius: 20px !important;
     font-size: 0.75rem !important;
     font-weight: 500 !important;
