@@ -254,6 +254,44 @@
     border-radius: 0 0 12px 12px;
 }
 
+/* Navigation Bar */
+.navbar {
+    background-color: #0f172a;
+    color: white;
+    padding: 1rem 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: white;
+    text-decoration: none;
+}
+
+.navbar-brand:hover {
+    color: #e2e8f0;
+}
+
+.navbar-nav {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+}
+
+.nav-link {
+    color: white;
+    text-decoration: none;
+    font-size: 1rem;
+}
+
+.nav-link:hover {
+    color: #e2e8f0;
+}
+
 /* Mobile Responsive */
 @media (max-width: 768px) {
     .companies-table {
