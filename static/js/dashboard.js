@@ -82,15 +82,27 @@
             row.className = 'company-row';
             row.setAttribute('data-company-id', company.id);
             
-            // Create row content with simpler structure
+            // Create row content with simpler structure and consistent alignment
             const rowContent = `
-                <td class="col-name"><div class="text-badge">${company.name || ''}</div></td>
-                <td class="col-industry"><div class="text-badge">${company.industry || ''}</div></td>
-                <td class="col-stage"><div class="text-badge">${company.stage || ''}</div></td>
-                <td class="col-location"><div class="text-badge">${company.location || ''}</div></td>
-                <td class="col-otani-rating"><div class="rating-badge otani-rating-${(company.otani_rating || 'D').toLowerCase()}">${company.otani_rating || 'D'}</div></td>
-                <td class="col-rating"><div class="rating-badge rating-${(company.rating || '').toLowerCase()}">${company.rating || ''}</div></td>
-                <td class="col-actions">
+                <td>
+                    <div class="text-badge">${company.name || ''}</div>
+                </td>
+                <td>
+                    <div class="text-badge">${company.industry || ''}</div>
+                </td>
+                <td>
+                    <div class="text-badge">${company.stage || ''}</div>
+                </td>
+                <td>
+                    <div class="text-badge">${company.location || ''}</div>
+                </td>
+                <td>
+                    <div class="rating-badge otani-rating-${(company.otani_rating || 'D').toLowerCase()}">${company.otani_rating || 'D'}</div>
+                </td>
+                <td>
+                    <div class="rating-badge rating-${(company.rating || '').toLowerCase()}">${company.rating || ''}</div>
+                </td>
+                <td>
                     <button class="action-btn" onclick="openCompanyDetails('${company.id}')">
                         <i class="fas fa-external-link-alt"></i>
                     </button>
