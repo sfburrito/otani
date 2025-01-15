@@ -19,11 +19,9 @@
             </div>
             <div class="header-actions">
                 <button class="btn btn-primary" onclick="savePreferences()">
-                    <i class="fas fa-save" aria-hidden="true"></i>
                     <span>Save Preferences</span>
                 </button>
                 <button class="btn btn-secondary" onclick="resetPreferences()">
-                    <i class="fas fa-undo" aria-hidden="true"></i>
                     <span>Reset</span>
                 </button>
             </div>
@@ -35,7 +33,6 @@
                 <div class="custom-select" tabindex="0" data-placeholder="Select stages">
                     <div class="select-trigger">
                         <span class="selected-text">Select stages</span>
-                        <i class="fas fa-chevron-down"></i>
                     </div>
                     <div class="custom-options">
                         <label class="option-item">
@@ -65,7 +62,6 @@
                 <div class="custom-select" tabindex="0" data-placeholder="Select industries">
                     <div class="select-trigger">
                         <span class="selected-text">Select industries</span>
-                        <i class="fas fa-chevron-down"></i>
                     </div>
                     <div class="custom-options">
                         <label class="option-item">
@@ -107,7 +103,6 @@
                 <div class="custom-select" tabindex="0" data-placeholder="Select regions">
                     <div class="select-trigger">
                         <span class="selected-text">Select regions</span>
-                        <i class="fas fa-chevron-down"></i>
                     </div>
                     <div class="custom-options">
                         <label class="option-item">
@@ -134,7 +129,6 @@
                 <div class="custom-select" tabindex="0" data-placeholder="Select investment sizes">
                     <div class="select-trigger">
                         <span class="selected-text">Select investment sizes</span>
-                        <i class="fas fa-chevron-down"></i>
                     </div>
                     <div class="custom-options">
                         <label class="option-item">
@@ -174,7 +168,6 @@
         </div>
         <div class="header-actions">
             <button class="btn btn-primary" onclick="openAddCompanyModal()">
-                <i class="fas fa-plus" aria-hidden="true"></i>
                 <span>Add Company</span>
             </button>
         </div>
@@ -182,42 +175,20 @@
 
     <div class="companies-section">
         <div class="search-bar">
-            <i class="fas fa-search search-icon"></i>
             <input type="text" id="companySearch" placeholder="Search companies..." aria-label="Search companies">
         </div>
 
         <div class="table-container">
-            <table class="companies-table" role="grid">
+            <table class="companies-table">
                 <thead>
                     <tr>
-                        <th scope="col" data-column="name" aria-sort="none" style="width: 20%">
-                            <i class="fas fa-building" aria-hidden="true"></i>
-                            <span>Name</span>
-                        </th>
-                        <th scope="col" data-column="industry" aria-sort="none" style="width: 15%">
-                            <i class="fas fa-industry" aria-hidden="true"></i>
-                            <span>Industry</span>
-                        </th>
-                        <th scope="col" data-column="stage" aria-sort="none" style="width: 15%">
-                            <i class="fas fa-chart-line" aria-hidden="true"></i>
-                            <span>Stage</span>
-                        </th>
-                        <th scope="col" data-column="location" aria-sort="none" style="width: 15%">
-                            <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
-                            <span>Location</span>
-                        </th>
-                        <th scope="col" data-column="otani_rating" aria-sort="none" style="width: 12%">
-                            <i class="fas fa-star" aria-hidden="true"></i>
-                            <span>Otani Rating</span>
-                        </th>
-                        <th scope="col" data-column="rating" aria-sort="none" style="width: 12%">
-                            <i class="fas fa-user-check" aria-hidden="true"></i>
-                            <span>Your Rating</span>
-                        </th>
-                        <th scope="col" aria-label="Actions" style="width: 11%">
-                            <i class="fas fa-cog" aria-hidden="true"></i>
-                            <span class="sr-only">Actions</span>
-                        </th>
+                        <th>Name</th>
+                        <th>Industry</th>
+                        <th>Stage</th>
+                        <th>Location</th>
+                        <th>Otani Rating</th>
+                        <th>Your Rating</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody id="companiesTableBody">
@@ -227,12 +198,10 @@
 
         <div class="pagination">
             <button class="btn btn-outline btn-sm" id="prevPage" aria-label="Previous page">
-                <i class="fas fa-chevron-left" aria-hidden="true"></i>
                 <span>Previous</span>
             </button>
             <span id="pageInfo">Page <span id="currentPage">1</span> of <span id="totalPages">1</span></span>
             <button class="btn btn-outline btn-sm" id="nextPage" aria-label="Next page">
-                <i class="fas fa-chevron-right" aria-hidden="true"></i>
                 <span>Next</span>
             </button>
         </div>
@@ -246,7 +215,6 @@
         <div class="modal-header">
             <h2>Add New Company</h2>
             <button class="modal-close close-modal" onclick="closeAddCompanyModal()">
-                <i class="fas fa-times" aria-hidden="true"></i>
                 <span>Close</span>
             </button>
         </div>
@@ -336,11 +304,9 @@
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-outline" onclick="closeAddCompanyModal()">
-                <i class="fas fa-times" aria-hidden="true"></i>
                 <span>Cancel</span>
             </button>
             <button type="button" class="btn btn-primary" id="addCompanyButton">
-                <i class="fas fa-plus" aria-hidden="true"></i>
                 <span>Add Company</span>
             </button>
         </div>

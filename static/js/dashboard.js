@@ -79,34 +79,17 @@
         companiesData.forEach(company => {
             console.log('Creating row for company:', company);
             const row = document.createElement('tr');
-            row.className = 'company-row';
             row.setAttribute('data-company-id', company.id);
             
-            // Create row content with simpler structure and consistent alignment
+            // Create row content with minimal structure
             const rowContent = `
-                <td>
-                    <div class="text-badge">${company.name || ''}</div>
-                </td>
-                <td>
-                    <div class="text-badge">${company.industry || ''}</div>
-                </td>
-                <td>
-                    <div class="text-badge">${company.stage || ''}</div>
-                </td>
-                <td>
-                    <div class="text-badge">${company.location || ''}</div>
-                </td>
-                <td>
-                    <div class="rating-badge otani-rating-${(company.otani_rating || 'D').toLowerCase()}">${company.otani_rating || 'D'}</div>
-                </td>
-                <td>
-                    <div class="rating-badge rating-${(company.rating || '').toLowerCase()}">${company.rating || ''}</div>
-                </td>
-                <td>
-                    <button class="action-btn" onclick="openCompanyDetails('${company.id}')">
-                        <i class="fas fa-external-link-alt"></i>
-                    </button>
-                </td>
+                <td><div class="text-badge">${company.name || ''}</div></td>
+                <td><div class="text-badge">${company.industry || ''}</div></td>
+                <td><div class="text-badge">${company.stage || ''}</div></td>
+                <td><div class="text-badge">${company.location || ''}</div></td>
+                <td><div class="rating-badge otani-rating-${(company.otani_rating || 'D').toLowerCase()}">${company.otani_rating || 'D'}</div></td>
+                <td><div class="rating-badge rating-${(company.rating || '').toLowerCase()}">${company.rating || ''}</div></td>
+                <td><button class="action-btn" onclick="openCompanyDetails('${company.id}')">View</button></td>
             `;
 
             // Set the row content
