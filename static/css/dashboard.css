@@ -258,11 +258,26 @@
 .navbar {
     background-color: var(--navy);
     color: white;
-    padding: 1rem 3rem;
+    padding: 1rem 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
     width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 9999;
+}
+
+.navbar-inner {
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .navbar-brand {
@@ -290,6 +305,13 @@
 
 .nav-link:hover {
     color: #e2e8f0;
+}
+
+/* Main Content Adjustment */
+.main-content {
+    margin-top: calc(var(--navbar-height) + 1rem);
+    position: relative;
+    z-index: 1;
 }
 
 /* Mobile Responsive */

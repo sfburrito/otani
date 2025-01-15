@@ -30,15 +30,17 @@
 </head>
 <body>
     <nav class="navbar">
-        <a href="{{ url_for('index') }}" class="navbar-brand">Otani</a>
-        <div class="navbar-nav">
-            {% if current_user.is_authenticated %}
-                <a href="{{ url_for('dashboard') }}" class="nav-link">Dashboard</a>
-                <a href="{{ url_for('logout') }}" class="nav-link">Logout</a>
-            {% else %}
-                <a href="{{ url_for('login') }}" class="nav-link">Login</a>
-                <a href="{{ url_for('register') }}" class="nav-link cta">Register</a>
-            {% endif %}
+        <div class="navbar-inner">
+            <a href="{{ url_for('index') }}" class="navbar-brand">Otani</a>
+            <div class="navbar-nav">
+                {% if current_user.is_authenticated %}
+                    <a href="{{ url_for('dashboard') }}" class="nav-link">Dashboard</a>
+                    <a href="{{ url_for('logout') }}" class="nav-link">Logout</a>
+                {% else %}
+                    <a href="{{ url_for('login') }}" class="nav-link">Login</a>
+                    <a href="{{ url_for('register') }}" class="nav-link cta">Register</a>
+                {% endif %}
+            </div>
         </div>
     </nav>
 
