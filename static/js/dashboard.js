@@ -41,6 +41,9 @@
                 renderCompanies(filteredCompanies);
             });
         }
+
+        // Add sorting functionality
+        initializeSorting();
     }
 
     // Render companies in the table
@@ -112,7 +115,75 @@
         });
     }
 
+    // Add sorting functionality
+    function initializeSorting() {
+        const headers = document.querySelectorAll('.companies-table th[data-column]');
+        headers.forEach(header => {
+            header.addEventListener('click', () => {
+                const column = header.dataset.column;
+                const currentSort = header.getAttribute('aria-sort');
+                
+                // Reset all other headers
+                headers.forEach(h => h.setAttribute('aria-sort', 'none'));
+                
+                // Toggle sort direction
+                const newSort = currentSort === 'ascending' ? 'descending' : 'ascending';
+                header.setAttribute('aria-sort', newSort);
+                
+                // Sort the table
+                sortTable(column, newSort === 'ascending');
+            });
+        });
+    }
+
+    // Sort table data
+    function sortTable(column, ascending) {
+        const tbody = document.getElementById('companiesTableBody');
+        const rows = Array.from(tbody.getElementsByTagName('tr'));
+        
+        rows.sort((a, b) => {
+            const aValue = getCellValue(a, column);
+            const bValue = getCellValue(b, column);
+            
+            if (aValue === bValue) return 0;
+            if (ascending) {
+                return aValue > bValue ? 1 : -1;
+            } else {
+                return aValue < bValue ? 1 : -1;
+            }
+        });
+        
+        // Clear and re-append rows
+        while (tbody.firstChild) {
+            tbody.removeChild(tbody.firstChild);
+        }
+        rows.forEach(row => tbody.appendChild(row));
+    }
+
+    // Helper to get cell value for sorting
+    function getCellValue(row, column) {
+        const columnIndex = {
+            'name': 0,
+            'industry': 1,
+            'stage': 2,
+            'location': 3,
+            'otani_rating': 4,
+            'rating': 5
+        }[column];
+        
+        if (columnIndex === undefined) return '';
+        
+        const cell = row.cells[columnIndex];
+        const badge = cell.querySelector('.text-badge, .rating-badge');
+        return badge ? badge.textContent.trim().toLowerCase() : '';
+    }
+
     // Expose functions to window
     window.initDashboard = initDashboard;
     window.renderCompanies = renderCompanies;
 })();
+
+// Initialize sorting when table is populated
+document.addEventListener('DOMContentLoaded', () => {
+    // No need to call initializeSorting here, it's already called in initDashboard
+});
