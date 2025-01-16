@@ -1,0 +1,130 @@
+<!--
+    Project: Otani
+    File: index.html
+    Description: Main entry point for the Otani web application
+    Author: Tyler Tanaka
+    Created: January 16, 2025
+    
+    This file serves as the main container for all components:
+    - Loads CSS files from the css/ directory
+    - Dynamically loads HTML components from the html/ directory
+    - Manages basic page layout and styling
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Otani</title>
+    
+    <!-- External CSS files -->
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/investorpreferences.css">
+    <link rel="stylesheet" href="css/yourcompanies.css">
+    <link rel="stylesheet" href="css/footer.css">
+    
+    <!-- Global styles -->
+    <style>
+        /* Reset default browser styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        /* Base page styling */
+        body {
+            background-color: white;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            padding-bottom: 60px; /* Add space for footer */
+            box-sizing: border-box;
+        }
+
+        /* Container for limiting content width */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+        }
+
+        /* Vertical boundary lines */
+        .container::before,
+        .container::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            background-color: #e0e0e0; /* Faint grey color */
+            z-index: 1000;
+        }
+
+        .container::before {
+            left: calc((100% - 1400px) / 2);  /* Left boundary */
+        }
+
+        .container::after {
+            right: calc((100% - 1400px) / 2); /* Right boundary */
+        }
+    </style>
+</head>
+<body>
+    <!-- Header component container -->
+    <div id="header"></div>
+
+    <!-- Main content component container -->
+    <div class="container">
+        <div id="main-content"></div>
+        <div id="companies-section"></div>
+    </div>
+
+    <!-- Footer component container -->
+    <div id="footer"></div>
+
+    <!-- Component loading script -->
+    <script>
+        /**
+         * Loads HTML content from a file into a specified element
+         * @param {string} url - The URL of the HTML file to load
+         * @param {string} elementId - The ID of the element to load the content into
+         */
+        async function loadComponent(url, elementId) {
+            try {
+                const response = await fetch(url);
+                const html = await response.text();
+                document.getElementById(elementId).innerHTML = html;
+            } catch (error) {
+                console.error('Error loading component:', error);
+            }
+        }
+
+        // Prevent going back to login page
+        history.pushState(null, null, document.URL);
+        window.addEventListener('popstate', function () {
+            history.pushState(null, null, document.URL);
+        });
+
+        // Function to load HTML content
+        async function loadContent() {
+            const header = await fetch('html/header.html').then(response => response.text());
+            const main = await fetch('html/investorpreferences.html').then(response => response.text());
+            const companies = await fetch('html/yourcompanies.html').then(response => response.text());
+            const footer = await fetch('html/footer.html').then(response => response.text());
+
+            document.getElementById('header').innerHTML = header;
+            document.getElementById('main-content').innerHTML = main;
+            document.getElementById('companies-section').innerHTML = companies;
+            document.getElementById('footer').innerHTML = footer;
+        }
+
+        // Initialize components when DOM is ready
+        window.addEventListener('DOMContentLoaded', () => {
+            loadContent();
+        });
+    </script>
+</body>
+</html>

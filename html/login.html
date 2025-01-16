@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="../css/login.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="login-container">
+        <h1 class="logo">Otani</h1>
+        <p class="welcome">Welcome to Otani</p>
+        <p class="subtitle">Investment Portfolio Management</p>
+        
+        <form class="login-form" onsubmit="handleLogin(event)">
+            <div class="input-group">
+                <i class="fas fa-envelope"></i>
+                <input type="email" placeholder="Email" class="login-input">
+            </div>
+            <div class="input-group">
+                <i class="fas fa-lock"></i>
+                <input type="password" placeholder="Password" class="login-input">
+            </div>
+            <button type="submit" class="login-button">Log In</button>
+        </form>
+
+        <div class="footer-text">
+            <p class="powered-by">Powered by Otani</p>
+            <p class="version">v1.0</p>
+        </div>
+    </div>
+    <script>
+        function handleLogin(event) {
+            event.preventDefault();
+            window.location.href = '../index.html';
+        }
+    </script>
+</body>
+</html>

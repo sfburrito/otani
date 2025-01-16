@@ -1,0 +1,60 @@
+/*
+    Component: Your Companies Styles
+    Description: Styles for the company portfolio table display
+    
+    Color Scheme:
+    - Primary Text: #333 (Dark Gray)
+    - Secondary Text: #555 (Medium Gray)
+    - Table Borders: #e0e0e0 (Light Gray)
+    - Header Background: #f8f8f8 (Light Gray)
+    
+    Typography:
+    - Font Family: Arial, sans-serif
+    - Size Hierarchy:
+        - Section Title: 28px
+        - Table Headers: 14px
+        - Table Content: 14px
+    
+    Layout:
+    - Full width table
+    - Consistent cell padding
+    - Light borders for structure
+*/
+
+/* Section container */
+.companies-section {
+    margin-top: 3rem;           /* Space after preferences section */
+}
+
+/* Section title styling */
+.companies-section .section-title {
+    color: #333;                /* Dark gray for emphasis */
+    font-family: Arial, sans-serif;
+    font-size: 28px;            /* Matches other section titles */
+    font-weight: 500;           /* Medium weight for balance */
+    text-align: left;
+    margin-bottom: 1.5rem;      /* Space before table */
+}
+
+/* Table base styling */
+.companies-table {
+    width: 100%;               /* Full width of container */
+    border-collapse: collapse; /* Removes double borders */
+    font-family: Arial, sans-serif;
+}
+
+/* Table header and cell shared styles */
+.companies-table th,
+.companies-table td {
+    border: 1px solid #e0e0e0;  /* Light gray borders */
+    padding: 12px;              /* Consistent cell padding */
+    text-align: left;
+}
+
+/* Table header specific styles */
+.companies-table th {
+    background-color: #f8f8f8;  /* Light gray background */
+    font-weight: 600;           /* Semi-bold for headers */
+    color: #333;                /* Dark gray text */
+    font-size: 14px;
+}
