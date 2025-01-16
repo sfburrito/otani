@@ -1,3 +1,22 @@
+/*
+    Component: Login Page Styles
+    Description: Styles for the Otani login page
+    Author: Tyler Tanaka
+    Created: January 16, 2025
+    
+    Color Scheme:
+    - Primary: #00002b (Navy)
+    - Secondary: #008080 (Teal)
+    - Text: #666 (Gray)
+    - Background: White with frosted glass effect
+    
+    Layout:
+    - Centered container with max-width
+    - Flexbox for vertical alignment
+    - Responsive padding and margins
+*/
+
+/* Base page layout */
 body {
     margin: 0;
     padding: 0;
@@ -9,6 +28,7 @@ body {
     background: linear-gradient(135deg, #00002b 0%, #00002f 100%);
 }
 
+/* Main container with frosted glass effect */
 .login-container {
     width: 350px;
     padding: 3rem;
@@ -19,6 +39,7 @@ body {
     text-align: center;
 }
 
+/* Branding elements */
 .logo {
     color: #00002b;
     font-size: 36px;
@@ -37,6 +58,7 @@ body {
     margin-bottom: 2rem;
 }
 
+/* Form layout and styling */
 .login-form {
     display: flex;
     flex-direction: column;
@@ -44,6 +66,7 @@ body {
     margin-bottom: 2rem;
 }
 
+/* Input group with icon */
 .input-group {
     position: relative;
     display: flex;
@@ -56,6 +79,7 @@ body {
     color: #666;
 }
 
+/* Input field styling */
 .login-input {
     width: 100%;
     padding: 12px 12px 12px 40px;
@@ -69,6 +93,7 @@ body {
     border-color: #008080;
 }
 
+/* Login button styling */
 .login-button {
     padding: 12px;
     font-size: 16px;
@@ -84,6 +109,7 @@ body {
     background-color: #008080;
 }
 
+/* Footer text styling */
 .footer-text {
     margin-top: 2rem;
     font-size: 12px;
