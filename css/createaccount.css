@@ -130,3 +130,13 @@ body {
     margin: 0.25rem 0 0;
     font-size: 12px;
 }
+
+/* Error message styling */
+.error-message {
+    color: #ff3b30;
+    font-size: 14px;
+    margin-top: -0.5rem;
+    margin-bottom: 1rem;
+    text-align: left;
+    display: none;
+}

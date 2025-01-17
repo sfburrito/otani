@@ -1,16 +1,3 @@
-<!--
-    Project: Otani
-    File: index.html
-    Description: Main entry point for the Otani web application
-    Author: Tyler Tanaka
-    Created: January 16, 2025
-    
-    This file serves as the main container for all components:
-    - Loads CSS files from the css/ directory
-    - Dynamically loads HTML components from the html/ directory
-    - Manages basic page layout and styling
--->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -61,7 +48,7 @@
             bottom: 0;
             width: 1px;
             background-color: #e0e0e0; /* Faint grey color */
-            z-index: 1000;
+            z-index: 900;
         }
 
         .container::before {
@@ -88,85 +75,137 @@
 
     <!-- Component loading script -->
     <script>
-        /**
-         * Loads HTML content from a file into a specified element
-         * @param {string} url - The URL of the HTML file to load
-         * @param {string} elementId - The ID of the element to load the content into
-         */
-        async function loadComponent(url, elementId) {
+        // Function to load HTML content
+        async function loadContent() {
             try {
-                const response = await fetch(url);
-                const html = await response.text();
-                document.getElementById(elementId).innerHTML = html;
+                const header = await fetch('html/header.html');
+                const main = await fetch('html/investorpreferences.html');
+                const companies = await fetch('html/yourcompanies.html');
+                const footer = await fetch('html/footer.html');
+
+                document.getElementById('header').innerHTML = await header.text();
+                document.getElementById('main-content').innerHTML = await main.text();
+                document.getElementById('companies-section').innerHTML = await companies.text();
+                document.getElementById('footer').innerHTML = await footer.text();
+
+                // Initialize modal functionality after content is loaded
+                initializeModal();
+                // Initialize preferences functionality
+                initializePreferences();
             } catch (error) {
-                console.error('Error loading component:', error);
+                console.error('Error loading content:', error);
             }
         }
 
-        // Prevent going back to login page
-        history.pushState(null, null, document.URL);
-        window.addEventListener('popstate', function () {
-            history.pushState(null, null, document.URL);
-        });
+        // Modal initialization function
+        function initializeModal() {
+            const modal = document.getElementById('addCompanyModal');
+            const addButton = document.querySelector('.add-company-button');
+            const cancelButton = document.getElementById('cancelButton');
 
-        // Function to load HTML content
-        async function loadContent() {
-            const header = await fetch('html/header.html').then(response => response.text());
-            const main = await fetch('html/investorpreferences.html').then(response => response.text());
-            const companies = await fetch('html/yourcompanies.html').then(response => response.text());
-            const footer = await fetch('html/footer.html').then(response => response.text());
+            if (!modal || !addButton || !cancelButton) return;
 
-            document.getElementById('header').innerHTML = header;
-            document.getElementById('main-content').innerHTML = main;
-            document.getElementById('companies-section').innerHTML = companies;
-            document.getElementById('footer').innerHTML = footer;
+            addButton.addEventListener('click', () => modal.removeAttribute('hidden'));
+            cancelButton.addEventListener('click', () => modal.setAttribute('hidden', ''));
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) modal.setAttribute('hidden', '');
+            });
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && !modal.hasAttribute('hidden')) {
+                    modal.setAttribute('hidden', '');
+                }
+            });
+        }
 
-            // Initialize modal functionality after content is loaded
-            const initializeModal = () => {
-                const modal = document.getElementById('addCompanyModal');
-                const addButton = document.querySelector('.add-company-button');
-                const cancelButton = document.getElementById('cancelButton');
+        // Initialize preferences functionality
+        function initializePreferences() {
+            const saveButton = document.querySelector('.save-button');
+            if (!saveButton) return;
 
-                if (!modal || !addButton || !cancelButton) return;
+            // Load saved preferences
+            loadSavedPreferences();
 
-                // Function to hide modal
-                const hideModal = () => modal.setAttribute('hidden', '');
+            saveButton.addEventListener('click', async () => {
+                try {
+                    // Get selected values from each category
+                    const industry = Array.from(document.querySelector('select[name="industry"]').selectedOptions).map(opt => opt.value);
+                    const stage = Array.from(document.querySelector('select[name="stage"]').selectedOptions).map(opt => opt.value);
+                    const location = Array.from(document.querySelector('select[name="location"]').selectedOptions).map(opt => opt.value);
+                    const investment_amount = Array.from(document.querySelector('select[name="investment_amount"]').selectedOptions).map(opt => opt.value);
+                    const additional_info = document.querySelector('.preferences-input').value;
 
-                // Show modal when Add Company is clicked
-                addButton.addEventListener('click', () => modal.removeAttribute('hidden'));
+                    // Show loading state
+                    saveButton.textContent = 'Saving...';
+                    saveButton.disabled = true;
 
-                // Hide modal when Cancel is clicked
-                cancelButton.addEventListener('click', hideModal);
+                    // Send data to server
+                    const response = await fetch('/api/preferences', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            industry,
+                            stage,
+                            location,
+                            investment_amount,
+                            additional_info
+                        })
+                    });
 
-                // Hide modal when clicking outside
-                modal.addEventListener('click', (e) => {
-                    if (e.target === modal) hideModal();
-                });
+                    const result = await response.json();
 
-                // Hide modal when Esc key is pressed (only add listener when modal is visible)
-                const handleEscKey = (e) => {
-                    if (e.key === 'Escape') hideModal();
-                };
-
-                // Add/remove Esc key listener based on modal visibility
-                const observer = new MutationObserver(() => {
-                    if (modal.hasAttribute('hidden')) {
-                        document.removeEventListener('keydown', handleEscKey);
+                    if (result.success) {
+                        alert('Preferences saved successfully!');
                     } else {
-                        document.addEventListener('keydown', handleEscKey);
+                        throw new Error(result.error || 'Failed to save preferences');
                     }
-                });
-                observer.observe(modal, { attributes: true });
-            };
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Failed to save preferences: ' + error.message);
+                } finally {
+                    // Reset button state
+                    saveButton.textContent = 'Save Preferences';
+                    saveButton.disabled = false;
+                }
+            });
+        }
 
-            // Call initialization after content is loaded
-            initializeModal();
+        // Function to load saved preferences
+        async function loadSavedPreferences() {
+            try {
+                const response = await fetch('/api/preferences');
+                const result = await response.json();
+
+                if (result.success && result.data) {
+                    // Set selected options for each select element
+                    const setSelectedOptions = (selectName, values) => {
+                        const select = document.querySelector(`select[name="${selectName}"]`);
+                        if (select && values) {
+                            Array.from(select.options).forEach(option => {
+                                option.selected = values.includes(option.value);
+                            });
+                        }
+                    };
+
+                    setSelectedOptions('industry', result.data.industry);
+                    setSelectedOptions('stage', result.data.stage);
+                    setSelectedOptions('location', result.data.location);
+                    setSelectedOptions('investment_amount', result.data.investment_amount);
+
+                    // Set additional info text
+                    const textarea = document.querySelector('.preferences-input');
+                    if (textarea && result.data.additional_info) {
+                        textarea.value = result.data.additional_info;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading preferences:', error);
+            }
         }
 
         // Initialize components when DOM is ready
-        window.addEventListener('DOMContentLoaded', () => {
-            loadContent();
-        });
+        document.addEventListener('DOMContentLoaded', loadContent);
     </script>
 </body>
 </html>

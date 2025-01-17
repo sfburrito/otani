@@ -132,6 +132,16 @@ body {
     background-color: #006666;
 }
 
+/* Error message styling */
+.error-message {
+    color: #ff3b30;
+    font-size: 14px;
+    margin-top: -0.5rem;
+    margin-bottom: 1rem;
+    text-align: left;
+    display: none;
+}
+
 /* Footer text styling */
 .footer-text {
     margin-top: 2rem;

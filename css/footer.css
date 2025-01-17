@@ -27,6 +27,9 @@
     display: flex;
     justify-content: flex-end;    /* Right-aligns the copyright text */
     align-items: center;          /* Vertically centers content */
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 2rem;
 }
 
 /* Copyright text styling */

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <title>Login - Otani</title>
     <link rel="stylesheet" href="../css/login.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
@@ -10,15 +11,16 @@
         <p class="welcome">Welcome to Otani</p>
         <p class="subtitle">Investment Portfolio Management</p>
         
-        <form class="login-form" onsubmit="handleLogin(event)">
+        <form class="login-form" id="loginForm">
             <div class="input-group">
                 <i class="fas fa-envelope"></i>
-                <input type="email" placeholder="Email" class="login-input">
+                <input type="email" id="email" placeholder="Email" class="login-input" required>
             </div>
             <div class="input-group">
                 <i class="fas fa-lock"></i>
-                <input type="password" placeholder="Password" class="login-input">
+                <input type="password" id="password" placeholder="Password" class="login-input" required>
             </div>
+            <div id="error-message" class="error-message"></div>
             <div class="button-group">
                 <button type="submit" class="login-button">Log In</button>
                 <button type="button" class="create-account-button" onclick="window.location.href='html/createaccount.html'">Create Account</button>
@@ -31,10 +33,43 @@
         </div>
     </div>
     <script>
-        function handleLogin(event) {
+        async function handleLogin(event) {
             event.preventDefault();
-            window.location.href = '../index.html';
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            try {
+                const response = await fetch('http://localhost:5000/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Store user info in localStorage
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    // Redirect to dashboard
+                    window.location.href = '/dashboard';
+                } else {
+                    throw new Error(data.error || 'Login failed');
+                }
+            } catch (error) {
+                const errorMessage = document.getElementById('error-message');
+                errorMessage.textContent = error.message || 'An unexpected error occurred';
+                errorMessage.style.display = 'block';
+            }
         }
+        
+        document.getElementById('loginForm').addEventListener('submit', handleLogin);
     </script>
 </body>
 </html>
