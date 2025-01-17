@@ -43,7 +43,7 @@ body {
 .logo {
     color: #00002b;
     font-size: 36px;
-    margin: 0 0 1rem;
+    margin: 0 0 0.5rem;
 }
 
 .welcome {
@@ -93,9 +93,16 @@ body {
     border-color: #008080;
 }
 
+/* Button group styling */
+.button-group {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
 /* Login button styling */
 .login-button {
-    padding: 12px;
+    padding: 12px 24px;
     font-size: 16px;
     background-color: #00002b;
     color: white;
@@ -109,6 +116,22 @@ body {
     background-color: #008080;
 }
 
+/* Create account button styling */
+.create-account-button {
+    padding: 12px 24px;
+    font-size: 16px;
+    background-color: #008080;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.create-account-button:hover {
+    background-color: #006666;
+}
+
 /* Footer text styling */
 .footer-text {
     margin-top: 2rem;
@@ -117,11 +140,7 @@ body {
 }
 
 .powered-by {
-    margin-bottom: 0.5rem;
-}
-
-.copyright {
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.25rem;
 }
 
 .version {

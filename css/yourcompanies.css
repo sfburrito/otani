@@ -1,39 +1,66 @@
 /*
     Component: Your Companies Styles
-    Description: Styles for the company portfolio table display
+    Description: Styles for the companies table display and modal form
     
     Color Scheme:
-    - Primary Text: #333 (Dark Gray)
-    - Secondary Text: #555 (Medium Gray)
-    - Table Borders: #e0e0e0 (Light Gray)
-    - Header Background: #f8f8f8 (Light Gray)
+    - Text: #333333 (Dark Gray)
+    - Border: #e0e0e0 (Light Gray)
+    - Hover: #f5f5f5 (Lighter Gray)
+    - Modal Overlay: rgba(0, 0, 0, 0.5)
     
     Typography:
     - Font Family: Arial, sans-serif
     - Size Hierarchy:
-        - Section Title: 28px
+        - Page Title: 28px
         - Table Headers: 14px
         - Table Content: 14px
+        - Modal Title: 20px
+        - Form Labels: 14px
     
     Layout:
     - Full width table
-    - Consistent cell padding
-    - Light borders for structure
+    - Equal column widths
+    - Modal centered with max-width 500px
 */
 
 /* Section container */
 .companies-section {
-    margin-top: 3rem;           /* Space after preferences section */
+    margin-top: 2rem;           /* Space after preferences section */
 }
 
-/* Section title styling */
-.companies-section .section-title {
-    color: #333;                /* Dark gray for emphasis */
+/* Header container with flexbox */
+.companies-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Page title */
+.page-title {
+    color: #333;
     font-family: Arial, sans-serif;
-    font-size: 28px;            /* Matches other section titles */
-    font-weight: 500;           /* Medium weight for balance */
-    text-align: left;
-    margin-bottom: 1.5rem;      /* Space before table */
+    font-size: 28px;
+    font-weight: 500;
+    margin-top: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Add company button */
+.add-company-button {
+    padding: 8px 16px;
+    font-size: 14px;
+    background-color: #008080;  /* Teal color */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-family: Arial, sans-serif;
+}
+
+/* Button hover effect */
+.add-company-button:hover {
+    background-color: #006666;  /* Darker teal on hover */
 }
 
 /* Table base styling */
@@ -41,6 +68,7 @@
     width: 100%;               /* Full width of container */
     border-collapse: collapse; /* Removes double borders */
     font-family: Arial, sans-serif;
+    margin-bottom: 2rem;      /* Add space below table */
 }
 
 /* Table header and cell shared styles */
@@ -57,4 +85,77 @@
     font-weight: 600;           /* Semi-bold for headers */
     color: #333;                /* Dark gray text */
     font-size: 14px;
+}
+
+/* Modal styles */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Ensure modal appears above other content */
+}
+
+.modal[hidden] {
+    display: none;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Form styles */
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #333;
+    font-weight: 500;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.form-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.form-buttons button {
+    padding: 8px 16px;
+    font-size: 14px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.form-buttons button[type="submit"] {
+    background-color: #008080;
+    color: white;
+    border: none;
+}
+
+.form-buttons button[type="button"] {
+    background-color: #f5f5f5;
+    border: 1px solid #e0e0e0;
 }

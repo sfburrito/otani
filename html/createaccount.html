@@ -1,0 +1,49 @@
+<!--
+    Component: Create Account Page
+    Description: Account creation page for new Otani users
+    Author: Tyler Tanaka
+    Created: January 16, 2025
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="../css/createaccount.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="create-account-container">
+        <h1 class="logo">Otani</h1>
+        <p class="welcome">Create Your Account</p>
+        <p class="subtitle">Join the Investment Community</p>
+        
+        <form class="create-account-form">
+            <div class="input-group">
+                <i class="fas fa-user"></i>
+                <input type="text" placeholder="Full Name" class="create-account-input">
+            </div>
+            <div class="input-group">
+                <i class="fas fa-envelope"></i>
+                <input type="email" placeholder="Email" class="create-account-input">
+            </div>
+            <div class="input-group">
+                <i class="fas fa-lock"></i>
+                <input type="password" placeholder="Password" class="create-account-input">
+            </div>
+            <div class="input-group">
+                <i class="fas fa-lock"></i>
+                <input type="password" placeholder="Confirm Password" class="create-account-input">
+            </div>
+            <div class="button-group">
+                <button type="submit" class="create-button">Create Account</button>
+                <button type="button" class="back-button" onclick="window.location.href='/'">Back to Login</button>
+            </div>
+        </form>
+
+        <div class="footer-text">
+            <p class="powered-by">Powered by Otani</p>
+            <p class="version">v1.0</p>
+        </div>
+    </div>
+</body>
+</html>

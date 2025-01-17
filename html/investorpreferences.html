@@ -4,7 +4,6 @@
     Styles: ../css/investorpreferences.css
     
     Structure:
-    - Main container with flex layout
     - Four category sections in grid layout
     - Additional preferences section with textarea
     
@@ -17,62 +16,62 @@
 
 <!-- Main content section - Primary container -->
 <main class="main-content">
-    <div class="content-wrapper">
-        <!-- Main heading -->
-        <h2 class="section-title">Investor Preferences</h2>
+    <div class="title-row">
+        <h2 class="page-title">Investor Preferences</h2>
+        <button class="save-button">Save Preferences</button>
+    </div>
+    
+    <!-- Category grid container -->
+    <div class="categories">
+        <!-- Industry category -->
+        <div class="category">
+            <h3 class="category-header">Industry</h3>
+            <select multiple class="category-select" name="industry">
+                <option>Artificial Intelligence/Machine Learning</option>
+                <option>Climate Tech/Sustainability</option>
+                <option>Healthcare/Biotech</option>
+                <option>Enterprise SaaS</option>
+            </select>
+        </div>
         
-        <!-- Category grid container -->
-        <div class="categories">
-            <!-- Industry category -->
-            <div class="category">
-                <h3 class="category-header">Industry</h3>
-                <ul class="category-list">
-                    <li>Artificial Intelligence/Machine Learning</li>
-                    <li>Climate Tech/Sustainability</li>
-                    <li>Healthcare/Biotech</li>
-                    <li>Enterprise SaaS</li>
-                </ul>
-            </div>
-            
-            <!-- Investment stage category -->
-            <div class="category">
-                <h3 class="category-header">Stage</h3>
-                <ul class="category-list">
-                    <li>Seed</li>
-                    <li>Series A</li>
-                    <li>Series B</li>
-                    <li>Growth</li>
-                </ul>
-            </div>
-            
-            <!-- Geographic location category -->
-            <div class="category">
-                <h3 class="category-header">Location</h3>
-                <ul class="category-list">
-                    <li>North America</li>
-                    <li>Europe</li>
-                    <li>Asia</li>
-                    <li>Other</li>
-                </ul>
-            </div>
-            
-            <!-- Investment amount category -->
-            <div class="category">
-                <h3 class="category-header">Investment Amount</h3>
-                <ul class="category-list">
-                    <li>$1m to $5m</li>
-                    <li>$5m to $15m</li>
-                    <li>$15m to $30m</li>
-                    <li>$30m to $50m</li>
-                </ul>
-            </div>
+        <!-- Investment stage category -->
+        <div class="category">
+            <h3 class="category-header">Stage</h3>
+            <select multiple class="category-select" name="stage">
+                <option>Seed</option>
+                <option>Series A</option>
+                <option>Series B</option>
+                <option>Growth</option>
+            </select>
         </div>
+        
+        <!-- Geographic location category -->
+        <div class="category">
+            <h3 class="category-header">Location</h3>
+            <select multiple class="category-select" name="location">
+                <option>North America</option>
+                <option>Europe</option>
+                <option>Asia</option>
+                <option>Other</option>
+            </select>
+        </div>
+        
+        <!-- Investment amount category -->
+        <div class="category">
+            <h3 class="category-header">Investment Amount</h3>
+            <select multiple class="category-select" name="investment_amount">
+                <option>$1m to $5m</option>
+                <option>$5m to $15m</option>
+                <option>$15m to $30m</option>
+                <option>$30m to $50m</option>
+            </select>
+        </div>
+    </div>
 
-        <!-- Additional preferences section -->
-        <div class="additional-section">
-            <h3 class="category-header">Additional Preferences</h3>
-            <textarea class="preferences-input" 
-                      placeholder="Enter any additional investment preferences..."></textarea>
-        </div>
+    <!-- Additional preferences section -->
+    <div class="additional-section">
+        <h3 class="category-header">Additional Preferences</h3>
+        <textarea class="preferences-input" 
+                  placeholder="Enter any additional investment preferences..."></textarea>
     </div>
 </main>

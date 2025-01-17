@@ -39,6 +39,7 @@
             margin: 0;
             padding: 0;
             min-height: 100vh;
+            padding-top: 60px;  /* Space for fixed header */
             padding-bottom: 60px; /* Add space for footer */
             box-sizing: border-box;
         }
@@ -119,6 +120,47 @@
             document.getElementById('main-content').innerHTML = main;
             document.getElementById('companies-section').innerHTML = companies;
             document.getElementById('footer').innerHTML = footer;
+
+            // Initialize modal functionality after content is loaded
+            const initializeModal = () => {
+                const modal = document.getElementById('addCompanyModal');
+                const addButton = document.querySelector('.add-company-button');
+                const cancelButton = document.getElementById('cancelButton');
+
+                if (!modal || !addButton || !cancelButton) return;
+
+                // Function to hide modal
+                const hideModal = () => modal.setAttribute('hidden', '');
+
+                // Show modal when Add Company is clicked
+                addButton.addEventListener('click', () => modal.removeAttribute('hidden'));
+
+                // Hide modal when Cancel is clicked
+                cancelButton.addEventListener('click', hideModal);
+
+                // Hide modal when clicking outside
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) hideModal();
+                });
+
+                // Hide modal when Esc key is pressed (only add listener when modal is visible)
+                const handleEscKey = (e) => {
+                    if (e.key === 'Escape') hideModal();
+                };
+
+                // Add/remove Esc key listener based on modal visibility
+                const observer = new MutationObserver(() => {
+                    if (modal.hasAttribute('hidden')) {
+                        document.removeEventListener('keydown', handleEscKey);
+                    } else {
+                        document.addEventListener('keydown', handleEscKey);
+                    }
+                });
+                observer.observe(modal, { attributes: true });
+            };
+
+            // Call initialization after content is loaded
+            initializeModal();
         }
 
         // Initialize components when DOM is ready

@@ -1,10 +1,10 @@
-from flask import Flask, render_template, send_from_directory
+from flask import Flask, send_from_directory
 import os
 
 app = Flask(__name__, static_folder='.')
 
 @app.route('/')
-def login():
+def index():
     return send_from_directory('.', 'html/login.html')
 
 @app.route('/<path:path>')
