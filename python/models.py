@@ -78,3 +78,28 @@ class InvestorPreferences(db.Model):
             'investment_amount': self.investment_amount,
             'additional_info': self.additional_info
         }
+
+class Company(db.Model):
+    __tablename__ = 'companies'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    company_name = db.Column(db.String(255))
+    industry = db.Column(db.String(100))
+    stage = db.Column(db.String(50))
+    location = db.Column(db.String(100))
+    your_rating = db.Column(db.String(1))
+    
+    user = db.relationship('User', backref=db.backref('companies', lazy=True))
+
+    def to_dict(self):
+        """Convert company object to dictionary for JSON serialization."""
+        return {
+            'id': self.id,
+            'user_id': self.user_id,
+            'company_name': self.company_name,
+            'industry': self.industry,
+            'stage': self.stage,
+            'location': self.location,
+            'your_rating': self.your_rating
+        }

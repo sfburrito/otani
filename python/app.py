@@ -6,7 +6,7 @@ Main application module that defines routes and handles user authentication.
 
 from flask import Flask, request, jsonify, send_from_directory, session
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
-from models import db, User, InvestorPreferences
+from models import db, User, InvestorPreferences, Company
 import logging
 import os
 
@@ -60,6 +60,11 @@ def serve_html(filename):
 def serve_css(filename):
     """Serve CSS files from the css directory."""
     return send_from_directory('../css', filename)
+
+@app.route('/js/<path:filename>')
+def serve_js(filename):
+    """Serve JavaScript files from the js directory."""
+    return send_from_directory('../js', filename)
 
 @app.route('/api/register', methods=['POST'])
 def register():
@@ -205,6 +210,116 @@ def get_preferences():
         
     except Exception as e:
         logger.error(f'Error getting preferences: {str(e)}')
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 400
+
+@app.route('/api/companies', methods=['POST'])
+@login_required
+def add_company():
+    """
+    Add a new company and calculate Otani rating.
+    
+    Expects JSON payload with:
+        - company_name: Name of the company
+        - industry: Company's industry
+        - stage: Company's funding stage
+        - location: Company's location
+        - your_rating: User's rating (A-D)
+        
+    Returns:
+        JSON response with:
+            - success: Boolean indicating success
+            - company: Company data including calculated Otani rating
+            - error: Error message if failed
+    """
+    logger.debug('Add company endpoint hit')
+    data = request.get_json()
+    
+    # Get user preferences for Otani rating calculation
+    preferences = InvestorPreferences.query.filter_by(user_id=current_user.id).first()
+    
+    # Calculate Otani rating based on preference matches
+    matches = 0
+    if preferences:
+        if any(ind == data['industry'] for ind in preferences.industry):
+            matches += 1
+        if any(st == data['stage'] for st in preferences.stage):
+            matches += 1
+        if any(loc == data['location'] for loc in preferences.location):
+            matches += 1
+    
+    otani_rating = {3: 'A', 2: 'B', 1: 'C', 0: 'D'}[matches]
+    
+    try:
+        # Create and save new company
+        company = Company(
+            user_id=current_user.id,
+            company_name=data['company_name'],
+            industry=data['industry'],
+            stage=data['stage'],
+            location=data['location'],
+            your_rating=data.get('your_rating', 'C')
+        )
+        
+        db.session.add(company)
+        db.session.commit()
+        
+        # Prepare response with both ratings
+        response_data = company.to_dict()
+        response_data['otani_rating'] = otani_rating
+        
+        logger.debug(f'Company added successfully: {response_data}')
+        return jsonify({'success': True, 'company': response_data})
+        
+    except Exception as e:
+        logger.error(f'Error adding company: {str(e)}')
+        db.session.rollback()
+        return jsonify({'success': False, 'error': str(e)}), 400
+
+@app.route('/api/companies', methods=['GET'])
+@login_required
+def get_companies():
+    """
+    Get all companies for the current user with Otani ratings.
+    
+    Returns:
+        JSON response with:
+            - success: Boolean indicating success
+            - companies: List of company data including Otani ratings
+            - error: Error message if failed
+    """
+    try:
+        # Get user's companies and preferences
+        companies = Company.query.filter_by(user_id=current_user.id).all()
+        preferences = InvestorPreferences.query.filter_by(user_id=current_user.id).first()
+        
+        # Prepare response with calculated Otani ratings
+        companies_data = []
+        for company in companies:
+            company_dict = company.to_dict()
+            
+            # Calculate Otani rating
+            matches = 0
+            if preferences:
+                if any(ind == company.industry for ind in preferences.industry):
+                    matches += 1
+                if any(st == company.stage for st in preferences.stage):
+                    matches += 1
+                if any(loc == company.location for loc in preferences.location):
+                    matches += 1
+            
+            company_dict['otani_rating'] = {3: 'A', 2: 'B', 1: 'C', 0: 'D'}[matches]
+            companies_data.append(company_dict)
+        
+        return jsonify({
+            'success': True,
+            'companies': companies_data
+        })
+        
+    except Exception as e:
+        logger.error(f'Error getting companies: {str(e)}')
         return jsonify({
             'success': False,
             'error': str(e)

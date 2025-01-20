@@ -88,124 +88,25 @@
                 document.getElementById('companies-section').innerHTML = await companies.text();
                 document.getElementById('footer').innerHTML = await footer.text();
 
-                // Initialize modal functionality after content is loaded
-                initializeModal();
-                // Initialize preferences functionality
-                initializePreferences();
+                // Initialize both Otani and preferences functionality after ALL content is loaded
+                console.log('All content loaded, initializing functionality');
+                if (typeof initializeOtani === 'function') {
+                    initializeOtani();
+                }
+                if (typeof initializePreferences === 'function') {
+                    initializePreferences();
+                }
             } catch (error) {
                 console.error('Error loading content:', error);
-            }
-        }
-
-        // Modal initialization function
-        function initializeModal() {
-            const modal = document.getElementById('addCompanyModal');
-            const addButton = document.querySelector('.add-company-button');
-            const cancelButton = document.getElementById('cancelButton');
-
-            if (!modal || !addButton || !cancelButton) return;
-
-            addButton.addEventListener('click', () => modal.removeAttribute('hidden'));
-            cancelButton.addEventListener('click', () => modal.setAttribute('hidden', ''));
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) modal.setAttribute('hidden', '');
-            });
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape' && !modal.hasAttribute('hidden')) {
-                    modal.setAttribute('hidden', '');
-                }
-            });
-        }
-
-        // Initialize preferences functionality
-        function initializePreferences() {
-            const saveButton = document.querySelector('.save-button');
-            if (!saveButton) return;
-
-            // Load saved preferences
-            loadSavedPreferences();
-
-            saveButton.addEventListener('click', async () => {
-                try {
-                    // Get selected values from each category
-                    const industry = Array.from(document.querySelector('select[name="industry"]').selectedOptions).map(opt => opt.value);
-                    const stage = Array.from(document.querySelector('select[name="stage"]').selectedOptions).map(opt => opt.value);
-                    const location = Array.from(document.querySelector('select[name="location"]').selectedOptions).map(opt => opt.value);
-                    const investment_amount = Array.from(document.querySelector('select[name="investment_amount"]').selectedOptions).map(opt => opt.value);
-                    const additional_info = document.querySelector('.preferences-input').value;
-
-                    // Show loading state
-                    saveButton.textContent = 'Saving...';
-                    saveButton.disabled = true;
-
-                    // Send data to server
-                    const response = await fetch('/api/preferences', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            industry,
-                            stage,
-                            location,
-                            investment_amount,
-                            additional_info
-                        })
-                    });
-
-                    const result = await response.json();
-
-                    if (result.success) {
-                        alert('Preferences saved successfully!');
-                    } else {
-                        throw new Error(result.error || 'Failed to save preferences');
-                    }
-                } catch (error) {
-                    console.error('Error:', error);
-                    alert('Failed to save preferences: ' + error.message);
-                } finally {
-                    // Reset button state
-                    saveButton.textContent = 'Save Preferences';
-                    saveButton.disabled = false;
-                }
-            });
-        }
-
-        // Function to load saved preferences
-        async function loadSavedPreferences() {
-            try {
-                const response = await fetch('/api/preferences');
-                const result = await response.json();
-
-                if (result.success && result.data) {
-                    // Set selected options for each select element
-                    const setSelectedOptions = (selectName, values) => {
-                        const select = document.querySelector(`select[name="${selectName}"]`);
-                        if (select && values) {
-                            Array.from(select.options).forEach(option => {
-                                option.selected = values.includes(option.value);
-                            });
-                        }
-                    };
-
-                    setSelectedOptions('industry', result.data.industry);
-                    setSelectedOptions('stage', result.data.stage);
-                    setSelectedOptions('location', result.data.location);
-                    setSelectedOptions('investment_amount', result.data.investment_amount);
-
-                    // Set additional info text
-                    const textarea = document.querySelector('.preferences-input');
-                    if (textarea && result.data.additional_info) {
-                        textarea.value = result.data.additional_info;
-                    }
-                }
-            } catch (error) {
-                console.error('Error loading preferences:', error);
             }
         }
 
         // Initialize components when DOM is ready
         document.addEventListener('DOMContentLoaded', loadContent);
     </script>
+    
+    <!-- Load Otani JavaScript -->
+    <script src="js/companies.js"></script>
+    <script src="js/preferences.js"></script>
 </body>
 </html>

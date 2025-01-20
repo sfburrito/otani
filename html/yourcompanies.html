@@ -16,8 +16,8 @@
 <section class="companies-section">
     <div class="companies-header">
         <h2 class="page-title">Your Companies</h2>
-        <button class="add-company-button">Add Company</button>
-    </div>
+        <button type="button" class="add-company-button">Add Company</button>
+    </div>    
     
     <!-- Companies table -->
     <table class="companies-table">
@@ -32,14 +32,6 @@
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
         </tbody>
     </table>
 
@@ -47,7 +39,7 @@
     <div id="addCompanyModal" class="modal" hidden>
         <div class="modal-content">
             <h3>Add New Company</h3>
-            <form id="addCompanyForm">
+            <form id="addCompanyForm" action="javascript:void(0);">
                 <!-- Company Name -->
                 <div class="form-group">
                     <label for="companyName">Company Name:</label>
@@ -111,3 +103,6 @@
         </div>
     </div>
 </section>
+
+<!-- Load external JavaScript -->
+<script src="../js/companies.js"></script>
