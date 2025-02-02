@@ -155,16 +155,17 @@
     left: 0;
     right: 0;
     background: white;
-    border: 1px solid #008080;
+    border: 1px solid #e0e0e0;
     border-top: none;
     border-radius: 0 0 4px 4px;
     max-height: 0;
     overflow: hidden;
     transition: max-height 0.2s ease;
-    z-index: 1000;
+    z-index: 900;  /* Changed from 1000 to 900 to stay below header */
 }
 
 .options-container.active {
+    border: 1px solid #008080;
     max-height: 200px;
     overflow-y: auto;
 }
