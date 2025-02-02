@@ -15,27 +15,29 @@
 /* Footer container */
 .footer {
     background-color: #00002b;
-    padding: 1rem 2rem;
-    width: 100%;             /* Full width of viewport */
-    position: sticky;        /* Sticks to bottom when scrolling */
-    bottom: 0;              /* Aligned to bottom */
-    left: 0;               /* Aligned to left edge */
+    padding: 1rem 0;
+    width: 100%;
+    margin-top: auto;
 }
 
-/* Inner container for content alignment */
+/* Inner container for width control */
 .footer .container {
-    display: flex;
-    justify-content: flex-end;    /* Right-aligns the copyright text */
-    align-items: center;          /* Vertically centers content */
     max-width: 1400px;
     margin: 0 auto;
     padding: 0 2rem;
 }
 
-/* Copyright text styling */
-.copyright {
+/* Content container */
+.footer .footer-content {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+/* Copyright text */
+.footer .copyright {
     color: #ffffff;
     font-size: 14px;
     font-family: Arial, sans-serif;
-    opacity: 0.8;                 /* Slightly transparent for subtle look */
+    opacity: 0.8;
 }

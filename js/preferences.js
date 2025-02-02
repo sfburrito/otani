@@ -14,7 +14,11 @@ const PREFERENCES_CONFIG = {
     debug: true,
     selectors: {
         saveButton: '.save-button',
-        categorySelects: '.category-select',
+        customSelect: '.custom-select',
+        selectHeader: '.select-header',
+        optionsContainer: '.options-container',
+        option: '.option',
+        selectedOptions: '.selected-options',
         additionalInfo: '.preferences-input'
     },
     endpoints: {
@@ -41,6 +45,9 @@ const initializePreferences = async () => {
         return;
     }
 
+    // Initialize custom selects
+    initializeCustomSelects();
+
     // Load existing preferences
     await loadPreferences();
 
@@ -49,8 +56,83 @@ const initializePreferences = async () => {
 };
 
 /**
+ * Initialize custom select dropdowns
+ */
+const initializeCustomSelects = () => {
+    const selects = document.querySelectorAll(PREFERENCES_CONFIG.selectors.customSelect);
+    
+    selects.forEach(select => {
+        const header = select.querySelector(PREFERENCES_CONFIG.selectors.selectHeader);
+        const optionsContainer = select.querySelector(PREFERENCES_CONFIG.selectors.optionsContainer);
+        const options = select.querySelectorAll(PREFERENCES_CONFIG.selectors.option);
+        
+        // Toggle dropdown
+        header.addEventListener('click', () => {
+            const isActive = header.classList.contains('active');
+            
+            // Close all other dropdowns
+            document.querySelectorAll(PREFERENCES_CONFIG.selectors.selectHeader).forEach(h => {
+                h.classList.remove('active');
+                h.nextElementSibling.classList.remove('active');
+            });
+            
+            // Toggle current dropdown
+            header.classList.toggle('active', !isActive);
+            optionsContainer.classList.toggle('active', !isActive);
+        });
+        
+        // Handle option selection
+        options.forEach(option => {
+            option.addEventListener('click', () => {
+                option.classList.toggle('selected');
+                updateSelectedOptions(select);
+            });
+        });
+    });
+    
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest(PREFERENCES_CONFIG.selectors.customSelect)) {
+            document.querySelectorAll(PREFERENCES_CONFIG.selectors.selectHeader).forEach(header => {
+                header.classList.remove('active');
+                header.nextElementSibling.classList.remove('active');
+            });
+        }
+    });
+};
+
+/**
+ * Update selected options display
+ */
+const updateSelectedOptions = (select) => {
+    const selectedContainer = select.querySelector(PREFERENCES_CONFIG.selectors.selectedOptions);
+    const header = select.querySelector(PREFERENCES_CONFIG.selectors.selectHeader);
+    const selected = Array.from(select.querySelectorAll(`${PREFERENCES_CONFIG.selectors.option}.selected`));
+    
+    selectedContainer.innerHTML = selected.map(option => `
+        <span class="selected-tag">
+            ${option.textContent}
+            <span class="remove" data-value="${option.dataset.value}">×</span>
+        </span>
+    `).join('');
+    
+    // Add/remove has-selections class
+    header.classList.toggle('has-selections', selected.length > 0);
+    
+    // Add click handlers for remove buttons
+    selectedContainer.querySelectorAll('.remove').forEach(removeBtn => {
+        removeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const value = removeBtn.dataset.value;
+            const option = select.querySelector(`${PREFERENCES_CONFIG.selectors.option}[data-value="${value}"]`);
+            option.classList.remove('selected');
+            updateSelectedOptions(select);
+        });
+    });
+};
+
+/**
  * Load existing preferences from API
- * Populates form fields with user's saved preferences
  */
 const loadPreferences = async () => {
     try {
@@ -61,16 +143,19 @@ const loadPreferences = async () => {
             throw new Error(result.error || 'Failed to load preferences');
         }
 
-        // Update form fields with loaded preferences
-        const selects = document.querySelectorAll(PREFERENCES_CONFIG.selectors.categorySelects);
-        selects.forEach(select => {
-            const fieldName = select.getAttribute('name');
+        // Update custom selects with loaded preferences
+        document.querySelectorAll(PREFERENCES_CONFIG.selectors.customSelect).forEach(select => {
+            const fieldName = select.dataset.name;
             const values = result.data[fieldName] || [];
             
-            // Update selected options
-            Array.from(select.options).forEach(option => {
-                option.selected = values.includes(option.value);
+            values.forEach(value => {
+                const option = select.querySelector(`${PREFERENCES_CONFIG.selectors.option}[data-value="${value}"]`);
+                if (option) {
+                    option.classList.add('selected');
+                }
             });
+            
+            updateSelectedOptions(select);
         });
 
         // Update additional info
@@ -85,14 +170,21 @@ const loadPreferences = async () => {
 };
 
 /**
+ * Get selected values from a custom select
+ */
+const getSelectedValues = (fieldName) => {
+    const select = document.querySelector(`${PREFERENCES_CONFIG.selectors.customSelect}[data-name="${fieldName}"]`);
+    return Array.from(select.querySelectorAll(`${PREFERENCES_CONFIG.selectors.option}.selected`))
+        .map(option => option.dataset.value);
+};
+
+/**
  * Handle preferences form submission
- * Collects form data and sends to API
  */
 const handlePreferencesSave = async () => {
     const saveButton = document.querySelector(PREFERENCES_CONFIG.selectors.saveButton);
     if (!saveButton) return;
 
-    // Toggle button state
     const toggleSaving = (saving) => {
         saveButton.disabled = saving;
         saveButton.textContent = saving ? 'Saving...' : 'Save Preferences';
@@ -101,8 +193,7 @@ const handlePreferencesSave = async () => {
     toggleSaving(true);
 
     try {
-        // Collect form data
-        const formData = {
+        const data = {
             industry: getSelectedValues('industry'),
             stage: getSelectedValues('stage'),
             location: getSelectedValues('location'),
@@ -110,46 +201,26 @@ const handlePreferencesSave = async () => {
             additional_info: document.querySelector(PREFERENCES_CONFIG.selectors.additionalInfo)?.value || ''
         };
 
-        // Send to API
         const response = await fetch(PREFERENCES_CONFIG.endpoints.save, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify(formData)
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
         });
 
         const result = await response.json();
-
+        
         if (!result.success) {
             throw new Error(result.error || 'Failed to save preferences');
         }
 
-        // Show success feedback
-        saveButton.textContent = 'Saved!';
-        setTimeout(() => {
-            saveButton.textContent = 'Save Preferences';
-        }, 2000);
-
+        logPreferences('Preferences saved successfully');
+        
     } catch (error) {
         logPreferences(error.message, 'error');
-        alert('Failed to save preferences. Please try again.');
     } finally {
         toggleSaving(false);
     }
 };
-
-/**
- * Helper function to get selected values from a multiple select
- */
-const getSelectedValues = (fieldName) => {
-    const select = document.querySelector(`select[name="${fieldName}"]`);
-    return select ? Array.from(select.selectedOptions).map(opt => opt.value) : [];
-};
-
-// Remove the DOMContentLoaded event listener since we're initializing from index.html
-// document.addEventListener('DOMContentLoaded', initializePreferences);
 
 // Export the initialization function for use in index.html
 window.initializePreferences = initializePreferences;

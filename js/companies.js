@@ -169,14 +169,27 @@ const loadCompanies = async () => {
  */
 const createCompanyRow = (company) => {
     const row = document.createElement('tr');
-    row.innerHTML = `
-        <td>${company.company_name}</td>
-        <td>${company.industry}</td>
-        <td>${company.stage}</td>
-        <td>${company.location}</td>
-        <td>${company.your_rating}</td>
-        <td>${company.otani_rating || 'N/A'}</td>
-    `;
+    
+    // Create cells for each company property
+    const cells = [
+        { text: company.company_name, class: '' },
+        { text: company.industry, class: '' },
+        { text: company.stage, class: '' },
+        { text: company.location, class: '' },
+        { text: company.your_rating, class: `rating-${company.your_rating.toLowerCase()}` },
+        { text: company.otani_rating || 'N/A', class: `rating-${company.otani_rating.toLowerCase()}` }
+    ];
+    
+    // Create and append cells
+    cells.forEach(({ text, class: className }) => {
+        const td = document.createElement('td');
+        td.textContent = text;
+        if (className) {
+            td.className = className;
+        }
+        row.appendChild(td);
+    });
+    
     return row;
 };
 

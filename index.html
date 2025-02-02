@@ -27,7 +27,8 @@
             padding: 0;
             min-height: 100vh;
             padding-top: 60px;  /* Space for fixed header */
-            padding-bottom: 60px; /* Add space for footer */
+            display: flex;      /* Make body a flex container */
+            flex-direction: column; /* Stack children vertically */
             box-sizing: border-box;
         }
 
@@ -37,6 +38,15 @@
             margin: 0 auto;
             padding: 0 2rem;
             position: relative;
+            flex: 1;          /* Make container take up all available space */
+            width: 100%;      /* Ensure full width */
+            display: flex;    /* Make it a flex container */
+            flex-direction: column; /* Stack children vertically */
+        }
+
+        #main-content,
+        #companies-section {
+            width: 100%;      /* Ensure sections take full width */
         }
 
         /* Vertical boundary lines */

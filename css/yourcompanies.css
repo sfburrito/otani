@@ -26,6 +26,9 @@
 /* Section container */
 .companies-section {
     margin-top: 2rem;           /* Space after preferences section */
+    margin-bottom: 2rem;        /* Space before footer */
+    width: 100%;                /* Ensure full width */
+    max-width: 100%;            /* Prevent overflow */
 }
 
 /* Header container with flexbox */
@@ -65,26 +68,111 @@
 
 /* Table base styling */
 .companies-table {
-    width: 100%;               /* Full width of container */
-    border-collapse: collapse; /* Removes double borders */
+    width: 100%;                /* Make table use full width */
+    border-collapse: separate;  /* Allow spacing between cells */
+    border-spacing: 0;         /* Remove default spacing */
+    margin-top: 1rem;
     font-family: Arial, sans-serif;
-    margin-bottom: 2rem;      /* Add space below table */
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;        /* Rounded corners for the table */
+    overflow: hidden;          /* Ensure border-radius clips content */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Subtle shadow */
 }
 
 /* Table header and cell shared styles */
 .companies-table th,
 .companies-table td {
-    border: 1px solid #e0e0e0;  /* Light gray borders */
-    padding: 12px;              /* Consistent cell padding */
+    padding: 16px;              /* Increased padding for better spacing */
     text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+/* Remove bottom border from last row */
+.companies-table tbody tr:last-child td {
+    border-bottom: none;
 }
 
 /* Table header specific styles */
 .companies-table th {
-    background-color: #f8f8f8;  /* Light gray background */
+    background-color: #f8f9fa;  /* Subtle light background */
     font-weight: 600;           /* Semi-bold for headers */
     color: #333;                /* Dark gray text */
     font-size: 14px;
+    text-transform: uppercase;  /* Uppercase headers for emphasis */
+    letter-spacing: 0.5px;      /* Slight letter spacing for readability */
+    white-space: nowrap;        /* Prevent header text wrapping */
+    border-bottom: 2px solid #e0e0e0; /* Thicker border under headers */
+}
+
+/* Center align rating columns */
+.companies-table th:nth-child(5),  /* Your Rating header */
+.companies-table th:nth-child(6) { /* Otani Rating header */
+    text-align: center;
+}
+
+.companies-table td:nth-child(5),  /* Your Rating cell */
+.companies-table td:nth-child(6) { /* Otani Rating cell */
+    text-align: center;
+}
+
+/* Table body styles */
+.companies-table tbody tr {
+    transition: background-color 0.2s ease; /* Smooth hover transition */
+}
+
+/* Alternating row colors */
+.companies-table tbody tr:nth-child(even) {
+    background-color: #f8f9fa;  /* Very light gray for even rows */
+}
+
+/* Row hover effect */
+.companies-table tbody tr:hover {
+    background-color: #f0f7f7;  /* Light teal color on hover */
+}
+
+/* Table cell styles */
+.companies-table td {
+    font-size: 14px;
+    color: #444;               /* Slightly softer than black */
+    line-height: 1.4;          /* Improved line height for readability */
+}
+
+/* Rating cell styles */
+.companies-table td:nth-child(5),  /* Your Rating */
+.companies-table td:nth-child(6) { /* Otani Rating */
+    font-weight: 600;          /* Make ratings stand out */
+}
+
+/* Rating colors */
+.rating-a { color: #2ecc71; }  /* Green for A */
+.rating-b { color: #3498db; }  /* Blue for B */
+.rating-c { color: #f1c40f; }  /* Yellow for C */
+.rating-d { color: #e74c3c; }  /* Red for D */
+
+/* Empty state styles */
+.companies-table tbody:empty::after {
+    content: "No companies added yet";
+    display: block;
+    padding: 32px;
+    text-align: center;
+    color: #999;
+    font-style: italic;
+    background-color: #fff;
+}
+
+/* Responsive table styles */
+@media (max-width: 768px) {
+    .companies-table {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .companies-table th,
+    .companies-table td {
+        white-space: nowrap;  /* Prevent text wrapping on mobile */
+        padding: 12px;        /* Slightly reduced padding for mobile */
+    }
 }
 
 /* Modal styles */
