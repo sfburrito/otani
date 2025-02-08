@@ -174,7 +174,10 @@ const getSelectedValues = (fieldName) => {
  */
 const handlePreferencesSave = async () => {
     const saveButton = document.querySelector(PREFERENCES_CONFIG.selectors.saveButton);
-    if (!saveButton) return;
+    if (!saveButton) {
+        console.error('Save button not found');
+        return;
+    }
 
     const toggleSaving = (saving) => {
         saveButton.disabled = saving;
@@ -192,12 +195,25 @@ const handlePreferencesSave = async () => {
             additional_info: document.querySelector(PREFERENCES_CONFIG.selectors.additionalInfo)?.value || ''
         };
 
+        // Debug log the data being saved
+        console.log('Saving preferences:', data);
+
         // Save to localStorage
         localStorage.setItem('investorPreferences', JSON.stringify(data));
+        
+        // Verify the save
+        const savedData = localStorage.getItem('investorPreferences');
+        console.log('Verified saved data:', JSON.parse(savedData));
+        
         logPreferences('Preferences saved successfully');
         
+        // Show visual confirmation
+        alert('Preferences saved successfully!');
+        
     } catch (error) {
+        console.error('Error saving preferences:', error);
         logPreferences(error.message, 'error');
+        alert('Failed to save preferences');
     } finally {
         toggleSaving(false);
     }
