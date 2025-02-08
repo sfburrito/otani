@@ -7,6 +7,7 @@
     - Table with columns:
         - Company Name
         - Website
+        - Status
         - Industry
         - Stage
         - Location
@@ -27,15 +28,14 @@
             <tr>
                 <th>Company Name</th>
                 <th>Website</th>
-                <th>Industry</th>
-                <th>Stage</th>
-                <th>Location</th>
+                <th>Status</th>
                 <th>Your Rating</th>
                 <th>Otani Rating</th>
                 <th>Why</th>
             </tr>
         </thead>
-        <tbody>
+        <tbody id="companiesTableBody">
+            <!-- Companies will be inserted here -->
         </tbody>
     </table>
 
@@ -113,10 +113,21 @@
                     <textarea id="additionalInfo" name="additionalInfo" rows="3" placeholder="Optional: Add any additional context about the company"></textarea>
                 </div>
 
+                <!-- Add status field to the add company form -->
+                <div class="form-group">
+                    <label for="status">Status:</label>
+                    <select id="status" name="status" required>
+                        <option value="">Select Status</option>
+                        <option value="Active">Active</option>
+                        <option value="Pass">Pass</option>
+                        <option value="Invested">Invested</option>
+                    </select>
+                </div>
+
                 <!-- Form Buttons -->
                 <div class="form-buttons">
                     <button type="submit">Submit</button>
-                    <button type="button" id="cancelButton">Cancel</button>
+                    <button type="button" onclick="closeAddModal()">Cancel</button>
                 </div>
             </form>
         </div>
@@ -175,6 +186,15 @@
                 <div class="form-group">
                     <label for="editAdditionalInfo">Additional Information:</label>
                     <textarea id="editAdditionalInfo" name="additionalInfo" rows="3" placeholder="Optional: Add any additional context about the company"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="editStatus">Status:</label>
+                    <select id="editStatus" name="status" required>
+                        <option value="">Select Status</option>
+                        <option value="Active">Active</option>
+                        <option value="Pass">Pass</option>
+                        <option value="Invested">Invested</option>
+                    </select>
                 </div>
                 <div class="form-buttons">
                     <button type="submit" class="submit-button">Save Changes</button>

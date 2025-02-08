@@ -184,13 +184,21 @@ const getOtaniRating = async (company, preferences) => {
                                 - Industry: ${company.industry}
                                 - Stage: ${company.stage}
                                 - Location: ${company.location}
+                                - Status: ${company.status}
                                 - Additional Info: ${company.additional_info || 'None provided'}
+                                
+                                Investor History:
+                                - Companies marked as "Invested" indicate successful investments
+                                - Companies marked as "Pass" should be considered negative examples
+                                - Companies marked as "Active" are under consideration
                                 
                                 Investor Preferences:
                                 - Industries: ${preferences.industry.join(', ')}
                                 - Stages: ${preferences.stage.join(', ')}
                                 - Locations: ${preferences.location.join(', ')}
                                 - Additional Info: ${preferences.additional_info}
+                                
+                                Consider the company's status when rating. Favor patterns similar to "Invested" companies and avoid patterns similar to "Pass" companies.
                                 
                                 Provide rating and explanation in the specified format.`
                     }
@@ -313,31 +321,81 @@ const createCompanyRow = (company, index) => {
     // Create cells for each company property
     const cells = [
         { text: company.company_name, class: '' },
-        { text: company.website, class: '', isLink: true },
-        { text: company.industry, class: '' },
-        { text: company.stage, class: '' },
-        { text: company.location, class: '' },
+        { isWebsite: true, url: company.website, class: 'website-cell' },
+        { isStatus: true, status: company.status, index: index },
         { text: company.your_rating, class: `rating-${company.your_rating.toLowerCase()}` },
         { text: company.otani_rating || 'N/A', class: company.otani_rating ? `rating-${company.otani_rating.toLowerCase()}` : '' },
         { text: company.why || '', class: 'why-column' }
     ];
     
     // Create and append cells
-    cells.forEach(({ text, class: className, isLink }) => {
+    cells.forEach(({ text, class: className, isWebsite, url, isStatus, status, index }) => {
         const td = document.createElement('td');
-        if (isLink) {
-            const a = document.createElement('a');
-            a.href = text;
-            a.textContent = new URL(text).hostname;
-            a.target = '_blank';
-            a.rel = 'noopener noreferrer';
-            td.appendChild(a);
-        } else {
-            td.textContent = text;
-        }
         if (className) {
             td.className = className;
         }
+        
+        if (isWebsite) {
+            // Stop the row click event when clicking the website icon
+            td.onclick = (e) => e.stopPropagation();
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.target = '_blank';
+            a.rel = 'noopener noreferrer';
+            a.className = 'website-icon';
+            
+            // Create the website icon using SVG
+            a.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="2" y1="12" x2="22" y2="12"></line>
+                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                </svg>
+            `;
+            
+            td.appendChild(a);
+        } else if (isStatus) {
+            // Stop the row click event when clicking the status select
+            td.onclick = (e) => e.stopPropagation();
+            
+            const select = document.createElement('select');
+            select.className = 'status-select';
+            select.innerHTML = `
+                <option value="Active" ${status === 'Active' ? 'selected' : ''}>Active</option>
+                <option value="Pass" ${status === 'Pass' ? 'selected' : ''}>Pass</option>
+                <option value="Invested" ${status === 'Invested' ? 'selected' : ''}>Invested</option>
+            `;
+            
+            select.addEventListener('change', async (e) => {
+                const newStatus = e.target.value;
+                companiesList[index].status = newStatus;
+                
+                // Update localStorage
+                localStorage.setItem('companiesList', JSON.stringify(companiesList));
+                
+                // Get new Otani rating based on updated status
+                const preferences = JSON.parse(localStorage.getItem('investorPreferences')) || {
+                    industry: [],
+                    stage: [],
+                    location: [],
+                    additional_info: ''
+                };
+                
+                const otaniResponse = await getOtaniRating(companiesList[index], preferences);
+                companiesList[index].otani_rating = otaniResponse.rating;
+                companiesList[index].why = otaniResponse.explanation;
+                
+                // Save and reload
+                localStorage.setItem('companiesList', JSON.stringify(companiesList));
+                loadCompanies();
+            });
+            
+            td.appendChild(select);
+        } else {
+            td.textContent = text;
+        }
+        
         row.appendChild(td);
     });
     
@@ -396,6 +454,9 @@ const closeAddModal = () => {
         }
     }
 };
+
+// Make sure this function is available globally
+window.closeAddModal = closeAddModal;
 
 // Initialize only after content is loaded
 document.addEventListener('DOMContentLoaded', initializeOtani);

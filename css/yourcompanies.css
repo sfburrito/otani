@@ -46,6 +46,7 @@
     border-radius: 8px;
     overflow: hidden;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    table-layout: fixed;
 }
 
 .companies-table th,
@@ -74,11 +75,63 @@
     background-color: rgba(0, 0, 43, 0.02);
 }
 
+/* Column widths for new structure */
+.companies-table th:nth-child(1),  /* Company Name */
+.companies-table td:nth-child(1) {
+    width: 20%;
+}
+
+.companies-table th:nth-child(2),  /* Website */
+.companies-table td:nth-child(2) {
+    width: 5%;
+}
+
+.companies-table th:nth-child(3),  /* Status */
+.companies-table td:nth-child(3) {
+    width: 10%;
+}
+
+.companies-table th:nth-child(4),  /* Your Rating */
+.companies-table td:nth-child(4) {
+    width: 10%;
+}
+
+.companies-table th:nth-child(5),  /* Otani Rating */
+.companies-table td:nth-child(5) {
+    width: 10%;
+}
+
+.companies-table th:nth-child(6),  /* Why */
+.companies-table td:nth-child(6) {
+    width: 45%;
+}
+
 /* Rating colors */
 .rating-a { color: #00002b; font-weight: 600; }
 .rating-b { color: #2c3e50; font-weight: 600; }
 .rating-c { color: #7f8c8d; font-weight: 600; }
 .rating-d { color: #95a5a6; font-weight: 600; }
+
+/* Status select styles */
+.status-select {
+    width: 100px;
+    padding: 4px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    font-size: 13px;
+}
+
+/* Website icon */
+.website-icon {
+    width: 20px;
+    height: 20px;
+}
+
+/* Why column text */
+.why-column {
+    white-space: normal;
+    line-height: 1.4;
+}
 
 /* Modal styles */
 .modal {
@@ -111,12 +164,9 @@
     max-width: 500px;
 }
 
-.modal h3 {
-    color: #00002b;
-    font-family: 'Inter', Arial, sans-serif;
-    font-size: 20px;
-    font-weight: 600;
-    margin-bottom: 1.5rem;
+/* Form styles */
+.form-group {
+    margin-bottom: 1rem;
 }
 
 .form-group label {
@@ -125,136 +175,11 @@
     font-size: 14px;
     font-weight: 500;
     margin-bottom: 0.5rem;
+    display: block;
 }
 
 .form-group input,
-.form-group select {
-    width: 100%;
-    padding: 10px 12px;
-    border: 1px solid #e0e0e0;
-    border-radius: 6px;
-    font-family: 'Inter', Arial, sans-serif;
-    font-size: 14px;
-    transition: all 0.2s;
-}
-
-.form-group input:focus,
-.form-group select:focus {
-    outline: none;
-    border-color: #00002b;
-    box-shadow: 0 0 0 2px rgba(0, 0, 43, 0.1);
-}
-
-.form-buttons button[type="submit"] {
-    background-color: #00002b;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 6px;
-    font-family: 'Inter', Arial, sans-serif;
-    font-size: 14px;
-    transition: all 0.2s;
-}
-
-.form-buttons button[type="button"] {
-    background-color: #f8f9fa;
-    color: #00002b;
-    padding: 10px 20px;
-    border: 1px solid #e0e0e0;
-    border-radius: 6px;
-    font-family: 'Inter', Arial, sans-serif;
-    font-size: 14px;
-    transition: all 0.2s;
-}
-
-.form-buttons button:hover {
-    transform: translateY(-1px);
-}
-
-/* Column width adjustments */
-.companies-table th,
-.companies-table td {
-    padding: 8px 12px;  /* Slightly reduced padding */
-}
-
-/* Company name - moderate width */
-.companies-table th:nth-child(1),
-.companies-table td:nth-child(1) {
-    width: 15%;
-}
-
-/* Website - compact */
-.companies-table th:nth-child(2),
-.companies-table td:nth-child(2) {
-    width: 12%;
-}
-
-/* Industry - compact */
-.companies-table th:nth-child(3),
-.companies-table td:nth-child(3) {
-    width: 12%;
-}
-
-/* Stage - very compact */
-.companies-table th:nth-child(4),
-.companies-table td:nth-child(4) {
-    width: 8%;
-}
-
-/* Location - very compact */
-.companies-table th:nth-child(5),
-.companies-table td:nth-child(5) {
-    width: 8%;
-}
-
-/* Ratings - minimal width */
-.companies-table th:nth-child(6),
-.companies-table td:nth-child(6),
-.companies-table th:nth-child(7),
-.companies-table td:nth-child(7) {
-    width: 7%;
-    text-align: center;
-}
-
-/* Why column - expanded */
-.companies-table th:nth-child(8),
-.companies-table td:nth-child(8) {
-    width: 31%;  /* Takes remaining space */
-}
-
-/* Ensure table uses the new column widths */
-.companies-table {
-    table-layout: fixed;
-}
-
-/* Handle text overflow in compact columns */
-.companies-table td {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-/* Allow Why column to wrap */
-.companies-table td.why-column {
-    white-space: normal;
-}
-
-/* Company details modal specific styles */
-.delete-button {
-    background-color: #dc3545 !important;
-    color: white !important;
-}
-
-.delete-button:hover {
-    background-color: #c82333 !important;
-}
-
-/* Make table rows clickable */
-.companies-table tbody tr {
-    cursor: pointer;
-}
-
-/* Add these to your existing form styles */
+.form-group select,
 .form-group textarea {
     width: 100%;
     padding: 10px 12px;
@@ -262,13 +187,55 @@
     border-radius: 6px;
     font-family: 'Inter', Arial, sans-serif;
     font-size: 14px;
-    resize: vertical;
-    min-height: 80px;
     transition: all 0.2s;
 }
 
+.form-group textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.form-group input:focus,
+.form-group select:focus,
 .form-group textarea:focus {
     outline: none;
     border-color: #00002b;
     box-shadow: 0 0 0 2px rgba(0, 0, 43, 0.1);
+}
+
+/* Button styles */
+.form-buttons {
+    margin-top: 1.5rem;
+    display: flex;
+    gap: 1rem;
+}
+
+.form-buttons button {
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-family: 'Inter', Arial, sans-serif;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.form-buttons button[type="submit"] {
+    background-color: #00002b;
+    color: white;
+    border: none;
+}
+
+.form-buttons button[type="button"] {
+    background-color: #f8f9fa;
+    color: #00002b;
+    border: 1px solid #e0e0e0;
+}
+
+.delete-button {
+    background-color: #dc3545 !important;
+    color: white !important;
+}
+
+/* Make table rows clickable */
+.companies-table tbody tr {
+    cursor: pointer;
 }
