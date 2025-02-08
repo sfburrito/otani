@@ -3,8 +3,8 @@
  * Handles loading, saving, and displaying investor preferences
  * 
  * Features:
- * - Load existing preferences from API
- * - Save preferences to API
+ * - Load existing preferences from localStorage
+ * - Save preferences to localStorage
  * - Handle multiple select inputs
  * - Provide visual feedback on save
  */
@@ -20,10 +20,6 @@ const PREFERENCES_CONFIG = {
         option: '.option',
         selectedOptions: '.selected-options',
         additionalInfo: '.preferences-input'
-    },
-    endpoints: {
-        get: '/api/preferences',
-        save: '/api/preferences'
     }
 };
 
@@ -49,7 +45,7 @@ const initializePreferences = async () => {
     initializeCustomSelects();
 
     // Load existing preferences
-    await loadPreferences();
+    loadPreferences();
 
     // Set up save button handler
     saveButton.addEventListener('click', handlePreferencesSave);
@@ -132,21 +128,16 @@ const updateSelectedOptions = (select) => {
 };
 
 /**
- * Load existing preferences from API
+ * Load existing preferences from localStorage
  */
-const loadPreferences = async () => {
+const loadPreferences = () => {
     try {
-        const response = await fetch(PREFERENCES_CONFIG.endpoints.get);
-        const result = await response.json();
-
-        if (!result.success) {
-            throw new Error(result.error || 'Failed to load preferences');
-        }
+        const savedPreferences = JSON.parse(localStorage.getItem('investorPreferences')) || {};
 
         // Update custom selects with loaded preferences
         document.querySelectorAll(PREFERENCES_CONFIG.selectors.customSelect).forEach(select => {
             const fieldName = select.dataset.name;
-            const values = result.data[fieldName] || [];
+            const values = savedPreferences[fieldName] || [];
             
             values.forEach(value => {
                 const option = select.querySelector(`${PREFERENCES_CONFIG.selectors.option}[data-value="${value}"]`);
@@ -161,7 +152,7 @@ const loadPreferences = async () => {
         // Update additional info
         const additionalInfo = document.querySelector(PREFERENCES_CONFIG.selectors.additionalInfo);
         if (additionalInfo) {
-            additionalInfo.value = result.data.additional_info || '';
+            additionalInfo.value = savedPreferences.additional_info || '';
         }
 
     } catch (error) {
@@ -201,18 +192,8 @@ const handlePreferencesSave = async () => {
             additional_info: document.querySelector(PREFERENCES_CONFIG.selectors.additionalInfo)?.value || ''
         };
 
-        const response = await fetch(PREFERENCES_CONFIG.endpoints.save, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        });
-
-        const result = await response.json();
-        
-        if (!result.success) {
-            throw new Error(result.error || 'Failed to save preferences');
-        }
-
+        // Save to localStorage
+        localStorage.setItem('investorPreferences', JSON.stringify(data));
         logPreferences('Preferences saved successfully');
         
     } catch (error) {
