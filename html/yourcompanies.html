@@ -1,0 +1,108 @@
+<!--
+    Component: Your Companies Section
+    Description: Table display of company portfolio and ratings
+    Styles: ../css/yourcompanies.css
+    
+    Structure:
+    - Table with columns:
+        - Company Name
+        - Industry
+        - Stage
+        - Location
+        - Your Rating
+        - Otani Rating
+-->
+
+<section class="companies-section">
+    <div class="companies-header">
+        <h2 class="page-title">Your Companies</h2>
+        <button type="button" class="add-company-button">Add Company</button>
+    </div>    
+    
+    <!-- Companies table -->
+    <table class="companies-table">
+        <thead>
+            <tr>
+                <th>Company Name</th>
+                <th>Industry</th>
+                <th>Stage</th>
+                <th>Location</th>
+                <th>Your Rating</th>
+                <th>Otani Rating</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <!-- Add Company Modal -->
+    <div id="addCompanyModal" class="modal" hidden>
+        <div class="modal-content">
+            <h3>Add New Company</h3>
+            <form id="addCompanyForm" action="javascript:void(0);">
+                <!-- Company Name -->
+                <div class="form-group">
+                    <label for="companyName">Company Name:</label>
+                    <input type="text" id="companyName" name="companyName" required>
+                </div>
+
+                <!-- Industry -->
+                <div class="form-group">
+                    <label for="industry">Industry:</label>
+                    <select id="industry" name="industry" required>
+                        <option value="">Select Industry</option>
+                        <option>Artificial Intelligence/Machine Learning</option>
+                        <option>Climate Tech/Sustainability</option>
+                        <option>Healthcare/Biotech</option>
+                        <option>Enterprise SaaS</option>
+                    </select>
+                </div>
+
+                <!-- Stage -->
+                <div class="form-group">
+                    <label for="stage">Stage:</label>
+                    <select id="stage" name="stage" required>
+                        <option value="">Select Stage</option>
+                        <option>Seed</option>
+                        <option>Series A</option>
+                        <option>Series B</option>
+                        <option>Growth</option>
+                    </select>
+                </div>
+
+                <!-- Location -->
+                <div class="form-group">
+                    <label for="location">Location:</label>
+                    <select id="location" name="location" required>
+                        <option value="">Select Location</option>
+                        <option>North America</option>
+                        <option>Europe</option>
+                        <option>Asia</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+
+                <!-- Your Rating -->
+                <div class="form-group">
+                    <label for="rating">Your Rating:</label>
+                    <select id="rating" name="rating" required>
+                        <option value="">Select Rating</option>
+                        <option>A</option>
+                        <option>B</option>
+                        <option>C</option>
+                        <option>D</option>
+                    </select>
+                </div>
+
+                <!-- Form Buttons -->
+                <div class="form-buttons">
+                    <button type="submit">Submit</button>
+                    <button type="button" id="cancelButton">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+<!-- Load external JavaScript -->
+<script src="../js/companies.js"></script>

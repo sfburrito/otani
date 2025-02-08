@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Account - Otani</title>
+    <link rel="stylesheet" href="/css/createaccount.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="create-account-container">
+        <h1 class="logo">Otani</h1>
+        <p class="welcome">Create Your Account</p>
+        <p class="subtitle">Join the Investment Community</p>
+        
+        <form class="create-account-form" id="createAccountForm">
+            <div class="input-group">
+                <i class="fas fa-envelope"></i>
+                <input type="email" id="email" placeholder="Email" class="create-account-input" required>
+            </div>
+            <div class="input-group">
+                <i class="fas fa-lock"></i>
+                <input type="password" id="password" placeholder="Password" class="create-account-input" required>
+            </div>
+            <div id="error-message" class="error-message"></div>
+            <div class="button-group">
+                <button type="submit" class="create-button">Create Account</button>
+                <button type="button" class="back-button" onclick="window.location.href='/'">Back to Login</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('createAccountForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            try {
+                const response = await fetch('http://localhost:5000/api/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    window.location.href = '/';
+                } else {
+                    throw new Error(data.error || 'Registration failed');
+                }
+            } catch (error) {
+                const errorMessage = document.getElementById('error-message');
+                errorMessage.textContent = error.message || 'An unexpected error occurred';
+                errorMessage.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>
