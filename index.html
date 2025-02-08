@@ -49,26 +49,6 @@
         #companies-section {
             width: 100%;      /* Ensure sections take full width */
         }
-
-        /* Vertical boundary lines */
-        .container::before,
-        .container::after {
-            content: '';
-            position: fixed;
-            top: 0;
-            bottom: 0;
-            width: 1px;
-            background-color: #e0e0e0; /* Faint grey color */
-            z-index: 900;
-        }
-
-        .container::before {
-            left: calc((100% - 1400px) / 2);  /* Left boundary */
-        }
-
-        .container::after {
-            right: calc((100% - 1400px) / 2); /* Right boundary */
-        }
     </style>
 </head>
 <body>
