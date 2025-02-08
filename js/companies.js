@@ -187,10 +187,10 @@ const getOtaniRating = async (company, preferences) => {
                                 - Status: ${company.status}
                                 - Additional Info: ${company.additional_info || 'None provided'}
                                 
-                                Investor History:
-                                - Companies marked as "Invested" indicate successful investments
-                                - Companies marked as "Pass" should be considered negative examples
-                                - Companies marked as "Active" are under consideration
+                                Status Meanings:
+                                - "Active" means the company is under initial review (neutral)
+                                - "Pass" means the investor has decided not to invest (negative signal)
+                                - "Invested" means the investor has invested (positive signal)
                                 
                                 Investor Preferences:
                                 - Industries: ${preferences.industry.join(', ')}
@@ -198,7 +198,8 @@ const getOtaniRating = async (company, preferences) => {
                                 - Locations: ${preferences.location.join(', ')}
                                 - Additional Info: ${preferences.additional_info}
                                 
-                                Consider the company's status when rating. Favor patterns similar to "Invested" companies and avoid patterns similar to "Pass" companies.
+                                Consider the company's status when rating, but remember that "Active" is neutral.
+                                Favor patterns similar to "Invested" companies and avoid patterns similar to "Pass" companies.
                                 
                                 Provide rating and explanation in the specified format.`
                     }
@@ -321,7 +322,6 @@ const createCompanyRow = (company, index) => {
     // Create cells for each company property
     const cells = [
         { text: company.company_name, class: '' },
-        { isWebsite: true, url: company.website, class: 'website-cell' },
         { isStatus: true, status: company.status, index: index },
         { text: company.your_rating, class: `rating-${company.your_rating.toLowerCase()}` },
         { text: company.otani_rating || 'N/A', class: company.otani_rating ? `rating-${company.otani_rating.toLowerCase()}` : '' },
@@ -329,33 +329,13 @@ const createCompanyRow = (company, index) => {
     ];
     
     // Create and append cells
-    cells.forEach(({ text, class: className, isWebsite, url, isStatus, status, index }) => {
+    cells.forEach(({ text, class: className, isStatus, status, index }) => {
         const td = document.createElement('td');
         if (className) {
             td.className = className;
         }
         
-        if (isWebsite) {
-            // Stop the row click event when clicking the website icon
-            td.onclick = (e) => e.stopPropagation();
-            
-            const a = document.createElement('a');
-            a.href = url;
-            a.target = '_blank';
-            a.rel = 'noopener noreferrer';
-            a.className = 'website-icon';
-            
-            // Create the website icon using SVG
-            a.innerHTML = `
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <line x1="2" y1="12" x2="22" y2="12"></line>
-                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-                </svg>
-            `;
-            
-            td.appendChild(a);
-        } else if (isStatus) {
+        if (isStatus) {
             // Stop the row click event when clicking the status select
             td.onclick = (e) => e.stopPropagation();
             

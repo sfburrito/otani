@@ -78,40 +78,38 @@
 /* Column widths for new structure */
 .companies-table th:nth-child(1),  /* Company Name */
 .companies-table td:nth-child(1) {
-    width: 15%;
+    width: 13%;
 }
 
-.companies-table th:nth-child(2),  /* Website */
+.companies-table th:nth-child(2),  /* Status */
 .companies-table td:nth-child(2) {
-    width: 7%;
-    text-align: center;
+    width: 9%;
 }
 
-.companies-table th:nth-child(3),  /* Status */
+.companies-table th:nth-child(3),  /* Your Rating */
 .companies-table td:nth-child(3) {
-    width: 12%;
-    padding-left: 20px;
+    width: 11%;
 }
 
-.companies-table th:nth-child(4),  /* Your Rating */
+.companies-table th:nth-child(4),  /* Otani Rating */
 .companies-table td:nth-child(4) {
-    width: 10%;
-    text-align: center;
-    padding-left: 0;
-    padding-right: 0;
+    width: 11%;
 }
 
-.companies-table th:nth-child(5),  /* Otani Rating */
+.companies-table th:nth-child(5),  /* Why */
 .companies-table td:nth-child(5) {
-    width: 12%;
-    text-align: center;
-    padding-left: 0;
-    padding-right: 0;
+    width: 56%;
+    white-space: normal;
 }
 
-.companies-table th:nth-child(6),  /* Why */
-.companies-table td:nth-child(6) {
-    width: 44%;
+/* Ensure centering is maintained */
+.companies-table th:nth-child(2),  /* Status */
+.companies-table td:nth-child(2),
+.companies-table th:nth-child(3),  /* Your Rating */
+.companies-table td:nth-child(3),
+.companies-table th:nth-child(4),  /* Otani Rating */
+.companies-table td:nth-child(4) {
+    text-align: center;
 }
 
 /* Rating colors */
@@ -120,9 +118,19 @@
 .rating-c { color: #7f8c8d; font-weight: 600; }
 .rating-d { color: #95a5a6; font-weight: 600; }
 
+/* Status column and dropdown centering */
+.companies-table th:nth-child(2),  /* Status header */
+.companies-table td:nth-child(2) {
+    text-align: center;
+    padding-left: 0;
+    padding-right: 0;
+}
+
 /* Status select styles */
 .status-select {
-    width: 100px;
+    width: 80px;  /* Fixed width for consistency */
+    margin: 0 auto;
+    display: block;
     padding: 4px;
     border: 1px solid #e0e0e0;
     border-radius: 4px;
@@ -266,18 +274,12 @@
     cursor: pointer;
 }
 
-/* Ensure Otani rating is centered */
-.companies-table td:nth-child(5) span,
-.companies-table td:nth-child(5) .rating-a,
-.companies-table td:nth-child(5) .rating-b,
-.companies-table td:nth-child(5) .rating-c,
-.companies-table td:nth-child(5) .rating-d {
-    display: inline-block;
-    text-align: center;
-    min-width: 16px;
-}
-
-/* Ensure Your rating is centered */
+/* Rating styles centering */
+.companies-table td:nth-child(3) span,
+.companies-table td:nth-child(3) .rating-a,
+.companies-table td:nth-child(3) .rating-b,
+.companies-table td:nth-child(3) .rating-c,
+.companies-table td:nth-child(3) .rating-d,
 .companies-table td:nth-child(4) span,
 .companies-table td:nth-child(4) .rating-a,
 .companies-table td:nth-child(4) .rating-b,
