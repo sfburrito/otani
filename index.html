@@ -6,10 +6,11 @@
     <title>Otani</title>
     
     <!-- External CSS files -->
-    <link rel="stylesheet" href="css/header.css">
-    <link rel="stylesheet" href="css/investorpreferences.css">
-    <link rel="stylesheet" href="css/yourcompanies.css">
-    <link rel="stylesheet" href="css/footer.css">
+    <link rel="stylesheet" href="./css/styles.css">
+    <link rel="stylesheet" href="./css/header.css">
+    <link rel="stylesheet" href="./css/investorpreferences.css">
+    <link rel="stylesheet" href="./css/yourcompanies.css">
+    <link rel="stylesheet" href="./css/footer.css">
     
     <!-- Global styles -->
     <style>
@@ -88,10 +89,10 @@
         // Function to load HTML content
         async function loadContent() {
             try {
-                const header = await fetch('html/header.html');
-                const main = await fetch('html/investorpreferences.html');
-                const companies = await fetch('html/yourcompanies.html');
-                const footer = await fetch('html/footer.html');
+                const header = await fetch('./html/header.html');
+                const main = await fetch('./html/investorpreferences.html');
+                const companies = await fetch('./html/yourcompanies.html');
+                const footer = await fetch('./html/footer.html');
 
                 document.getElementById('header').innerHTML = await header.text();
                 document.getElementById('main-content').innerHTML = await main.text();
@@ -116,7 +117,7 @@
     </script>
     
     <!-- Load Otani JavaScript -->
-    <script src="js/companies.js"></script>
-    <script src="js/preferences.js"></script>
+    <script src="./js/companies.js"></script>
+    <script src="./js/preferences.js"></script>
 </body>
 </html>
