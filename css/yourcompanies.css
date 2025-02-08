@@ -238,3 +238,37 @@
 .companies-table td.why-column {
     white-space: normal;
 }
+
+/* Company details modal specific styles */
+.delete-button {
+    background-color: #dc3545 !important;
+    color: white !important;
+}
+
+.delete-button:hover {
+    background-color: #c82333 !important;
+}
+
+/* Make table rows clickable */
+.companies-table tbody tr {
+    cursor: pointer;
+}
+
+/* Add these to your existing form styles */
+.form-group textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    font-family: 'Inter', Arial, sans-serif;
+    font-size: 14px;
+    resize: vertical;
+    min-height: 80px;
+    transition: all 0.2s;
+}
+
+.form-group textarea:focus {
+    outline: none;
+    border-color: #00002b;
+    box-shadow: 0 0 0 2px rgba(0, 0, 43, 0.1);
+}

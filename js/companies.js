@@ -33,7 +33,8 @@ const SELECTORS = {
 };
 
 // Initialize companies list from localStorage
-const companiesList = JSON.parse(localStorage.getItem('companiesList')) || [];
+let companiesList = JSON.parse(localStorage.getItem('companiesList')) || [];
+let currentCompanyIndex = -1;
 
 /**
  * Main initialization function
@@ -41,8 +42,97 @@ const companiesList = JSON.parse(localStorage.getItem('companiesList')) || [];
  */
 const initializeOtani = () => {
     loadCompanies();
-    initializeFormHandling();
-    initializeModal();
+    
+    // Add Company button event listener
+    const addButton = document.querySelector('.add-company-button');
+    if (addButton) {
+        addButton.addEventListener('click', () => {
+            const modal = document.getElementById('addCompanyModal');
+            if (modal) {
+                modal.removeAttribute('hidden');
+            }
+        });
+    }
+    
+    // Set up event listeners for the add company form
+    const addForm = document.getElementById('addCompanyForm');
+    if (addForm) {
+        addForm.addEventListener('submit', handleFormSubmit);
+    }
+    
+    // Set up event listeners for the edit company form
+    const editForm = document.getElementById('editCompanyForm');
+    if (editForm) {
+        editForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            console.log('Edit form submitted'); // Debug log
+            
+            if (currentCompanyIndex >= 0) {
+                const form = event.target;
+                const submitButton = form.querySelector('button[type="submit"]');
+                
+                // Disable submit button and show loading state
+                submitButton.disabled = true;
+                submitButton.textContent = 'Saving...';
+                
+                try {
+                    // Get investor preferences
+                    const preferences = JSON.parse(localStorage.getItem('investorPreferences')) || {
+                        industry: [],
+                        stage: [],
+                        location: [],
+                        additional_info: ''
+                    };
+
+                    // Update company details
+                    const updatedCompany = {
+                        ...companiesList[currentCompanyIndex],
+                        company_name: form.companyName.value,
+                        website: form.website.value,
+                        industry: form.industry.value,
+                        stage: form.stage.value,
+                        location: form.location.value,
+                        your_rating: form.rating.value,
+                        additional_info: form.additionalInfo.value,
+                        otani_rating: 'Loading...',
+                        why: 'Updating...'
+                    };
+
+                    console.log('Updating company:', updatedCompany); // Debug log
+
+                    // Save initial update to show loading state
+                    companiesList[currentCompanyIndex] = updatedCompany;
+                    localStorage.setItem('companiesList', JSON.stringify(companiesList));
+                    loadCompanies();
+
+                    // Get new Otani rating
+                    const otaniResponse = await getOtaniRating(updatedCompany, preferences);
+                    
+                    // Update with new rating and explanation
+                    updatedCompany.otani_rating = otaniResponse.rating;
+                    updatedCompany.why = otaniResponse.explanation;
+                    
+                    // Save final update
+                    companiesList[currentCompanyIndex] = updatedCompany;
+                    localStorage.setItem('companiesList', JSON.stringify(companiesList));
+                    loadCompanies();
+                    
+                    // Close modal
+                    closeDetailsModal();
+
+                } catch (error) {
+                    console.error('Error updating company:', error);
+                    alert('Failed to update company');
+                } finally {
+                    // Reset button state
+                    submitButton.disabled = false;
+                    submitButton.textContent = 'Save Changes';
+                }
+            }
+        });
+    } else {
+        console.error('Edit form not found'); // Debug log
+    }
 };
 
 /**
@@ -64,20 +154,6 @@ const initializeModal = () => {
 };
 
 /**
- * Initializes form handling
- * Sets up event listeners for form submission
- */
-const initializeFormHandling = () => {
-    const form = document.querySelector(SELECTORS.form);
-    if (!form) {
-        log('Add company form not found', 'error');
-        return;
-    }
-
-    form.addEventListener('submit', handleFormSubmit);
-};
-
-/**
  * Get Otani rating and explanation from Perplexity API
  */
 const getOtaniRating = async (company, preferences) => {
@@ -96,8 +172,8 @@ const getOtaniRating = async (company, preferences) => {
                         role: "system",
                         content: `You are Otani, an AI that rates companies based on investor preferences. 
                                 First provide a letter grade (A, B, C, or D) where A is the best match.
-                                Then provide a brief 1-2 sentence explanation.
-                                Format response as: "RATING: [letter]\nWHY: [explanation]"`
+                                Then provide a brief 1-2 sentence explanation of the rating.
+                                Format response exactly as: "RATING: [letter]\nWHY: [explanation]"`
                     },
                     {
                         role: "user",
@@ -108,12 +184,15 @@ const getOtaniRating = async (company, preferences) => {
                                 - Industry: ${company.industry}
                                 - Stage: ${company.stage}
                                 - Location: ${company.location}
+                                - Additional Info: ${company.additional_info || 'None provided'}
                                 
                                 Investor Preferences:
                                 - Industries: ${preferences.industry.join(', ')}
                                 - Stages: ${preferences.stage.join(', ')}
                                 - Locations: ${preferences.location.join(', ')}
-                                - Additional Info: ${preferences.additional_info}`
+                                - Additional Info: ${preferences.additional_info}
+                                
+                                Provide rating and explanation in the specified format.`
                     }
                 ]
             })
@@ -124,7 +203,7 @@ const getOtaniRating = async (company, preferences) => {
         
         // Parse rating and explanation
         const rating_match = response_text.match(/RATING:\s*([ABCD])/i);
-        const why_match = response_text.match(/WHY:\s*(.+)$/i);
+        const why_match = response_text.match(/WHY:\s*(.+)$/is);
         
         const rating = rating_match ? rating_match[1].toUpperCase() : 'C';
         const explanation = why_match ? why_match[1].trim() : 'No explanation provided';
@@ -173,6 +252,7 @@ const handleFormSubmit = async (event) => {
             stage: form.stage.value,
             location: form.location.value,
             your_rating: form.rating.value,
+            additional_info: form.additionalInfo.value,
             otani_rating: 'Loading...',
             why: 'Loading...'
         };
@@ -215,18 +295,20 @@ const loadCompanies = () => {
     }
 
     tbody.innerHTML = '';
-    companiesList.forEach(company => {
-        tbody.appendChild(createCompanyRow(company));
+    companiesList.forEach((company, index) => {
+        tbody.appendChild(createCompanyRow(company, index));
     });
 };
 
 /**
  * Creates a table row for a company
  * @param {Object} company - Company data object
+ * @param {Number} index - Index of the company in the list
  * @returns {HTMLElement} Table row element
  */
-const createCompanyRow = (company) => {
+const createCompanyRow = (company, index) => {
     const row = document.createElement('tr');
+    row.onclick = () => openDetailsModal(index);
     
     // Create cells for each company property
     const cells = [
@@ -260,6 +342,59 @@ const createCompanyRow = (company) => {
     });
     
     return row;
+};
+
+const openDetailsModal = (index) => {
+    currentCompanyIndex = index;
+    const company = companiesList[index];
+    const modal = document.getElementById('companyDetailsModal');
+    
+    // Fill form with company details
+    document.getElementById('editCompanyName').value = company.company_name;
+    document.getElementById('editWebsite').value = company.website;
+    document.getElementById('editIndustry').value = company.industry;
+    document.getElementById('editStage').value = company.stage;
+    document.getElementById('editLocation').value = company.location;
+    document.getElementById('editRating').value = company.your_rating;
+    document.getElementById('editAdditionalInfo').value = company.additional_info || '';
+    
+    modal.removeAttribute('hidden');
+};
+
+const closeDetailsModal = () => {
+    document.getElementById('companyDetailsModal').setAttribute('hidden', '');
+    currentCompanyIndex = -1;
+};
+
+const deleteCompany = () => {
+    if (currentCompanyIndex >= 0) {
+        if (confirm('Are you sure you want to delete this company?')) {
+            companiesList.splice(currentCompanyIndex, 1);
+            localStorage.setItem('companiesList', JSON.stringify(companiesList));
+            loadCompanies();
+            closeDetailsModal();
+        }
+    }
+};
+
+// Add these helper functions if they're not already present
+const openAddModal = () => {
+    const modal = document.getElementById('addCompanyModal');
+    if (modal) {
+        modal.removeAttribute('hidden');
+    }
+};
+
+const closeAddModal = () => {
+    const modal = document.getElementById('addCompanyModal');
+    if (modal) {
+        modal.setAttribute('hidden', '');
+        // Reset form
+        const form = document.getElementById('addCompanyForm');
+        if (form) {
+            form.reset();
+        }
+    }
 };
 
 // Initialize only after content is loaded
