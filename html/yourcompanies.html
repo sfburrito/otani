@@ -6,11 +6,13 @@
     Structure:
     - Table with columns:
         - Company Name
+        - Website
         - Industry
         - Stage
         - Location
         - Your Rating
         - Otani Rating
+        - Why
 -->
 
 <section class="companies-section">
@@ -24,11 +26,13 @@
         <thead>
             <tr>
                 <th>Company Name</th>
+                <th>Website</th>
                 <th>Industry</th>
                 <th>Stage</th>
                 <th>Location</th>
                 <th>Your Rating</th>
                 <th>Otani Rating</th>
+                <th>Why</th>
             </tr>
         </thead>
         <tbody>
@@ -92,6 +96,12 @@
                         <option>C</option>
                         <option>D</option>
                     </select>
+                </div>
+
+                <!-- Add this inside the form, after company name -->
+                <div class="form-group">
+                    <label for="website">Company Website:</label>
+                    <input type="url" id="website" name="website" placeholder="https://" required>
                 </div>
 
                 <!-- Form Buttons -->

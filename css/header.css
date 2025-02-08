@@ -22,6 +22,7 @@
     left: 0;
     width: 100%;
     z-index: 1000;  /* Ensure header stays above other content */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 /* Inner container - controls maximum width and centers content */
@@ -42,25 +43,25 @@
 .logo {
     color: white;
     font-size: 24px;
-    font-weight: 500;
-    font-family: Arial, sans-serif;
+    font-weight: 600;
+    font-family: 'Inter', Arial, sans-serif;
     margin: 0;
 }
 
 /* Logout button styles */
 .logout-button {
-    padding: 8px 16px;
+    padding: 10px 20px;
     font-size: 14px;
-    background-color: white;         /* White button on navy */
-    color: #00002b;                  /* Navy text */
-    border: none;
-    border-radius: 4px;              /* Rounded corners */
-    cursor: pointer;                 /* Hand cursor on hover */
-    transition: background-color 0.2s;/* Smooth hover effect */
-    font-family: Arial, sans-serif;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Inter', Arial, sans-serif;
 }
 
 /* Button hover effect */
 .logout-button:hover {
-    background-color: #f0f0f0;       /* Slightly darker on hover */
+    background-color: rgba(255, 255, 255, 0.2);
 }

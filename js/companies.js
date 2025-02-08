@@ -12,6 +12,9 @@
 // Debug mode flag for development logging
 const DEBUG = false;
 
+// Add this near the top with other constants
+const PERPLEXITY_API_KEY = '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';
+
 // Utility function for controlled logging
 const log = (message, type = 'info') => {
     if (DEBUG || type === 'error') {
@@ -75,48 +78,129 @@ const initializeFormHandling = () => {
 };
 
 /**
- * Handles form submission
- * Updates the UI with new company data
- * @param {Event} event - Form submission event
+ * Get Otani rating and explanation from Perplexity API
+ */
+const getOtaniRating = async (company, preferences) => {
+    try {
+        const response = await fetch('https://api.perplexity.ai/chat/completions', {
+            method: 'POST',
+            headers: {
+                'accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${PERPLEXITY_API_KEY}`
+            },
+            body: JSON.stringify({
+                model: "sonar-pro",
+                messages: [
+                    {
+                        role: "system",
+                        content: `You are Otani, an AI that rates companies based on investor preferences. 
+                                First provide a letter grade (A, B, C, or D) where A is the best match.
+                                Then provide a brief 1-2 sentence explanation.
+                                Format response as: "RATING: [letter]\nWHY: [explanation]"`
+                    },
+                    {
+                        role: "user",
+                        content: `Rate this company based on the investor's preferences:
+                                
+                                Company Details:
+                                - Name: ${company.company_name}
+                                - Industry: ${company.industry}
+                                - Stage: ${company.stage}
+                                - Location: ${company.location}
+                                
+                                Investor Preferences:
+                                - Industries: ${preferences.industry.join(', ')}
+                                - Stages: ${preferences.stage.join(', ')}
+                                - Locations: ${preferences.location.join(', ')}
+                                - Additional Info: ${preferences.additional_info}`
+                    }
+                ]
+            })
+        });
+
+        const data = await response.json();
+        const response_text = data.choices[0].message.content.trim();
+        
+        // Parse rating and explanation
+        const rating_match = response_text.match(/RATING:\s*([ABCD])/i);
+        const why_match = response_text.match(/WHY:\s*(.+)$/i);
+        
+        const rating = rating_match ? rating_match[1].toUpperCase() : 'C';
+        const explanation = why_match ? why_match[1].trim() : 'No explanation provided';
+        
+        return {
+            rating: rating,
+            explanation: explanation
+        };
+
+    } catch (error) {
+        console.error('Error getting Otani rating:', error);
+        return {
+            rating: 'C',
+            explanation: 'Error getting AI response'
+        };
+    }
+};
+
+/**
+ * Handle form submission with Otani rating and explanation
  */
 const handleFormSubmit = async (event) => {
     event.preventDefault();
     const form = event.target;
     const submitButton = form.querySelector(SELECTORS.submitButton);
     
-    if (!submitButton) {
-        log('Submit button not found', 'error');
-        return;
-    }
+    if (!submitButton) return;
 
-    // Toggle loading state
-    const toggleLoading = (loading) => {
-        submitButton.disabled = loading;
-        submitButton.textContent = loading ? 'Adding...' : 'Submit';
-    };
-
-    toggleLoading(true);
+    submitButton.disabled = true;
+    submitButton.textContent = 'Adding...';
 
     try {
+        // Get investor preferences
+        const preferences = JSON.parse(localStorage.getItem('investorPreferences')) || {
+            industry: [],
+            stage: [],
+            location: [],
+            additional_info: ''
+        };
+
+        // Create new company object
         const newCompany = {
             company_name: form.companyName.value,
+            website: form.website.value,
             industry: form.industry.value,
             stage: form.stage.value,
             location: form.location.value,
             your_rating: form.rating.value,
-            otani_rating: 'N/A' // Simplified for demo
+            otani_rating: 'Loading...',
+            why: 'Loading...'
         };
 
+        // Add company to list and update display
         companiesList.push(newCompany);
         localStorage.setItem('companiesList', JSON.stringify(companiesList));
+        loadCompanies();
+
+        // Close modal and reset form
         document.querySelector(SELECTORS.modal).setAttribute('hidden', '');
         form.reset();
+
+        // Get and update Otani rating and explanation
+        const otaniResponse = await getOtaniRating(newCompany, preferences);
+        newCompany.otani_rating = otaniResponse.rating;
+        newCompany.why = otaniResponse.explanation;
+        
+        // Update storage and display
+        localStorage.setItem('companiesList', JSON.stringify(companiesList));
         loadCompanies();
+
     } catch (error) {
-        log(error.message, 'error');
+        console.error('Error saving company:', error);
         alert('Failed to add company');
     } finally {
-        toggleLoading(false);
+        submitButton.disabled = false;
+        submitButton.textContent = 'Submit';
     }
 };
 
@@ -147,17 +231,28 @@ const createCompanyRow = (company) => {
     // Create cells for each company property
     const cells = [
         { text: company.company_name, class: '' },
+        { text: company.website, class: '', isLink: true },
         { text: company.industry, class: '' },
         { text: company.stage, class: '' },
         { text: company.location, class: '' },
         { text: company.your_rating, class: `rating-${company.your_rating.toLowerCase()}` },
-        { text: company.otani_rating || 'N/A', class: company.otani_rating ? `rating-${company.otani_rating.toLowerCase()}` : '' }
+        { text: company.otani_rating || 'N/A', class: company.otani_rating ? `rating-${company.otani_rating.toLowerCase()}` : '' },
+        { text: company.why || '', class: 'why-column' }
     ];
     
     // Create and append cells
-    cells.forEach(({ text, class: className }) => {
+    cells.forEach(({ text, class: className, isLink }) => {
         const td = document.createElement('td');
-        td.textContent = text;
+        if (isLink) {
+            const a = document.createElement('a');
+            a.href = text;
+            a.textContent = new URL(text).hostname;
+            a.target = '_blank';
+            a.rel = 'noopener noreferrer';
+            td.appendChild(a);
+        } else {
+            td.textContent = text;
+        }
         if (className) {
             td.className = className;
         }
