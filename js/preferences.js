@@ -1,17 +1,9 @@
 /**
  * Otani Investor Preferences Module
- * Handles loading, saving, and displaying investor preferences
- * 
- * Features:
- * - Load existing preferences from localStorage
- * - Save preferences to localStorage
- * - Handle multiple select inputs
- * - Provide visual feedback on save
+ * Handles loading, saving, and displaying investor preferences locally
  */
 
-// Configuration
 const PREFERENCES_CONFIG = {
-    debug: true,
     selectors: {
         saveButton: '.save-button',
         customSelect: '.custom-select',
@@ -23,31 +15,18 @@ const PREFERENCES_CONFIG = {
     }
 };
 
-// Logging utility
-const logPreferences = (message, type = 'info') => {
-    if (PREFERENCES_CONFIG.debug || type === 'error') {
-        console[type](`[Preferences] ${message}`);
-    }
-};
-
 /**
  * Initialize preferences functionality
- * Sets up event listeners and loads existing preferences
  */
-const initializePreferences = async () => {
+const initializePreferences = () => {
     const saveButton = document.querySelector(PREFERENCES_CONFIG.selectors.saveButton);
     if (!saveButton) {
-        logPreferences('Save button not found', 'error');
+        console.error('Save button not found');
         return;
     }
 
-    // Initialize custom selects
     initializeCustomSelects();
-
-    // Load existing preferences
     loadPreferences();
-
-    // Set up save button handler
     saveButton.addEventListener('click', handlePreferencesSave);
 };
 
@@ -112,10 +91,8 @@ const updateSelectedOptions = (select) => {
         </span>
     `).join('');
     
-    // Add/remove has-selections class
     header.classList.toggle('has-selections', selected.length > 0);
     
-    // Add click handlers for remove buttons
     selectedContainer.querySelectorAll('.remove').forEach(removeBtn => {
         removeBtn.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -134,7 +111,6 @@ const loadPreferences = () => {
     try {
         const savedPreferences = JSON.parse(localStorage.getItem('investorPreferences')) || {};
 
-        // Update custom selects with loaded preferences
         document.querySelectorAll(PREFERENCES_CONFIG.selectors.customSelect).forEach(select => {
             const fieldName = select.dataset.name;
             const values = savedPreferences[fieldName] || [];
@@ -149,14 +125,12 @@ const loadPreferences = () => {
             updateSelectedOptions(select);
         });
 
-        // Update additional info
         const additionalInfo = document.querySelector(PREFERENCES_CONFIG.selectors.additionalInfo);
         if (additionalInfo) {
             additionalInfo.value = savedPreferences.additional_info || '';
         }
-
     } catch (error) {
-        logPreferences(error.message, 'error');
+        console.error('Error loading preferences:', error);
     }
 };
 
@@ -172,19 +146,12 @@ const getSelectedValues = (fieldName) => {
 /**
  * Handle preferences form submission
  */
-const handlePreferencesSave = async () => {
+const handlePreferencesSave = () => {
     const saveButton = document.querySelector(PREFERENCES_CONFIG.selectors.saveButton);
-    if (!saveButton) {
-        console.error('Save button not found');
-        return;
-    }
+    if (!saveButton) return;
 
-    const toggleSaving = (saving) => {
-        saveButton.disabled = saving;
-        saveButton.textContent = saving ? 'Saving...' : 'Save Preferences';
-    };
-
-    toggleSaving(true);
+    saveButton.disabled = true;
+    saveButton.textContent = 'Saving...';
 
     try {
         const data = {
@@ -195,29 +162,16 @@ const handlePreferencesSave = async () => {
             additional_info: document.querySelector(PREFERENCES_CONFIG.selectors.additionalInfo)?.value || ''
         };
 
-        // Debug log the data being saved
-        console.log('Saving preferences:', data);
-
-        // Save to localStorage
         localStorage.setItem('investorPreferences', JSON.stringify(data));
-        
-        // Verify the save
-        const savedData = localStorage.getItem('investorPreferences');
-        console.log('Verified saved data:', JSON.parse(savedData));
-        
-        logPreferences('Preferences saved successfully');
-        
-        // Show visual confirmation
         alert('Preferences saved successfully!');
-        
     } catch (error) {
         console.error('Error saving preferences:', error);
-        logPreferences(error.message, 'error');
         alert('Failed to save preferences');
     } finally {
-        toggleSaving(false);
+        saveButton.disabled = false;
+        saveButton.textContent = 'Save Preferences';
     }
 };
 
-// Export the initialization function for use in index.html
+// Export the initialization function
 window.initializePreferences = initializePreferences;

@@ -25,10 +25,10 @@
 
 /* Section container */
 .companies-section {
-    margin-top: 2rem;           /* Space after preferences section */
-    margin-bottom: 2rem;        /* Space before footer */
-    width: 100%;                /* Ensure full width */
-    max-width: 100%;            /* Prevent overflow */
+    padding: 2rem;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 /* Header container with flexbox */
@@ -36,55 +36,47 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 2rem;
 }
 
 /* Page title */
 .page-title {
-    color: #333;
-    font-family: Arial, sans-serif;
-    font-size: 28px;
-    font-weight: 500;
-    margin-top: 2rem;
-    margin-bottom: 1.5rem;
+    font-size: 1.75rem;
+    color: #1a1a1a;
+    font-weight: 600;
 }
 
 /* Add company button */
 .add-company-button {
-    padding: 8px 16px;
-    font-size: 14px;
-    background-color: #008080;  /* Teal color */
+    padding: 0.75rem 1.5rem;
+    background-color: #2563eb;
     color: white;
     border: none;
-    border-radius: 4px;
+    border-radius: 8px;
+    font-weight: 500;
     cursor: pointer;
     transition: background-color 0.2s;
-    font-family: Arial, sans-serif;
 }
 
 /* Button hover effect */
 .add-company-button:hover {
-    background-color: #006666;  /* Darker teal on hover */
+    background-color: #1d4ed8;
 }
 
 /* Table base styling */
 .companies-table {
-    width: 100%;                /* Make table use full width */
-    border-collapse: separate;  /* Allow spacing between cells */
-    border-spacing: 0;         /* Remove default spacing */
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
     margin-top: 1rem;
-    font-family: Arial, sans-serif;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;        /* Rounded corners for the table */
-    overflow: hidden;          /* Ensure border-radius clips content */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Subtle shadow */
 }
 
 /* Table header and cell shared styles */
 .companies-table th,
 .companies-table td {
-    padding: 16px;              /* Increased padding for better spacing */
+    padding: 1rem 1.5rem;
     text-align: left;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid #e5e7eb;
 }
 
 /* Remove bottom border from last row */
@@ -94,60 +86,63 @@
 
 /* Table header specific styles */
 .companies-table th {
-    background-color: #f8f9fa;  /* Subtle light background */
-    font-weight: 600;           /* Semi-bold for headers */
-    color: #333;                /* Dark gray text */
-    font-size: 14px;
-    text-transform: uppercase;  /* Uppercase headers for emphasis */
-    letter-spacing: 0.5px;      /* Slight letter spacing for readability */
-    white-space: nowrap;        /* Prevent header text wrapping */
-    border-bottom: 2px solid #e0e0e0; /* Thicker border under headers */
+    background-color: #f8fafc;
+    font-weight: 600;
+    color: #4b5563;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
-/* Center align rating columns */
-.companies-table th:nth-child(5),  /* Your Rating header */
-.companies-table th:nth-child(6) { /* Otani Rating header */
-    text-align: center;
+.companies-table th:first-child {
+    border-top-left-radius: 8px;
 }
 
-.companies-table td:nth-child(5),  /* Your Rating cell */
-.companies-table td:nth-child(6) { /* Otani Rating cell */
-    text-align: center;
+.companies-table th:last-child {
+    border-top-right-radius: 8px;
 }
 
 /* Table body styles */
 .companies-table tbody tr {
-    transition: background-color 0.2s ease; /* Smooth hover transition */
+    transition: background-color 0.2s;
 }
 
 /* Alternating row colors */
 .companies-table tbody tr:nth-child(even) {
-    background-color: #f8f9fa;  /* Very light gray for even rows */
+    background-color: #f8fafc;
 }
 
 /* Row hover effect */
 .companies-table tbody tr:hover {
-    background-color: #f0f7f7;  /* Light teal color on hover */
+    background-color: #f8fafc;
 }
 
 /* Table cell styles */
 .companies-table td {
-    font-size: 14px;
-    color: #444;               /* Slightly softer than black */
-    line-height: 1.4;          /* Improved line height for readability */
+    font-size: 0.9375rem;
+    color: #1f2937;
 }
 
 /* Rating cell styles */
-.companies-table td:nth-child(5),  /* Your Rating */
-.companies-table td:nth-child(6) { /* Otani Rating */
-    font-weight: 600;          /* Make ratings stand out */
+.rating-a {
+    color: #059669;
+    font-weight: 600;
 }
 
-/* Rating colors */
-.rating-a { color: #2ecc71; }  /* Green for A */
-.rating-b { color: #3498db; }  /* Blue for B */
-.rating-c { color: #f1c40f; }  /* Yellow for C */
-.rating-d { color: #e74c3c; }  /* Red for D */
+.rating-b {
+    color: #0891b2;
+    font-weight: 600;
+}
+
+.rating-c {
+    color: #d97706;
+    font-weight: 600;
+}
+
+.rating-d {
+    color: #dc2626;
+    font-weight: 600;
+}
 
 /* Empty state styles */
 .companies-table tbody:empty::after {
@@ -182,11 +177,11 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    background-color: rgba(0, 0, 0, 0.5);
     display: flex;
-    justify-content: center;
     align-items: center;
-    z-index: 1000; /* Ensure modal appears above other content */
+    justify-content: center;
+    z-index: 1000;
 }
 
 .modal[hidden] {
@@ -196,31 +191,46 @@
 .modal-content {
     background-color: white;
     padding: 2rem;
-    border-radius: 8px;
-    width: 100%;
+    border-radius: 12px;
+    width: 90%;
     max-width: 500px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.modal h3 {
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1a1a1a;
 }
 
 /* Form styles */
 .form-group {
-    margin-bottom: 1rem;
+    margin-bottom: 1.25rem;
 }
 
 .form-group label {
     display: block;
     margin-bottom: 0.5rem;
-    color: #333;
     font-weight: 500;
+    color: #4b5563;
 }
 
 .form-group input,
 .form-group select {
     width: 100%;
-    padding: 8px;
-    border: 1px solid #e0e0e0;
-    border-radius: 4px;
-    font-size: 14px;
+    padding: 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 0.9375rem;
+    transition: border-color 0.2s;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
 .form-buttons {
@@ -231,19 +241,29 @@
 }
 
 .form-buttons button {
-    padding: 8px 16px;
-    font-size: 14px;
-    border-radius: 4px;
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    font-weight: 500;
     cursor: pointer;
+    transition: all 0.2s;
 }
 
 .form-buttons button[type="submit"] {
-    background-color: #008080;
+    background-color: #2563eb;
     color: white;
     border: none;
 }
 
+.form-buttons button[type="submit"]:hover {
+    background-color: #1d4ed8;
+}
+
 .form-buttons button[type="button"] {
-    background-color: #f5f5f5;
-    border: 1px solid #e0e0e0;
+    background-color: white;
+    color: #4b5563;
+    border: 1px solid #d1d5db;
+}
+
+.form-buttons button[type="button"]:hover {
+    background-color: #f3f4f6;
 }
