@@ -78,32 +78,40 @@
 /* Column widths for new structure */
 .companies-table th:nth-child(1),  /* Company Name */
 .companies-table td:nth-child(1) {
-    width: 20%;
+    width: 15%;
 }
 
 .companies-table th:nth-child(2),  /* Website */
 .companies-table td:nth-child(2) {
-    width: 5%;
+    width: 7%;
+    text-align: center;
 }
 
 .companies-table th:nth-child(3),  /* Status */
 .companies-table td:nth-child(3) {
-    width: 10%;
+    width: 12%;
+    padding-left: 20px;
 }
 
 .companies-table th:nth-child(4),  /* Your Rating */
 .companies-table td:nth-child(4) {
     width: 10%;
+    text-align: center;
+    padding-left: 0;
+    padding-right: 0;
 }
 
 .companies-table th:nth-child(5),  /* Otani Rating */
 .companies-table td:nth-child(5) {
-    width: 10%;
+    width: 12%;
+    text-align: center;
+    padding-left: 0;
+    padding-right: 0;
 }
 
 .companies-table th:nth-child(6),  /* Why */
 .companies-table td:nth-child(6) {
-    width: 45%;
+    width: 44%;
 }
 
 /* Rating colors */
@@ -123,8 +131,26 @@
 
 /* Website icon */
 .website-icon {
-    width: 20px;
-    height: 20px;
+    width: 16px;
+    height: 16px;
+    color: #6b7280;
+    opacity: 0.8;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.website-cell {
+    text-align: center;
+}
+
+.website-icon:hover {
+    opacity: 1;
+    color: #374151;
+}
+
+.website-icon svg {
+    width: 16px;
+    height: 16px;
 }
 
 /* Why column text */
@@ -238,4 +264,26 @@
 /* Make table rows clickable */
 .companies-table tbody tr {
     cursor: pointer;
+}
+
+/* Ensure Otani rating is centered */
+.companies-table td:nth-child(5) span,
+.companies-table td:nth-child(5) .rating-a,
+.companies-table td:nth-child(5) .rating-b,
+.companies-table td:nth-child(5) .rating-c,
+.companies-table td:nth-child(5) .rating-d {
+    display: inline-block;
+    text-align: center;
+    min-width: 16px;
+}
+
+/* Ensure Your rating is centered */
+.companies-table td:nth-child(4) span,
+.companies-table td:nth-child(4) .rating-a,
+.companies-table td:nth-child(4) .rating-b,
+.companies-table td:nth-child(4) .rating-c,
+.companies-table td:nth-child(4) .rating-d {
+    display: inline-block;
+    text-align: center;
+    min-width: 16px;
 }
