@@ -194,8 +194,8 @@
     padding: 2rem;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 43, 0.1);
-    width: 90%;
-    max-width: 500px;
+    width: 95%;
+    max-width: 1200px;
 }
 
 /* Form styles */
@@ -288,4 +288,46 @@
     display: inline-block;
     text-align: center;
     min-width: 16px;
+}
+
+.modal-grid {
+    display: grid;
+    grid-template-columns: 400px 1px 1fr;
+    gap: 2rem;
+}
+
+.modal-column {
+    padding: 1rem;
+}
+
+/* Add divider styles */
+.modal-divider {
+    background-color: #e5e7eb;
+    height: 100%;
+    width: 1px;
+}
+
+/* Add these new styles */
+.detail-section {
+    margin-bottom: 2rem;
+}
+
+.detail-header {
+    color: #00002b;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #f3f4f6;
+}
+
+.detail-content {
+    color: #4b5563;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.detail-placeholder {
+    color: #9ca3af;
+    font-style: italic;
 }

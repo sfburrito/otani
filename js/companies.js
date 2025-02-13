@@ -382,7 +382,46 @@ const createCompanyRow = (company, index) => {
     return row;
 };
 
-const openDetailsModal = (index) => {
+const fetchCompanyDetails = async (company) => {
+    try {
+        const response = await fetch('https://api.perplexity.ai/chat/completions', {
+            method: 'POST',
+            headers: {
+                'accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${PERPLEXITY_API_KEY}`
+            },
+            body: JSON.stringify({
+                model: "sonar-pro",
+                messages: [
+                    {
+                        role: "system",
+                        content: "You are a helpful AI that provides company information in a structured format. Provide information without citations or reference numbers. Use clear, direct statements."
+                    },
+                    {
+                        role: "user",
+                        content: `Please provide publicly available information about ${company.company_name} (${company.website}) without any citations or reference numbers in the text. Format the response exactly as:
+                            DESCRIPTION: Brief overview of what they do in 2-3 sentences.
+                            FOUNDERS: Key team members and their backgrounds in 1-2 sentences.
+                            MARKET: Addressable market size for ${company.industry} in 1-2 sentences.
+                            COMPETITION: Main competitors in 1-2 sentences.
+                            BUSINESS: Business model and revenue streams in 1-2 sentences.
+                            
+                            Keep responses concise and avoid any [1], [2], or similar citations in the text.`
+                    }
+                ]
+            })
+        });
+
+        const data = await response.json();
+        return data.choices[0].message.content;
+    } catch (error) {
+        console.error('Error fetching company details:', error);
+        return null;
+    }
+};
+
+const openDetailsModal = async (index) => {
     currentCompanyIndex = index;
     const company = companiesList[index];
     const modal = document.getElementById('companyDetailsModal');
@@ -396,7 +435,37 @@ const openDetailsModal = (index) => {
     document.getElementById('editRating').value = company.your_rating;
     document.getElementById('editAdditionalInfo').value = company.additional_info || '';
     
+    // Show the modal
     modal.removeAttribute('hidden');
+    
+    // Check if we already have the company details
+    if (!company.perplexityDetails) {
+        // Show loading state
+        document.querySelectorAll('.detail-content').forEach(section => {
+            section.innerHTML = '<p class="detail-placeholder">Loading...</p>';
+        });
+        
+        // Fetch details if we don't have them
+        const details = await fetchCompanyDetails(company);
+        if (details) {
+            // Store the details in the company object
+            company.perplexityDetails = details;
+            companiesList[index] = company;
+            localStorage.setItem('companiesList', JSON.stringify(companiesList));
+        }
+    }
+    
+    // Populate sections with stored details
+    if (company.perplexityDetails) {
+        const sections = company.perplexityDetails.split('\n');
+        sections.forEach(section => {
+            const [type, content] = section.split(': ');
+            const sectionElement = document.querySelector(`.detail-section[data-type="${type.toLowerCase()}"] .detail-content`);
+            if (sectionElement) {
+                sectionElement.innerHTML = `<p>${content}</p>`;
+            }
+        });
+    }
 };
 
 const closeDetailsModal = () => {
