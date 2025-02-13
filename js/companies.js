@@ -94,6 +94,7 @@ const initializeOtani = () => {
                         location: form.location.value,
                         your_rating: form.rating.value,
                         additional_info: form.additionalInfo.value,
+                        status: form.status.value,
                         otani_rating: 'Loading...',
                         why: 'Updating...'
                     };
@@ -434,6 +435,7 @@ const openDetailsModal = async (index) => {
     document.getElementById('editLocation').value = company.location;
     document.getElementById('editRating').value = company.your_rating;
     document.getElementById('editAdditionalInfo').value = company.additional_info || '';
+    document.getElementById('editStatus').value = company.status || 'Active';
     
     // Show the modal
     modal.removeAttribute('hidden');
