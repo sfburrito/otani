@@ -1,21 +1,27 @@
 /**
  * Otani Companies Module
  * 
- * Core functionality for managing company portfolio including:
- * - Company listing and table management
- * - Adding and editing companies
- * - Status management and updates
- * - AI-powered company ratings and analysis
- * - Company details fetching and caching
+ * Enterprise-grade company portfolio management system with AI-powered analysis.
+ * This module handles:
+ * - Company portfolio CRUD operations
+ * - AI-driven company analysis and ratings
+ * - Real-time status tracking
+ * - Detailed company insights
+ * 
+ * Technical Architecture:
+ * - Uses localStorage for data persistence
+ * - Integrates with Perplexity API for AI analysis
+ * - Event-driven updates for real-time UI
  * 
  * @module companies
+ * @version 1.0.0
  * @requires localStorage
  * @requires perplexity-api
  */
 
 // Configuration Constants
 const CONFIG = {
-    DEBUG: false,
+    DEBUG: false,  // Set to true to enable detailed logging
     PERPLEXITY_API_KEY: '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',
     STORAGE_KEYS: {
         COMPANIES: 'companiesList',
@@ -26,6 +32,26 @@ const CONFIG = {
         stage: [],
         location: [],
         additional_info: ''
+    },
+    RATING_CRITERIA: {
+        FOUNDERS: {
+            A: 'Strong track record',
+            B: 'Good experience',
+            C: 'Some experience',
+            D: 'Limited experience'
+        },
+        MARKET: {
+            A: '>$10B market',
+            B: '$1B-$10B market',
+            C: '$100M-$1B market',
+            D: '<$100M market'
+        },
+        COMPETITION: {
+            A: 'Few competitors',
+            B: 'Moderate competition',
+            C: 'High competition',
+            D: 'Dominant incumbents'
+        }
     }
 };
 
@@ -55,18 +81,18 @@ const SELECTORS = {
     }
 };
 
-// Initialize state
+// Application State
 let companiesList = [];
 let currentCompanyIndex = -1;
 
 /**
  * Utility function for controlled logging
  * @param {string} message - Message to log
- * @param {string} [type='info'] - Type of log ('info', 'error', etc.)
+ * @param {'info' | 'error' | 'warn'} [type='info'] - Type of log
  */
 const log = (message, type = 'info') => {
     if (CONFIG.DEBUG || type === 'error') {
-        console[type](message);
+        console[type](`[Otani ${type}]:`, message);
     }
 };
 
@@ -80,71 +106,63 @@ const getPreferences = () => {
 
 /**
  * Saves companies list to localStorage
+ * @returns {void}
  */
 const saveCompanies = () => {
-    localStorage.setItem(CONFIG.STORAGE_KEYS.COMPANIES, JSON.stringify(companiesList));
+    try {
+        localStorage.setItem(CONFIG.STORAGE_KEYS.COMPANIES, JSON.stringify(companiesList));
+    } catch (error) {
+        log('Failed to save companies: ' + error.message, 'error');
+    }
 };
 
 /**
- * Main initialization function
- * Sets up all event handlers and loads initial data
+ * Core Initialization and Company Management
+ */
+
+/**
+ * Initializes the application
+ * @returns {void}
  */
 const initializeOtani = () => {
-    console.log('Starting Otani initialization...');
-    
+    // Ensure DOM is fully loaded
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeOtani);
+        return;
+    }
+
     // Load initial data
     companiesList = JSON.parse(localStorage.getItem(CONFIG.STORAGE_KEYS.COMPANIES)) || [];
-    console.log(`Loaded ${companiesList.length} companies from storage`);
     
-    // Initialize table
+    // Initialize components
     const tbody = document.getElementById('companiesTableBody');
     if (!tbody) {
-        console.error('Companies table body not found. Make sure the table exists with id="companiesTableBody"');
+        console.error('Companies table body not found');
         return;
     }
     
-    // Initialize components
     loadCompanies();
-    
-    // Initialize forms
-    const addForm = document.getElementById('addCompanyForm');
-    const editForm = document.getElementById('editCompanyForm');
-    
-    if (addForm) {
-        initializeAddCompany();
-    } else {
-        console.warn('Add company form not found');
-    }
-    
-    if (editForm) {
-        initializeEditCompany();
-    } else {
-        console.warn('Edit company form not found');
-    }
-    
-    console.log('Otani initialization complete');
+    initializeAddCompany();
+    initializeEditCompany();
 };
 
 /**
  * Initializes add company functionality
- * Sets up event listeners for the add company modal and form
+ * @returns {void}
  */
 const initializeAddCompany = () => {
     const addButton = document.querySelector(SELECTORS.table.addButton);
     const addForm = document.querySelector(SELECTORS.forms.add);
     
-    if (addButton) {
+    if (addButton && addForm) {
         addButton.addEventListener('click', openAddModal);
-    }
-    
-    if (addForm) {
         addForm.addEventListener('submit', handleFormSubmit);
     }
 };
 
 /**
  * Initializes edit company functionality
- * Sets up event listeners for the edit company form
+ * @returns {void}
  */
 const initializeEditCompany = () => {
     const editForm = document.querySelector(SELECTORS.forms.edit);
@@ -154,8 +172,9 @@ const initializeEditCompany = () => {
 };
 
 /**
- * Handles the submission of the add company form
- * @param {Event} event - The form submission event
+ * Handles new company form submission
+ * @param {Event} event - Form submission event
+ * @returns {Promise<void>}
  */
 const handleFormSubmit = async (event) => {
     event.preventDefault();
@@ -178,18 +197,15 @@ const handleFormSubmit = async (event) => {
             additional_info: form.additionalInfo.value,
             status: form.status.value,
             otani_rating: 'Loading...',
-            why: 'Loading...'
+            why: 'Loading...',
+            created_at: new Date().toISOString()
         };
 
-        // Add company and update display
         companiesList.push(newCompany);
         saveCompanies();
         loadCompanies();
-
-        // Close modal and reset form
         closeAddModal();
 
-        // Get and update Otani rating
         const otaniResponse = await getOtaniRating(newCompany, getPreferences());
         newCompany.otani_rating = otaniResponse.rating;
         newCompany.why = otaniResponse.explanation;
@@ -198,8 +214,8 @@ const handleFormSubmit = async (event) => {
         loadCompanies();
 
     } catch (error) {
-        log('Error saving company: ' + error.message, 'error');
-        alert('Failed to add company');
+        console.error('Failed to add company:', error);
+        alert('Failed to add company. Please try again.');
     } finally {
         submitButton.disabled = false;
         submitButton.textContent = 'Submit';
@@ -207,8 +223,9 @@ const handleFormSubmit = async (event) => {
 };
 
 /**
- * Handles the submission of the edit company form
- * @param {Event} event - The form submission event
+ * Handles company edit form submission
+ * @param {Event} event - Form submission event
+ * @returns {Promise<void>}
  */
 const handleEditFormSubmit = async (event) => {
     event.preventDefault();
@@ -231,16 +248,13 @@ const handleEditFormSubmit = async (event) => {
             your_rating: form.rating.value,
             additional_info: form.additionalInfo.value,
             status: form.status.value,
-            otani_rating: 'Loading...',
-            why: 'Updating...'
+            updated_at: new Date().toISOString()
         };
 
-        // Save initial update
         companiesList[currentCompanyIndex] = updatedCompany;
         saveCompanies();
         loadCompanies();
 
-        // Get new Otani rating
         const otaniResponse = await getOtaniRating(updatedCompany, getPreferences());
         updatedCompany.otani_rating = otaniResponse.rating;
         updatedCompany.why = otaniResponse.explanation;
@@ -252,8 +266,8 @@ const handleEditFormSubmit = async (event) => {
         closeDetailsModal();
 
     } catch (error) {
-        log('Error updating company: ' + error.message, 'error');
-        alert('Failed to update company');
+        console.error('Failed to update company:', error);
+        alert('Failed to update company. Please try again.');
     } finally {
         submitButton.disabled = false;
         submitButton.textContent = 'Save Changes';
@@ -261,16 +275,16 @@ const handleEditFormSubmit = async (event) => {
 };
 
 /**
- * AI Rating and Details Functions
+ * AI Rating and Analysis Functions
  */
 
 /**
- * Fetches company details from Perplexity API
- * @param {Object} company - Company to fetch details for
- * @returns {Promise<string|null>} Formatted company details or null if error
+ * Fetches detailed company analysis from Perplexity API
+ * @param {Object} company - Company to analyze
+ * @returns {Promise<string|null>} Formatted analysis or null if error
  */
 const fetchCompanyDetails = async (company) => {
-    log('Fetching details for: ' + company.company_name);
+    console.log('🔍 Starting analysis for:', company.company_name);
     
     try {
         const response = await fetch('https://api.perplexity.ai/chat/completions', {
@@ -285,13 +299,13 @@ const fetchCompanyDetails = async (company) => {
                 messages: [
                     {
                         role: "system",
-                        content: `You are a company analyst providing concise analysis without citations or references. 
-                        Provide clear, factual information in simple sentences without mentioning sources.
+                        content: `You are a company analyst providing concise analysis without citations. 
+                        Provide clear, factual information in simple sentences.
                         Always use the exact format provided and include ratings.`
                     },
                     {
                         role: "user",
-                        content: `Analyze ${company.company_name} (${company.website}) using this exact format, without citations or references:
+                        content: `Analyze ${company.company_name} (${company.website}) using this exact format:
 
 DESCRIPTION: Write 2-3 clear sentences about what they do.
 
@@ -311,7 +325,7 @@ Rating criteria:
 - Market: A=>$10B market, D=<$100M market
 - Competition: A=few competitors, D=dominant incumbents
 
-Use simple, direct language without citations or references.`
+Use simple, direct language without citations.`
                     }
                 ]
             })
@@ -319,24 +333,19 @@ Use simple, direct language without citations or references.`
 
         const data = await response.json();
         if (!data.choices?.[0]?.message?.content) {
-            throw new Error('Invalid API response');
+            throw new Error('Invalid API response format');
         }
 
-        let content = data.choices[0].message.content;
-        console.log('Raw API response:', content);
-        
-        // Log before validation
-        console.log('Before validation:', content);
-        
-        const validatedContent = validateAndFormatResponse(content);
-        
-        // Log after validation
-        console.log('After validation:', validatedContent);
-        
+        const rawContent = data.choices[0].message.content;
+        console.log('📝 Raw Perplexity response:', rawContent);
+
+        const validatedContent = validateAndFormatResponse(rawContent);
+        console.log('✅ Validated content:', validatedContent);
+
         return validatedContent;
 
     } catch (error) {
-        log('Error fetching company details: ' + error.message, 'error');
+        console.error('❌ Error fetching company details:', error);
         return null;
     }
 };
@@ -347,6 +356,8 @@ Use simple, direct language without citations or references.`
  * @returns {string} Formatted content
  */
 const validateAndFormatResponse = (content) => {
+    console.log('🔎 Starting validation of content');
+    
     const requiredSections = [
         'DESCRIPTION',
         'BUSINESS',
@@ -359,6 +370,8 @@ const validateAndFormatResponse = (content) => {
     ];
 
     const sections = content.split('\n').filter(line => line.trim());
+    console.log('📋 Parsed sections:', sections);
+
     const formattedSections = {};
 
     // Extract existing sections
@@ -367,11 +380,13 @@ const validateAndFormatResponse = (content) => {
         const trimmedType = type.trim();
         const content = contentParts.join(':').trim();
         formattedSections[trimmedType] = content;
+        console.log(`📌 Found section ${trimmedType}:`, content);
     });
 
-    // Validate and ensure all sections exist
+    // Check for missing sections
     requiredSections.forEach(section => {
         if (!formattedSections[section]) {
+            console.log(`⚠️ Missing section ${section}, adding default`);
             if (section.endsWith('_RATING')) {
                 formattedSections[section] = 'B';
             } else {
@@ -380,10 +395,10 @@ const validateAndFormatResponse = (content) => {
         }
     });
 
-    // Construct final response
-    return Object.entries(formattedSections)
-        .filter(([key]) => requiredSections.includes(key))
-        .map(([key, value]) => `${key}: ${value}`)
+    console.log('🏁 Final formatted sections:', formattedSections);
+
+    return requiredSections
+        .map(key => `${key}: ${formattedSections[key]}`)
         .join('\n\n');
 };
 
@@ -392,75 +407,42 @@ const validateAndFormatResponse = (content) => {
  * @param {string} details - Formatted company details
  */
 const updateModalWithDetails = (details) => {
-    log('Updating modal with details');
-    if (!details) return;
+    if (!details) {
+        // Keep showing loading state
+        return;
+    }
     
-    // Reset all sections
-    document.querySelectorAll(SELECTORS.details.content).forEach(section => {
-        section.innerHTML = '<p class="detail-placeholder">No information available</p>';
-    });
-    
-    document.querySelectorAll(SELECTORS.details.rating).forEach(rating => {
-        rating.textContent = '-';
-        rating.removeAttribute('data-grade');
-    });
-    
-    // Process sections
     const sections = details.split('\n').filter(line => line.trim());
     sections.forEach(section => {
         const [type, ...contentParts] = section.split(':');
         const trimmedType = type.trim();
         const content = contentParts.join(':').trim();
         
-        log('Processing section:', {
-            type: trimmedType,
-            content: content,
-            isRating: trimmedType.endsWith('_RATING')
-        });
-        
         if (trimmedType.endsWith('_RATING')) {
-            updateRatingSection(trimmedType, content);
+            const baseType = trimmedType.replace('_RATING', '').toLowerCase();
+            const ratingElement = document.querySelector(`.section-rating[data-rating="${baseType}"]`);
+            
+            if (ratingElement) {
+                ratingElement.textContent = content;
+                ratingElement.setAttribute('data-grade', content);
+            }
         } else {
-            updateContentSection(trimmedType, content);
+            const sectionElement = document.querySelector(
+                `.detail-section[data-type="${trimmedType.toLowerCase()}"] .detail-content`
+            );
+            
+            if (sectionElement) {
+                sectionElement.innerHTML = `<p>${content}</p>`;
+            }
         }
     });
-};
-
-/**
- * Updates a rating section in the modal
- * @param {string} type - Rating type (e.g., 'FOUNDERS_RATING')
- * @param {string} content - Rating value
- */
-const updateRatingSection = (type, content) => {
-    const baseType = type.replace('_RATING', '').toLowerCase();
-    const ratingElement = document.querySelector(`.section-rating[data-rating="${baseType}"]`);
-    
-    if (ratingElement) {
-        ratingElement.textContent = content;
-        ratingElement.setAttribute('data-grade', content);
-    }
-};
-
-/**
- * Updates a content section in the modal
- * @param {string} type - Section type (e.g., 'DESCRIPTION')
- * @param {string} content - Section content
- */
-const updateContentSection = (type, content) => {
-    const sectionElement = document.querySelector(
-        `.detail-section[data-type="${type.toLowerCase()}"] .detail-content`
-    );
-    
-    if (sectionElement) {
-        sectionElement.innerHTML = `<p>${content}</p>`;
-    }
 };
 
 /**
  * Gets Otani rating for a company
  * @param {Object} company - Company to rate
  * @param {Object} preferences - Investor preferences
- * @returns {Promise<Object>} Rating and explanation
+ * @returns {Promise<{rating: string, explanation: string}>}
  */
 const getOtaniRating = async (company, preferences) => {
     try {
@@ -490,10 +472,10 @@ const getOtaniRating = async (company, preferences) => {
         return parseRatingResponse(data.choices[0].message.content);
 
     } catch (error) {
-        log('Error getting Otani rating: ' + error.message, 'error');
+        console.error('Failed to get Otani rating:', error);
         return {
             rating: 'C',
-            explanation: 'Error getting AI response'
+            explanation: 'Error analyzing company'
         };
     }
 };
@@ -542,16 +524,17 @@ const parseRatingResponse = (response) => {
 };
 
 /**
+ * Table and Display Management
+ */
+
+/**
  * Loads and displays companies in the table
+ * @returns {void}
  */
 const loadCompanies = () => {
     const tbody = document.getElementById('companiesTableBody');
-    if (!tbody) {
-        console.error('Companies table body not found during load');
-        return;
-    }
+    if (!tbody) return;
 
-    console.log(`Rendering ${companiesList.length} companies to table`);
     tbody.innerHTML = '';
     companiesList.forEach((company, index) => {
         tbody.appendChild(createCompanyRow(company, index));
@@ -560,30 +543,30 @@ const loadCompanies = () => {
 
 /**
  * Creates a table row for a company
- * @param {Object} company - Company data object
- * @param {number} index - Index of the company in the list
- * @returns {HTMLElement} Table row element
+ * @param {Object} company - Company data
+ * @param {number} index - Company index in list
+ * @returns {HTMLTableRowElement}
  */
 const createCompanyRow = (company, index) => {
     const row = document.createElement('tr');
     row.onclick = () => openDetailsModal(index);
     
     const cells = [
-        { text: company.company_name, class: '' },
-        { isStatus: true, status: company.status, index: index },
+        { text: company.company_name },
+        { isStatus: true, status: company.status, index },
         { text: company.your_rating, class: `rating-${company.your_rating?.toLowerCase()}` },
         { text: company.otani_rating || 'N/A', class: company.otani_rating ? `rating-${company.otani_rating.toLowerCase()}` : '' },
         { text: company.why || '', class: 'why-column' }
     ];
     
-    cells.forEach(({ text, class: className, isStatus, status, index }) => {
+    cells.forEach(cell => {
         const td = document.createElement('td');
-        if (className) td.className = className;
+        if (cell.class) td.className = cell.class;
         
-        if (isStatus) {
-            td.appendChild(createStatusSelect(status, index));
+        if (cell.isStatus) {
+            td.appendChild(createStatusSelect(cell.status, cell.index));
         } else {
-            td.textContent = text;
+            td.textContent = cell.text;
         }
         
         row.appendChild(td);
@@ -593,17 +576,16 @@ const createCompanyRow = (company, index) => {
 };
 
 /**
- * Creates a status select element for a company row
+ * Creates a status select element
  * @param {string} currentStatus - Current status value
- * @param {number} companyIndex - Index of the company
- * @returns {HTMLElement} Select element
+ * @param {number} companyIndex - Company index in list
+ * @returns {HTMLSelectElement}
  */
 const createStatusSelect = (currentStatus, companyIndex) => {
     const select = document.createElement('select');
     select.className = 'status-select';
     
-    const options = ['Active', 'Pass', 'Invested'];
-    options.forEach(status => {
+    ['Active', 'Pass', 'Invested'].forEach(status => {
         const option = document.createElement('option');
         option.value = status;
         option.textContent = status;
@@ -611,14 +593,12 @@ const createStatusSelect = (currentStatus, companyIndex) => {
         select.appendChild(option);
     });
     
-    // Stop event propagation to prevent modal opening
     select.onclick = (e) => e.stopPropagation();
-    
     select.addEventListener('change', async (e) => {
         const company = companiesList[companyIndex];
         company.status = e.target.value;
+        company.updated_at = new Date().toISOString();
         
-        // Update Otani rating based on new status
         const otaniResponse = await getOtaniRating(company, getPreferences());
         company.otani_rating = otaniResponse.rating;
         company.why = otaniResponse.explanation;
@@ -631,8 +611,33 @@ const createStatusSelect = (currentStatus, companyIndex) => {
 };
 
 /**
+ * Modal Management
+ */
+
+/**
+ * Opens the add company modal
+ * @returns {void}
+ */
+const openAddModal = () => {
+    const modal = document.querySelector(SELECTORS.modals.add);
+    if (modal) modal.removeAttribute('hidden');
+};
+
+/**
+ * Closes the add company modal
+ * @returns {void}
+ */
+const closeAddModal = () => {
+    const modal = document.querySelector(SELECTORS.modals.add);
+    const form = document.querySelector(SELECTORS.forms.add);
+    
+    if (modal) modal.setAttribute('hidden', '');
+    if (form) form.reset();
+};
+
+/**
  * Opens the company details modal
- * @param {number} index - Index of the company to display
+ * @param {number} index - Company index in list
  */
 const openDetailsModal = async (index) => {
     currentCompanyIndex = index;
@@ -641,55 +646,76 @@ const openDetailsModal = async (index) => {
     
     if (!modal || !company) return;
     
-    // Fill form with company details
-    const fields = {
-        'editCompanyName': company.company_name,
-        'editWebsite': company.website,
-        'editIndustry': company.industry,
-        'editStage': company.stage,
-        'editLocation': company.location,
-        'editRating': company.your_rating,
-        'editAdditionalInfo': company.additional_info || '',
-        'editStatus': company.status || 'Active'
+    // First, reset all content and ratings to loading state
+    document.querySelectorAll(SELECTORS.details.content).forEach(section => {
+        section.innerHTML = '<p class="detail-placeholder">Loading analysis...</p>';
+    });
+    
+    document.querySelectorAll(SELECTORS.details.rating).forEach(rating => {
+        rating.textContent = '—';
+        rating.removeAttribute('data-grade');
+        rating.className = 'section-rating'; // Reset any rating-specific classes
+    });
+    
+    // Update form fields
+    const formFields = {
+        editCompanyName: company.company_name,
+        editWebsite: company.website,
+        editIndustry: company.industry,
+        editStage: company.stage,
+        editLocation: company.location,
+        editRating: company.your_rating,
+        editAdditionalInfo: company.additional_info || '',
+        editStatus: company.status || 'Active'
     };
     
-    Object.entries(fields).forEach(([id, value]) => {
+    Object.entries(formFields).forEach(([id, value]) => {
         const element = document.getElementById(id);
         if (element) element.value = value;
     });
     
+    // Show the modal
     modal.removeAttribute('hidden');
     
-    // Handle company details loading
-    if (!company.perplexityDetails) {
-        // Show loading state
-        document.querySelectorAll(SELECTORS.details.content).forEach(section => {
-            section.innerHTML = '<p class="detail-placeholder">Loading...</p>';
-        });
-        
-        const details = await fetchCompanyDetails(company);
-        if (details) {
-            company.perplexityDetails = details;
-            saveCompanies();
-        }
-    }
+    // Clear any existing details
+    company.perplexityDetails = null;
     
-    if (company.perplexityDetails) {
-        updateModalWithDetails(company.perplexityDetails);
+    // Fetch new details
+    const details = await fetchCompanyDetails(company);
+    if (details) {
+        company.perplexityDetails = details;
+        saveCompanies();
+        updateModalWithDetails(details);
     }
 };
 
 /**
  * Closes the details modal
+ * @returns {void}
  */
 const closeDetailsModal = () => {
     const modal = document.querySelector(SELECTORS.modals.details);
     if (modal) {
+        // Reset all content and ratings when closing
+        document.querySelectorAll(SELECTORS.details.content).forEach(section => {
+            section.innerHTML = '<p class="detail-placeholder">Loading analysis...</p>';
+        });
+        
+        document.querySelectorAll(SELECTORS.details.rating).forEach(rating => {
+            rating.textContent = '—';
+            rating.removeAttribute('data-grade');
+            rating.className = 'section-rating';
+        });
+        
         modal.setAttribute('hidden', '');
         currentCompanyIndex = -1;
     }
 };
 
+/**
+ * Deletes the current company
+ * @returns {void}
+ */
 const deleteCompany = () => {
     if (currentCompanyIndex < 0) return;
     
@@ -701,30 +727,13 @@ const deleteCompany = () => {
     }
 };
 
-/**
- * Opens the add company modal
- */
-const openAddModal = () => {
-    const modal = document.querySelector(SELECTORS.modals.add);
-    if (modal) modal.removeAttribute('hidden');
-};
-
-/**
- * Closes the add company modal and resets the form
- */
-const closeAddModal = () => {
-    const modal = document.querySelector(SELECTORS.modals.add);
-    const form = document.querySelector(SELECTORS.forms.add);
-    
-    if (modal) modal.setAttribute('hidden', '');
-    if (form) form.reset();
-};
-
-// Make sure this function is available globally
+// Make necessary functions available globally
 window.closeAddModal = closeAddModal;
+window.closeDetailsModal = closeDetailsModal;
+window.deleteCompany = deleteCompany;
 
-// Wait for full page load before initializing
-window.addEventListener('load', () => {
-    console.log('Page fully loaded, initializing Otani...');
+// Update initialization
+document.addEventListener('DOMContentLoaded', () => {
+    // Remove the window.load listener we had before
     initializeOtani();
 });

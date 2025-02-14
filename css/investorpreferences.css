@@ -87,15 +87,18 @@
 }
 
 .select-header {
-    padding: 12px;
+    padding: 8px 36px 8px 12px;
+    min-height: 42px;
+    gap: 4px;
+    flex-wrap: wrap;
     border: 1px solid #e0e0e0;
     border-radius: 6px;
     background: white;
     cursor: pointer;
     display: flex;
     align-items: center;
-    min-height: 48px;
     transition: all 0.2s;
+    position: relative;
 }
 
 .select-header:hover {
@@ -107,19 +110,33 @@
     box-shadow: 0 0 0 2px rgba(0, 0, 43, 0.1);
 }
 
-.placeholder {
-    color: #999;
-    font-size: 14px;
-}
-
 .arrow {
     color: #666;
     font-size: 12px;
     transition: transform 0.2s ease;
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
 }
 
 .select-header.active .arrow {
-    transform: rotate(180deg);
+    transform: translateY(-50%) rotate(180deg);
+}
+
+.selected-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    min-height: 24px;
+    padding-right: 24px;
+    align-items: center;
+}
+
+.placeholder {
+    color: #999;
+    font-size: 13px;
+    margin-right: 24px;
 }
 
 .options-container {
@@ -144,9 +161,9 @@
 }
 
 .option {
-    padding: 10px 12px;
+    padding: 8px 12px;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 13px;
     transition: background-color 0.2s ease;
 }
 
@@ -157,30 +174,6 @@
 .option.selected {
     background-color: #e6f3f3;
     color: #00002b;
-}
-
-.selected-options {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px;
-    min-height: 24px;
-}
-
-.selected-tag {
-    background-color: rgba(0, 0, 43, 0.1);
-    color: #00002b;
-    padding: 4px 12px;
-    border-radius: 16px;
-    font-size: 13px;
-}
-
-.selected-tag .remove {
-    cursor: pointer;
-    color: #666;
-}
-
-.selected-tag .remove:hover {
-    color: #333;
 }
 
 /* Hide placeholder when options are selected */
@@ -219,4 +212,35 @@
     outline: none;
     border-color: #00002b;
     box-shadow: 0 0 0 2px rgba(0, 0, 43, 0.1);
+}
+
+/* Update selected tags styling */
+.selected-tag {
+    background-color: #e6f3f3;  /* Light blue background */
+    color: #00002b;
+    padding: 4px 12px;
+    border-radius: 16px;
+    font-size: 12px;     /* Smaller font size */
+    border: 1px solid rgba(0, 0, 43, 0.15);  /* Subtle border */
+    margin: 2px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+}
+
+.selected-tag:hover {
+    background-color: #d9ecec;  /* Slightly darker on hover */
+}
+
+.selected-tag .remove {
+    cursor: pointer;
+    color: #00002b;
+    opacity: 0.6;
+    font-size: 10px;    /* Smaller X icon */
+    margin-left: 2px;
+}
+
+.selected-tag .remove:hover {
+    opacity: 1;
 }
