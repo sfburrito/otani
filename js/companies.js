@@ -154,8 +154,12 @@ const initializeAddCompany = () => {
     const addButton = document.querySelector(SELECTORS.table.addButton);
     const addForm = document.querySelector(SELECTORS.forms.add);
     
-    if (addButton && addForm) {
-        addButton.addEventListener('click', openAddModal);
+    if (addButton) {
+        // Only attach the selection modal opener
+        addButton.onclick = openSelectionModal;
+    }
+    
+    if (addForm) {
         addForm.addEventListener('submit', handleFormSubmit);
     }
 };
@@ -172,17 +176,14 @@ const initializeEditCompany = () => {
 };
 
 /**
- * Handles new company form submission
+ * Handles form submission
  * @param {Event} event - Form submission event
- * @returns {Promise<void>}
  */
 const handleFormSubmit = async (event) => {
     event.preventDefault();
     const form = event.target;
     const submitButton = form.querySelector(SELECTORS.buttons.submit);
     
-    if (!submitButton) return;
-
     try {
         submitButton.disabled = true;
         submitButton.textContent = 'Adding...';
@@ -196,22 +197,23 @@ const handleFormSubmit = async (event) => {
             your_rating: form.rating.value,
             additional_info: form.additionalInfo.value,
             status: form.status.value,
-            otani_rating: 'Loading...',
-            why: 'Loading...',
             created_at: new Date().toISOString()
         };
+
+        // Get Otani rating before adding to list
+        const otaniResponse = await getOtaniRating(newCompany, getPreferences());
+        newCompany.otani_rating = otaniResponse.rating;
+        newCompany.why = otaniResponse.explanation;
 
         companiesList.push(newCompany);
         saveCompanies();
         loadCompanies();
-        closeAddModal();
 
-        const otaniResponse = await getOtaniRating(newCompany, getPreferences());
-        newCompany.otani_rating = otaniResponse.rating;
-        newCompany.why = otaniResponse.explanation;
-        
-        saveCompanies();
-        loadCompanies();
+        // Close both modals
+        closeAddModal();
+        closeSelectionModal();
+
+        form.reset();
 
     } catch (error) {
         console.error('Failed to add company:', error);
@@ -251,17 +253,28 @@ const handleEditFormSubmit = async (event) => {
             updated_at: new Date().toISOString()
         };
 
+        // Clear cached analysis if company details change
+        if (
+            updatedCompany.company_name !== companiesList[currentCompanyIndex].company_name ||
+            updatedCompany.website !== companiesList[currentCompanyIndex].website ||
+            updatedCompany.industry !== companiesList[currentCompanyIndex].industry
+        ) {
+            updatedCompany.perplexityDetails = null;
+        }
+
         companiesList[currentCompanyIndex] = updatedCompany;
         saveCompanies();
         loadCompanies();
 
-        const otaniResponse = await getOtaniRating(updatedCompany, getPreferences());
-        updatedCompany.otani_rating = otaniResponse.rating;
-        updatedCompany.why = otaniResponse.explanation;
-        
-        companiesList[currentCompanyIndex] = updatedCompany;
-        saveCompanies();
-        loadCompanies();
+        // Only fetch new analysis if cache was cleared
+        if (!updatedCompany.perplexityDetails) {
+            const details = await fetchCompanyDetails(updatedCompany);
+            if (details) {
+                updatedCompany.perplexityDetails = details;
+                saveCompanies();
+                loadCompanies();
+            }
+        }
         
         closeDetailsModal();
 
@@ -551,25 +564,45 @@ const createCompanyRow = (company, index) => {
     const row = document.createElement('tr');
     row.onclick = () => openDetailsModal(index);
     
+    // Helper function to create rating cell
+    const createRatingCell = (rating) => {
+        const td = document.createElement('td');
+        if (rating) {
+            td.className = `rating-cell rating-${rating.toLowerCase()}`;
+            const ratingSpan = document.createElement('span');
+            ratingSpan.className = 'rating-badge';
+            ratingSpan.textContent = rating;
+            td.appendChild(ratingSpan);
+        } else {
+            td.textContent = '—';
+        }
+        return td;
+    };
+    
+    // Create cells
     const cells = [
         { text: company.company_name },
         { isStatus: true, status: company.status, index },
-        { text: company.your_rating, class: `rating-${company.your_rating?.toLowerCase()}` },
-        { text: company.otani_rating || 'N/A', class: company.otani_rating ? `rating-${company.otani_rating.toLowerCase()}` : '' },
-        { text: company.why || '', class: 'why-column' }
+        createRatingCell(company.your_rating),
+        createRatingCell(company.otani_rating),
+        { text: company.why || '—', class: 'why-column' }
     ];
     
     cells.forEach(cell => {
-        const td = document.createElement('td');
-        if (cell.class) td.className = cell.class;
-        
-        if (cell.isStatus) {
-            td.appendChild(createStatusSelect(cell.status, cell.index));
+        if (cell instanceof HTMLTableCellElement) {
+            row.appendChild(cell);
         } else {
-            td.textContent = cell.text;
+            const td = document.createElement('td');
+            if (cell.class) td.className = cell.class;
+            
+            if (cell.isStatus) {
+                td.appendChild(createStatusSelect(cell.status, cell.index));
+            } else {
+                td.textContent = cell.text;
+            }
+            
+            row.appendChild(td);
         }
-        
-        row.appendChild(td);
     });
     
     return row;
@@ -654,7 +687,7 @@ const openDetailsModal = async (index) => {
     document.querySelectorAll(SELECTORS.details.rating).forEach(rating => {
         rating.textContent = '—';
         rating.removeAttribute('data-grade');
-        rating.className = 'section-rating'; // Reset any rating-specific classes
+        rating.className = 'section-rating';
     });
     
     // Update form fields
@@ -677,15 +710,19 @@ const openDetailsModal = async (index) => {
     // Show the modal
     modal.removeAttribute('hidden');
     
-    // Clear any existing details
-    company.perplexityDetails = null;
-    
-    // Fetch new details
-    const details = await fetchCompanyDetails(company);
-    if (details) {
-        company.perplexityDetails = details;
-        saveCompanies();
-        updateModalWithDetails(details);
+    // Check if we already have cached details
+    if (company.perplexityDetails) {
+        console.log('Using cached analysis');
+        updateModalWithDetails(company.perplexityDetails);
+    } else {
+        // Only fetch if we don't have cached details
+        console.log('Fetching new analysis');
+        const details = await fetchCompanyDetails(company);
+        if (details) {
+            company.perplexityDetails = details;
+            saveCompanies();
+            updateModalWithDetails(details);
+        }
     }
 };
 
@@ -737,3 +774,29 @@ document.addEventListener('DOMContentLoaded', () => {
     // Remove the window.load listener we had before
     initializeOtani();
 });
+
+// Add these new functions
+const openSelectionModal = () => {
+    const modal = document.getElementById('addCompanySelectionModal');
+    if (modal) modal.removeAttribute('hidden');
+};
+
+const closeSelectionModal = () => {
+    const modal = document.getElementById('addCompanySelectionModal');
+    if (modal) modal.setAttribute('hidden', '');
+};
+
+const handleUploadPitchDeck = () => {
+    alert('Coming soon: Upload Pitch Deck functionality');
+};
+
+const handleBatchUpload = () => {
+    alert('Coming soon: Batch Upload functionality');
+};
+
+// Make functions available globally
+window.openSelectionModal = openSelectionModal;
+window.closeSelectionModal = closeSelectionModal;
+window.handleUploadPitchDeck = handleUploadPitchDeck;
+window.handleBatchUpload = handleBatchUpload;
+window.openAddModal = openAddModal;

@@ -38,6 +38,35 @@
         </tbody>
     </table>
 
+    <!-- Add Company Selection Modal -->
+    <div id="addCompanySelectionModal" class="modal" hidden>
+        <div class="modal-content selection-modal">
+            <h3>Add Companies</h3>
+            <div class="add-options">
+                <div class="add-option" onclick="handleUploadPitchDeck()">
+                    <div class="option-icon">📄</div>
+                    <h4>Upload Pitch Deck</h4>
+                    <p>Upload a pitch deck to automatically extract company information</p>
+                    <span class="coming-soon">Coming Soon</span>
+                </div>
+                
+                <div class="add-option" onclick="handleBatchUpload()">
+                    <div class="option-icon">📁</div>
+                    <h4>Batch Upload</h4>
+                    <p>Upload multiple companies using a spreadsheet template</p>
+                    <span class="coming-soon">Coming Soon</span>
+                </div>
+                
+                <div class="add-option" onclick="openAddModal()">
+                    <div class="option-icon">➕</div>
+                    <h4>Add One Company</h4>
+                    <p>Manually add a single company to your portfolio</p>
+                </div>
+            </div>
+            <button class="modal-close" onclick="closeSelectionModal()">Cancel</button>
+        </div>
+    </div>
+
     <!-- Add Company Modal -->
     <div id="addCompanyModal" class="modal" hidden>
         <div class="modal-content">
@@ -218,29 +247,29 @@
                         </div>
                     </div>
 
+                    <div class="detail-section" data-type="business">
+                        <h4 class="detail-header">Business Model</h4>
+                        <div class="detail-content">
+                            <p class="detail-placeholder">Loading...</p>
+                        </div>
+                    </div>
+
                     <div class="detail-section" data-type="founders">
-                        <h4 class="detail-header">Founder Details</h4>
+                        <h4 class="detail-header">Founder Details <span class="section-rating" data-rating="founders">-</span></h4>
                         <div class="detail-content">
                             <p class="detail-placeholder">Loading...</p>
                         </div>
                     </div>
 
                     <div class="detail-section" data-type="market">
-                        <h4 class="detail-header">Market Size</h4>
+                        <h4 class="detail-header">Market Size <span class="section-rating" data-rating="market">-</span></h4>
                         <div class="detail-content">
                             <p class="detail-placeholder">Loading...</p>
                         </div>
                     </div>
 
                     <div class="detail-section" data-type="competition">
-                        <h4 class="detail-header">Competition</h4>
-                        <div class="detail-content">
-                            <p class="detail-placeholder">Loading...</p>
-                        </div>
-                    </div>
-
-                    <div class="detail-section" data-type="business">
-                        <h4 class="detail-header">Business Model</h4>
+                        <h4 class="detail-header">Competition <span class="section-rating" data-rating="competition">-</span></h4>
                         <div class="detail-content">
                             <p class="detail-placeholder">Loading...</p>
                         </div>
