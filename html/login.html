@@ -2,7 +2,14 @@
 <html>
 <head>
     <title>Login - Otani</title>
-    <link rel="stylesheet" href="../css/login.css">
+    <script>
+        // Dynamically set the CSS path based on environment
+        const isGitHubPages = window.location.hostname.includes('github.io');
+        const cssLink = document.createElement('link');
+        cssLink.rel = 'stylesheet';
+        cssLink.href = isGitHubPages ? '/otani/css/login.css' : '../css/login.css';
+        document.head.appendChild(cssLink);
+    </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
