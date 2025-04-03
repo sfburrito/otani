@@ -23,43 +23,18 @@
             <div id="error-message" class="error-message"></div>
             <div class="button-group">
                 <button type="submit" class="create-button">Create Account</button>
-                <button type="button" class="back-button" onclick="window.location.href='/'">Back to Login</button>
+                <button type="button" class="back-button" onclick="window.location.href='login.html'">Back to Login</button>
             </div>
         </form>
     </div>
 
     <script>
-        document.getElementById('createAccountForm').addEventListener('submit', async function(event) {
+        document.getElementById('createAccountForm').addEventListener('submit', function(event) {
             event.preventDefault();
-            
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            
-            try {
-                const response = await fetch('http://localhost:5000/api/register', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ email, password })
-                });
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                    window.location.href = '/';
-                } else {
-                    throw new Error(data.error || 'Registration failed');
-                }
-            } catch (error) {
-                const errorMessage = document.getElementById('error-message');
-                errorMessage.textContent = error.message || 'An unexpected error occurred';
-                errorMessage.style.display = 'block';
-            }
+            // Store the user info
+            localStorage.setItem('user', JSON.stringify({ email: document.getElementById('email').value }));
+            // Redirect to login page
+            window.location.href = 'login.html';
         });
     </script>
 </body>

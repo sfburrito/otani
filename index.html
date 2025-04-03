@@ -5,8 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Otani</title>
     
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+    
     <!-- External CSS files -->
-    <link rel="stylesheet" href="./css/styles.css">
     <link rel="stylesheet" href="./css/header.css">
     <link rel="stylesheet" href="./css/investorpreferences.css">
     <link rel="stylesheet" href="./css/yourcompanies.css">
@@ -64,8 +66,19 @@
     <!-- Footer component container -->
     <div id="footer"></div>
 
-    <!-- Component loading script -->
+    <!-- Global functions -->
     <script>
+        // Logout function
+        function handleLogout() {
+            console.log('Logout function called');
+            // Clear user data from localStorage
+            localStorage.removeItem('user');
+            console.log('LocalStorage cleared');
+            // Redirect to login page in html folder
+            window.location.href = './html/login.html';
+            console.log('Redirecting to login page');
+        }
+
         // Function to load HTML content
         async function loadContent() {
             try {
