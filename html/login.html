@@ -37,8 +37,16 @@
             event.preventDefault();
             // Store dummy user info
             localStorage.setItem('user', JSON.stringify({ email: 'user@example.com' }));
-            // Redirect to main page
-            window.location.href = '/';
+            
+            // Check if we're on GitHub Pages or local
+            const isGitHubPages = window.location.hostname.includes('github.io');
+            
+            // Redirect to appropriate main page
+            if (isGitHubPages) {
+                window.location.href = '/otani/';
+            } else {
+                window.location.href = '/';
+            }
         }
         
         document.getElementById('loginForm').addEventListener('submit', handleLogin);
