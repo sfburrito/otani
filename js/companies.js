@@ -200,6 +200,13 @@ const handleFormSubmit = async (event) => {
             created_at: new Date().toISOString()
         };
 
+        // Track company addition
+        gtag('event', 'add_company', {
+            'company_name': newCompany.company_name,
+            'industry': newCompany.industry,
+            'stage': newCompany.stage
+        });
+
         // Get Otani rating before adding to list
         const otaniResponse = await getOtaniRating(newCompany, getPreferences());
         newCompany.otani_rating = otaniResponse.rating;
@@ -754,9 +761,12 @@ const closeDetailsModal = () => {
  * @returns {void}
  */
 const deleteCompany = () => {
-    if (currentCompanyIndex < 0) return;
-    
-    if (confirm('Are you sure you want to delete this company?')) {
+    if (currentCompanyIndex >= 0 && confirm('Are you sure you want to delete this company?')) {
+        // Track company deletion
+        gtag('event', 'delete_company', {
+            'company_name': companiesList[currentCompanyIndex].company_name
+        });
+        
         companiesList.splice(currentCompanyIndex, 1);
         saveCompanies();
         loadCompanies();
@@ -800,3 +810,21 @@ window.closeSelectionModal = closeSelectionModal;
 window.handleUploadPitchDeck = handleUploadPitchDeck;
 window.handleBatchUpload = handleBatchUpload;
 window.openAddModal = openAddModal;
+
+// Add session tracking
+window.addEventListener('load', function() {
+    // Track session start
+    gtag('event', 'session_start', {
+        'page_title': document.title,
+        'page_location': window.location.href
+    });
+});
+
+// Track time spent on site
+let startTime = Date.now();
+window.addEventListener('beforeunload', function() {
+    const timeSpent = Math.round((Date.now() - startTime) / 1000);
+    gtag('event', 'session_duration', {
+        'duration_seconds': timeSpent
+    });
+});
