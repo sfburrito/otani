@@ -541,7 +541,7 @@ const getOtaniRating = async (company, preferences) => {
  * @returns {string} Formatted prompt
  */
 const generateRatingPrompt = (company, preferences) => {
-    return `Rate this company based on investor preferences:
+    return `Rate this company based on investor preferences. Do not include any citations or reference numbers in your response.
             
     Company Details:
     - Name: ${company.company_name}
@@ -559,7 +559,7 @@ const generateRatingPrompt = (company, preferences) => {
     
     Format response exactly as:
     RATING: [A-D]
-    WHY: [1-2 sentence explanation]`;
+    WHY: [1-2 sentence explanation without any citations or reference numbers]`;
 };
 
 /**
@@ -571,9 +571,14 @@ const parseRatingResponse = (response) => {
     const rating_match = response.match(/RATING:\s*([ABCD])/i);
     const why_match = response.match(/WHY:\s*(.+)$/is);
     
+    // Remove citation numbers [1], [2], etc.
+    const explanation = why_match 
+        ? why_match[1].trim().replace(/\[\d+\]/g, '').replace(/\s+/g, ' ').trim()
+        : 'No explanation provided';
+    
     return {
         rating: rating_match ? rating_match[1].toUpperCase() : 'C',
-        explanation: why_match ? why_match[1].trim() : 'No explanation provided'
+        explanation: explanation
     };
 };
 
