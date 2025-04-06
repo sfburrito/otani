@@ -123,7 +123,17 @@ const saveCompanies = () => {
  */
 const trackEvent = (eventName, params) => {
     if (typeof gtag !== 'undefined') {
-        gtag('event', eventName, params);
+        // Add event category and common parameters
+        const enhancedParams = {
+            ...params,
+            event_category: 'User Actions',
+            event_label: eventName,
+            non_interaction: false
+        };
+        console.log('📊 Tracking event:', eventName, enhancedParams);
+        gtag('event', eventName, enhancedParams);
+    } else {
+        console.warn('Google Analytics not loaded');
     }
 };
 
@@ -214,11 +224,13 @@ const handleFormSubmit = async (event) => {
             created_at: new Date().toISOString()
         };
 
-        // Track company addition
-        trackEvent('add_company', {
+        // Track company addition with enhanced parameters
+        trackEvent('company_addition', {
             'company_name': newCompany.company_name,
             'industry': newCompany.industry,
-            'stage': newCompany.stage
+            'stage': newCompany.stage,
+            'location': newCompany.location,
+            'timestamp': new Date().toISOString()
         });
 
         // Get Otani rating before adding to list
