@@ -345,13 +345,14 @@ const fetchCompanyDetails = async (company) => {
                 messages: [
                     {
                         role: "system",
-                        content: `You are a company analyst providing concise analysis without citations. 
+                        content: `You are a company analyst providing concise analysis without citations or markdown formatting. 
                         Provide clear, factual information in simple sentences.
+                        Use plain text format without headers or special characters.
                         Always use the exact format provided and include ratings.`
                     },
                     {
                         role: "user",
-                        content: `Analyze ${company.company_name} (${company.website}) using this exact format:
+                        content: `Analyze ${company.company_name} (${company.website}) using this exact format without markdown or special characters:
 
 DESCRIPTION: Write 2-3 clear sentences about what they do.
 
@@ -371,7 +372,7 @@ Rating criteria:
 - Market: A=>$10B market, D=<$100M market
 - Competition: A=few competitors, D=dominant incumbents
 
-Use simple, direct language without citations.`
+Use simple, direct language without citations, markdown, or special formatting.`
                     }
                 ]
             })
@@ -416,12 +417,17 @@ const validateAndFormatResponse = (content) => {
     ];
 
     // Clean up markdown formatting and split into sections
-    const cleanContent = content.replace(/\*\*/g, '').trim();
+    const cleanContent = content
+        .replace(/###\s*/g, '') // Remove markdown headers
+        .replace(/\*\*/g, '')   // Remove bold markers
+        .trim();
+    
+    // Split into sections and clean up
     const sections = cleanContent.split('\n').filter(line => line.trim());
     console.log('📋 Parsed sections:', sections);
 
     const formattedSections = {};
-    let currentSection = null;
+    let currentSection = '';
     let currentContent = [];
 
     // Process sections and their content
@@ -450,10 +456,10 @@ const validateAndFormatResponse = (content) => {
 
     // Check for missing sections and add defaults
     requiredSections.forEach(section => {
-        if (!formattedSections[section]) {
-            console.log(`⚠️ Missing section ${section}, adding default`);
+        if (!formattedSections[section] || formattedSections[section].includes('###')) {
+            console.log(`⚠️ Missing or invalid section ${section}, adding default`);
             if (section.endsWith('_RATING')) {
-                formattedSections[section] = 'B';
+                formattedSections[section] = formattedSections[section]?.match(/[ABCD]/)?.[0] || 'B';
             } else {
                 formattedSections[section] = 'Information not available';
             }
@@ -464,7 +470,7 @@ const validateAndFormatResponse = (content) => {
 
     // Return formatted content
     return requiredSections
-        .map(key => `${key}: ${formattedSections[key]}`)
+        .map(section => `${section}: ${formattedSections[section]}`)
         .join('\n\n');
 };
 
