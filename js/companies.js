@@ -575,8 +575,8 @@ const getOtaniRating = async (company, preferences) => {
  * @returns {string} Formatted prompt
  */
 const generateRatingPrompt = (company, preferences) => {
-    return `Rate this company based on investor preferences. Do not include any citations or reference numbers in your response.
-            
+    return `You are Otani, an expert AI investment analyst trained to evaluate startups through the lens of a VC investor. Assess the overall attractiveness of this company as an investment opportunity based on the provided information and known investor preferences. Your evaluation should consider founder quality, market size and growth, defensibility, business model scalability, and alignment with investor interests.
+
     Company Details:
     - Name: ${company.company_name}
     - Industry: ${company.industry}
@@ -591,9 +591,15 @@ const generateRatingPrompt = (company, preferences) => {
     - Locations: ${preferences.location.join(', ')}
     - Additional Info: ${preferences.additional_info}
     
+    Rating Criteria:
+    A - Exceptional Opportunity: Large and fast-growing market, highly experienced founding team with strong founder–market fit, clear and defensible competitive advantage, scalable business model, and high alignment with investor preferences.
+    B - Good Opportunity: Promising market, solid team, some differentiation or early traction, and reasonable fit with investor preferences.
+    C - Moderate Opportunity: Smaller or uncertain market, limited differentiation, average team experience, or unclear strategic fit.
+    D - Weak Opportunity: Small or stagnant market, inexperienced team, weak positioning, or poor alignment with investor preferences.
+    
     Format response exactly as:
     RATING: [A-D]
-    WHY: [1-2 sentence explanation without any citations or reference numbers]`;
+    WHY: [Summarize your reasoning in 2–3 sharp, investor-minded sentences. Focus on what makes (or breaks) this deal: the scale of the opportunity, quality of execution risk, competitive dynamics, and strategic alignment with investor goals. Be specific and incisive—this is the investor’s bottom-line takeaway.]`;
 };
 
 /**
