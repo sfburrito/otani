@@ -122,6 +122,7 @@ const saveCompanies = () => {
  * @param {Object} params - Event parameters
  */
 const trackEvent = (eventName, params) => {
+    console.log('🔍 Checking gtag availability:', typeof gtag);
     if (typeof gtag !== 'undefined') {
         // Add event category and common parameters
         const enhancedParams = {
@@ -132,8 +133,9 @@ const trackEvent = (eventName, params) => {
         };
         console.log('📊 Tracking event:', eventName, enhancedParams);
         gtag('event', eventName, enhancedParams);
+        console.log('✅ Event sent to GA');
     } else {
-        console.warn('Google Analytics not loaded');
+        console.warn('⚠️ Google Analytics not loaded - gtag is undefined');
     }
 };
 
@@ -599,7 +601,7 @@ const generateRatingPrompt = (company, preferences) => {
     
     Format response exactly as:
     RATING: [A-D]
-    WHY: [Summarize your reasoning in 2–3 sharp, investor-minded sentences. Focus on what makes (or breaks) this deal: the scale of the opportunity, quality of execution risk, competitive dynamics, and strategic alignment with investor goals. Be specific and incisive—this is the investor’s bottom-line takeaway.]`;
+    WHY: [Summarize your reasoning in 2–3 sharp, investor-minded sentences. Focus on what makes (or breaks) this deal: the scale of the opportunity, quality of execution risk, competitive dynamics, and strategic alignment with investor goals. Be specific and incisive—this is the investor's bottom-line takeaway.]`;
 };
 
 /**
