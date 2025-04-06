@@ -117,6 +117,17 @@ const saveCompanies = () => {
 };
 
 /**
+ * Utility function to safely call gtag
+ * @param {string} eventName - Event name
+ * @param {Object} params - Event parameters
+ */
+const trackEvent = (eventName, params) => {
+    if (typeof gtag !== 'undefined') {
+        gtag('event', eventName, params);
+    }
+};
+
+/**
  * Core Initialization and Company Management
  */
 
@@ -135,13 +146,16 @@ const initializeOtani = () => {
     companiesList = JSON.parse(localStorage.getItem(CONFIG.STORAGE_KEYS.COMPANIES)) || [];
     
     // Initialize components
-    const tbody = document.getElementById('companiesTableBody');
-    if (!tbody) {
+    const tbody = document.querySelector(SELECTORS.table.body);
+    if (!tbody && window.location.pathname.includes('yourcompanies')) {
         console.error('Companies table body not found');
         return;
     }
     
-    loadCompanies();
+    if (tbody) {
+        loadCompanies();
+    }
+    
     initializeAddCompany();
     initializeEditCompany();
 };
@@ -201,7 +215,7 @@ const handleFormSubmit = async (event) => {
         };
 
         // Track company addition
-        gtag('event', 'add_company', {
+        trackEvent('add_company', {
             'company_name': newCompany.company_name,
             'industry': newCompany.industry,
             'stage': newCompany.stage
@@ -763,7 +777,7 @@ const closeDetailsModal = () => {
 const deleteCompany = () => {
     if (currentCompanyIndex >= 0 && confirm('Are you sure you want to delete this company?')) {
         // Track company deletion
-        gtag('event', 'delete_company', {
+        trackEvent('delete_company', {
             'company_name': companiesList[currentCompanyIndex].company_name
         });
         
@@ -814,7 +828,7 @@ window.openAddModal = openAddModal;
 // Add session tracking
 window.addEventListener('load', function() {
     // Track session start
-    gtag('event', 'session_start', {
+    trackEvent('session_start', {
         'page_title': document.title,
         'page_location': window.location.href
     });
@@ -824,7 +838,7 @@ window.addEventListener('load', function() {
 let startTime = Date.now();
 window.addEventListener('beforeunload', function() {
     const timeSpent = Math.round((Date.now() - startTime) / 1000);
-    gtag('event', 'session_duration', {
+    trackEvent('session_duration', {
         'duration_seconds': timeSpent
     });
 });
