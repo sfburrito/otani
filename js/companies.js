@@ -354,17 +354,17 @@ const fetchCompanyDetails = async (company) => {
                         role: "user",
                         content: `Analyze ${company.company_name} (${company.website}) using this exact format without markdown or special characters:
 
-DESCRIPTION: Write 2-3 clear sentences about what they do.
+DESCRIPTION: In 2–3 clear sentences, summarize what the company does. Focus on their core product or service, target customers, and any key technology or differentiation.
 
-BUSINESS: Write 1-2 simple sentences about their business model.
+BUSINESS: In 1–2 sentences, explain how the company makes money. Specify if it's B2B, B2C, SaaS, marketplace, etc., and describe the revenue model (e.g. subscription, transaction-based, licensing).
 
-FOUNDERS: Write 1-2 factual sentences about the founders.
+FOUNDERS: In 2–3 factual sentences, describe the background of the founding team. Include where they went to school and what they studied (especially if it’s relevant to the startup), any prior work experience in relevant industries, how many years of experience they have and in what roles, and whether they’ve built any prior startups, had exits, or achieved anything notable. Focus on founder-market fit and relevant credentials only.
 FOUNDERS_RATING: [A/B/C/D]
 
-MARKET: Write 1-2 direct sentences about market size.
+MARKET: In 2–3 clear sentences, estimate the total addressable market (TAM) using a bottom-up approach. Define the target customer and estimate their average annual spend on this type of solution. Multiply by the estimated number of potential customers to calculate the TAM, and clearly show the math. If exact numbers aren’t available, make reasonable assumptions and state them explicitly.
 MARKET_RATING: [A/B/C/D]
 
-COMPETITION: Write 1-2 clear sentences about competitors.
+COMPETITION: In 2–3 sentences, describe the competitive landscape. Identify the key competitors and note whether the market is fragmented or dominated by a few players. Discuss if there are network effects, switching costs, or other dynamics that make it a winner-take-all market, and briefly explain how this company differentiates itself from existing players.
 COMPETITION_RATING: [A/B/C/D]
 
 Rating criteria:
