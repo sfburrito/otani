@@ -1,0 +1,284 @@
+<!--
+    Component: Your Companies Section
+    Description: Table display of company portfolio and ratings
+    Styles: ../css/yourcompanies.css
+    
+    Structure:
+    - Table with columns:
+        - Company Name
+        - Website
+        - Status
+        - Industry
+        - Stage
+        - Location
+        - Your Rating
+        - Otani Rating
+        - Why
+-->
+
+<section class="companies-section">
+    <div class="companies-header">
+        <h2 class="page-title">Your Companies</h2>
+        <button class="add-company-button" onclick="openAddModal()">Add Company</button>
+    </div>    
+    
+    <!-- Companies table -->
+    <table class="companies-table">
+        <thead>
+            <tr>
+                <th>Company Name</th>
+                <th>Status</th>
+                <th>Your Rating</th>
+                <th>Otani Rating</th>
+                <th>Why</th>
+            </tr>
+        </thead>
+        <tbody id="companiesTableBody">
+            <!-- Companies will be inserted here -->
+        </tbody>
+    </table>
+
+    <!-- Add Company Selection Modal -->
+    <div id="addCompanySelectionModal" class="modal" hidden>
+        <div class="modal-content selection-modal">
+            <h3>Add Companies</h3>
+            <div class="add-options">
+                <div class="add-option" onclick="handleUploadPitchDeck()">
+                    <div class="option-icon">📄</div>
+                    <h4>Upload Pitch Deck</h4>
+                    <p>Upload a pitch deck to automatically extract company information</p>
+                    <span class="coming-soon">Coming Soon</span>
+                </div>
+                
+                <div class="add-option" onclick="handleBatchUpload()">
+                    <div class="option-icon">📁</div>
+                    <h4>Batch Upload</h4>
+                    <p>Upload multiple companies using a spreadsheet template</p>
+                    <span class="coming-soon">Coming Soon</span>
+                </div>
+                
+                <div class="add-option" onclick="openAddModal()">
+                    <div class="option-icon">➕</div>
+                    <h4>Add One Company</h4>
+                    <p>Manually add a single company to your portfolio</p>
+                </div>
+            </div>
+            <button class="modal-close" onclick="closeSelectionModal()">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Add Company Modal -->
+    <div id="addCompanyModal" class="modal" hidden>
+        <div class="modal-content">
+            <h3>Add New Company</h3>
+            <form id="addCompanyForm" action="javascript:void(0);">
+                <!-- Company Name -->
+                <div class="form-group">
+                    <label for="companyName">Company Name:</label>
+                    <input type="text" id="companyName" name="companyName" required>
+                </div>
+
+                <!-- Industry -->
+                <div class="form-group">
+                    <label for="industry">Industry:</label>
+                    <select id="industry" name="industry" required>
+                        <option value="">Select Industry</option>
+                        <option>AI/ML</option>
+                        <option>Climate Tech</option>
+                        <option>Enterprise SaaS</option>
+                        <option>Fintech</option>
+                        <option>Healthcare</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+
+                <!-- Stage -->
+                <div class="form-group">
+                    <label for="stage">Stage:</label>
+                    <select id="stage" name="stage" required>
+                        <option value="">Select Stage</option>
+                        <option>Seed</option>
+                        <option>Series A</option>
+                        <option>Series B</option>
+                        <option>Growth</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+
+                <!-- Location -->
+                <div class="form-group">
+                    <label for="location">Location:</label>
+                    <select id="location" name="location" required>
+                        <option value="">Select Location</option>
+                        <option>North America</option>
+                        <option>Europe</option>
+                        <option>Asia</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+
+                <!-- Your Rating -->
+                <div class="form-group">
+                    <label for="rating">Your Rating:</label>
+                    <select id="rating" name="rating" required>
+                        <option value="">Select Rating</option>
+                        <option>A</option>
+                        <option>B</option>
+                        <option>C</option>
+                        <option>D</option>
+                    </select>
+                </div>
+
+                <!-- Add this inside the form, after company name -->
+                <div class="form-group">
+                    <label for="website">Company Website:</label>
+                    <input type="url" id="website" name="website" placeholder="https://" required>
+                </div>
+
+                <!-- Additional Information -->
+                <div class="form-group">
+                    <label for="additionalInfo">Additional Information:</label>
+                    <textarea id="additionalInfo" name="additionalInfo" rows="3" placeholder="Optional: Add any additional context about the company"></textarea>
+                </div>
+
+                <!-- Add status field to the add company form -->
+                <div class="form-group">
+                    <label for="status">Status:</label>
+                    <select id="status" name="status" required>
+                        <option value="">Select Status</option>
+                        <option value="Active">Active</option>
+                        <option value="Pass">Pass</option>
+                        <option value="Invested">Invested</option>
+                    </select>
+                </div>
+
+                <!-- Form Buttons -->
+                <div class="form-buttons">
+                    <button type="submit">Submit</button>
+                    <button type="button" onclick="closeAddModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add this after your existing add company modal -->
+    <div id="companyDetailsModal" class="modal" hidden>
+        <div class="modal-content">
+            <h3>Company Details</h3>
+            <div class="modal-grid">
+                <!-- Left Column -->
+                <div class="modal-column">
+                    <form id="editCompanyForm">
+                        <div class="form-group">
+                            <label for="editCompanyName">Company Name:</label>
+                            <input type="text" id="editCompanyName" name="companyName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editWebsite">Website:</label>
+                            <input type="url" id="editWebsite" name="website" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editIndustry">Industry:</label>
+                            <select id="editIndustry" name="industry" required>
+                                <option value="">Select Industry</option>
+                                <option>AI/ML</option>
+                                <option>Climate Tech</option>
+                                <option>Enterprise SaaS</option>
+                                <option>Fintech</option>
+                                <option>Healthcare</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="editStage">Stage:</label>
+                            <select id="editStage" name="stage" required>
+                                <option value="">Select Stage</option>
+                                <option>Seed</option>
+                                <option>Series A</option>
+                                <option>Series B</option>
+                                <option>Growth</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="editLocation">Location:</label>
+                            <input type="text" id="editLocation" name="location" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editRating">Your Rating:</label>
+                            <select id="editRating" name="rating" required>
+                                <option value="">Select Rating</option>
+                                <option>A</option>
+                                <option>B</option>
+                                <option>C</option>
+                                <option>D</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="editAdditionalInfo">Additional Information:</label>
+                            <textarea id="editAdditionalInfo" name="additionalInfo" rows="3" placeholder="Optional: Add any additional context about the company"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="editStatus">Status:</label>
+                            <select id="editStatus" name="status" required>
+                                <option value="">Select Status</option>
+                                <option value="Active">Active</option>
+                                <option value="Pass">Pass</option>
+                                <option value="Invested">Invested</option>
+                            </select>
+                        </div>
+                        <div class="form-buttons">
+                            <button type="submit" class="submit-button">Save Changes</button>
+                            <button type="button" onclick="closeDetailsModal()">Cancel</button>
+                            <button type="button" class="delete-button" onclick="deleteCompany()">Delete</button>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- Divider -->
+                <div class="modal-divider"></div>
+                
+                <!-- Right Column -->
+                <div class="modal-column">
+                    <div class="detail-section" data-type="description">
+                        <h4 class="detail-header">Company Description</h4>
+                        <div class="detail-content">
+                            <p class="detail-placeholder">Loading...</p>
+                        </div>
+                    </div>
+
+                    <div class="detail-section" data-type="business">
+                        <h4 class="detail-header">Business Model</h4>
+                        <div class="detail-content">
+                            <p class="detail-placeholder">Loading...</p>
+                        </div>
+                    </div>
+
+                    <div class="detail-section" data-type="founders">
+                        <h4 class="detail-header">Founder Details <span class="section-rating" data-rating="founders">-</span></h4>
+                        <div class="detail-content">
+                            <p class="detail-placeholder">Loading...</p>
+                        </div>
+                    </div>
+
+                    <div class="detail-section" data-type="market">
+                        <h4 class="detail-header">Market Size <span class="section-rating" data-rating="market">-</span></h4>
+                        <div class="detail-content">
+                            <p class="detail-placeholder">Loading...</p>
+                        </div>
+                    </div>
+
+                    <div class="detail-section" data-type="competition">
+                        <h4 class="detail-header">Competition <span class="section-rating" data-rating="competition">-</span></h4>
+                        <div class="detail-content">
+                            <p class="detail-placeholder">Loading...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Load external JavaScript -->
+<script src="../js/companies.js"></script>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Otani</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+    
+    <!-- External CSS files -->
+    <link rel="stylesheet" href="./css/header.css">
+    <link rel="stylesheet" href="./css/investorpreferences.css">
+    <link rel="stylesheet" href="./css/yourcompanies.css">
+    <link rel="stylesheet" href="./css/footer.css">
+    
+    <!-- Global styles -->
+    <style>
+        /* Reset default browser styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        /* Base page styling */
+        body {
+            background-color: white;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            padding-top: 60px;  /* Space for fixed header */
+            display: flex;      /* Make body a flex container */
+            flex-direction: column; /* Stack children vertically */
+            box-sizing: border-box;
+        }
+
+        /* Container for limiting content width */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            flex: 1;          /* Make container take up all available space */
+            width: 100%;      /* Ensure full width */
+            display: flex;    /* Make it a flex container */
+            flex-direction: column; /* Stack children vertically */
+        }
+
+        #main-content,
+        #companies-section {
+            width: 100%;      /* Ensure sections take full width */
+        }
+    </style>
+</head>
+<body>
+    <!-- Header component container -->
+    <div id="header"></div>
+
+    <!-- Main content component container -->
+    <div class="container">
+        <div id="main-content"></div>
+        <div id="companies-section"></div>
+    </div>
+
+    <!-- Footer component container -->
+    <div id="footer"></div>
+
+    <!-- Global functions -->
+    <script>
+        // Logout function
+        function handleLogout() {
+            console.log('Logout function called');
+            // Clear user data from localStorage
+            localStorage.removeItem('user');
+            console.log('LocalStorage cleared');
+            // Redirect to login page in html folder
+            window.location.href = './html/login.html';
+            console.log('Redirecting to login page');
+        }
+
+        // Function to load HTML content
+        async function loadContent() {
+            try {
+                const header = await fetch('./html/header.html');
+                const main = await fetch('./html/investorpreferences.html');
+                const companies = await fetch('./html/yourcompanies.html');
+                const footer = await fetch('./html/footer.html');
+
+                document.getElementById('header').innerHTML = await header.text();
+                document.getElementById('main-content').innerHTML = await main.text();
+                document.getElementById('companies-section').innerHTML = await companies.text();
+                document.getElementById('footer').innerHTML = await footer.text();
+
+                // Initialize both Otani and preferences functionality after ALL content is loaded
+                console.log('All content loaded, initializing functionality');
+                if (typeof initializeOtani === 'function') {
+                    initializeOtani();
+                }
+                if (typeof initializePreferences === 'function') {
+                    initializePreferences();
+                }
+            } catch (error) {
+                console.error('Error loading content:', error);
+            }
+        }
+
+        // Initialize components when DOM is ready
+        document.addEventListener('DOMContentLoaded', loadContent);
+    </script>
+    
+    <!-- Load Otani JavaScript -->
+    <script src="./js/companies.js"></script>
+    <script src="./js/preferences.js"></script>
+</body>
+</html>

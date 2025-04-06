@@ -1,0 +1,501 @@
+/* Companies section */
+.companies-section {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.companies-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.page-title {
+    color: #00002b;
+    font-family: 'Inter', Arial, sans-serif;
+    font-size: 24px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.add-company-button {
+    padding: 10px 20px;
+    background-color: #00002b;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Inter', Arial, sans-serif;
+    font-size: 14px;
+}
+
+.add-company-button:hover {
+    background-color: #000045;
+}
+
+/* Table styles */
+.companies-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-top: 1rem;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    table-layout: fixed;
+}
+
+.companies-table th,
+.companies-table td {
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+    font-family: 'Inter', Arial, sans-serif;
+}
+
+.companies-table th {
+    background-color: #f8f9fa;
+    color: #00002b;
+    font-weight: 500;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.companies-table td {
+    font-size: 14px;
+    color: #2c3e50;
+}
+
+.companies-table tbody tr:hover {
+    background-color: rgba(0, 0, 43, 0.02);
+}
+
+/* Column widths for new structure */
+.companies-table th:nth-child(1),  /* Company Name */
+.companies-table td:nth-child(1) {
+    width: 13%;
+}
+
+.companies-table th:nth-child(2),  /* Status */
+.companies-table td:nth-child(2) {
+    width: 9%;
+}
+
+.companies-table th:nth-child(3),  /* Your Rating */
+.companies-table td:nth-child(3) {
+    width: 11%;
+}
+
+.companies-table th:nth-child(4),  /* Otani Rating */
+.companies-table td:nth-child(4) {
+    width: 11%;
+}
+
+.companies-table th:nth-child(5),  /* Why */
+.companies-table td:nth-child(5) {
+    width: 56%;
+    white-space: normal;
+}
+
+/* Ensure centering is maintained */
+.companies-table th:nth-child(2),  /* Status */
+.companies-table td:nth-child(2),
+.companies-table th:nth-child(3),  /* Your Rating */
+.companies-table td:nth-child(3),
+.companies-table th:nth-child(4),  /* Otani Rating */
+.companies-table td:nth-child(4) {
+    text-align: center;
+}
+
+/* Rating colors */
+.rating-a { color: #00002b; font-weight: 600; }
+.rating-b { color: #2c3e50; font-weight: 600; }
+.rating-c { color: #7f8c8d; font-weight: 600; }
+.rating-d { color: #95a5a6; font-weight: 600; }
+
+/* Status column and dropdown centering */
+.companies-table th:nth-child(2),  /* Status header */
+.companies-table td:nth-child(2) {
+    text-align: center;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+/* Status select styles */
+.status-select {
+    width: 80px;  /* Fixed width for consistency */
+    margin: 0 auto;
+    display: block;
+    padding: 4px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    font-size: 13px;
+}
+
+/* Website icon */
+.website-icon {
+    width: 16px;
+    height: 16px;
+    color: #6b7280;
+    opacity: 0.8;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.website-cell {
+    text-align: center;
+}
+
+.website-icon:hover {
+    opacity: 1;
+    color: #374151;
+}
+
+.website-icon svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* Why column text */
+.why-column {
+    white-space: normal;
+    line-height: 1.4;
+}
+
+/* Modal styles */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 43, 0.5);
+    z-index: 1000;
+}
+
+.modal[hidden] {
+    display: none;
+}
+
+.modal:not([hidden]) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 43, 0.1);
+    width: 95%;
+    max-width: 1200px;
+}
+
+/* Form styles */
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    color: #00002b;
+    font-family: 'Inter', Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    font-family: 'Inter', Arial, sans-serif;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #00002b;
+    box-shadow: 0 0 0 2px rgba(0, 0, 43, 0.1);
+}
+
+/* Button styles */
+.form-buttons {
+    margin-top: 1.5rem;
+    display: flex;
+    gap: 1rem;
+}
+
+.form-buttons button {
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-family: 'Inter', Arial, sans-serif;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.form-buttons button[type="submit"] {
+    background-color: #00002b;
+    color: white;
+    border: none;
+}
+
+.form-buttons button[type="button"] {
+    background-color: #f8f9fa;
+    color: #00002b;
+    border: 1px solid #e0e0e0;
+}
+
+.delete-button {
+    background-color: #dc3545 !important;
+    color: white !important;
+}
+
+/* Make table rows clickable */
+.companies-table tbody tr {
+    cursor: pointer;
+}
+
+/* Rating styles centering */
+.companies-table td:nth-child(3) span,
+.companies-table td:nth-child(3) .rating-a,
+.companies-table td:nth-child(3) .rating-b,
+.companies-table td:nth-child(3) .rating-c,
+.companies-table td:nth-child(3) .rating-d,
+.companies-table td:nth-child(4) span,
+.companies-table td:nth-child(4) .rating-a,
+.companies-table td:nth-child(4) .rating-b,
+.companies-table td:nth-child(4) .rating-c,
+.companies-table td:nth-child(4) .rating-d {
+    display: inline-block;
+    text-align: center;
+    min-width: 16px;
+}
+
+.modal-grid {
+    display: grid;
+    grid-template-columns: 400px 1px 1fr;
+    gap: 2rem;
+}
+
+.modal-column {
+    padding: 1rem;
+}
+
+/* Add divider styles */
+.modal-divider {
+    background-color: #e5e7eb;
+    height: 100%;
+    width: 1px;
+}
+
+/* Add these new styles */
+.detail-section {
+    margin-bottom: 2rem;
+}
+
+.detail-header {
+    color: #00002b;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #f3f4f6;
+}
+
+.detail-content {
+    color: #4b5563;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.detail-placeholder {
+    color: #9ca3af;
+    font-style: italic;
+}
+
+.section-rating {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    font-weight: bold;
+}
+
+.section-rating[data-grade="A"] { background-color: #dcfce7; color: #166534; }
+.section-rating[data-grade="B"] { background-color: #e0f2fe; color: #075985; }
+.section-rating[data-grade="C"] { background-color: #fef9c3; color: #854d0e; }
+.section-rating[data-grade="D"] { background-color: #fee2e2; color: #991b1b; }
+
+/* Rating cell styling */
+.rating-cell {
+    text-align: center;
+    position: relative;  /* Add position relative for absolute positioning of overlay */
+}
+
+.rating-badge {
+    display: inline-block;
+    width: 28px;
+    height: 28px;
+    line-height: 28px;
+    text-align: center;
+    border-radius: 50%;
+    font-weight: 500;
+    font-size: 14px;
+    color: white;
+}
+
+/* Rating colors */
+.rating-a .rating-badge {
+    background-color: #34A853;
+}
+
+.rating-b .rating-badge {
+    background-color: #4285F4;
+}
+
+.rating-c .rating-badge {
+    background-color: #FBBC05;
+}
+
+.rating-d .rating-badge {
+    background-color: #EA4335;
+}
+
+/* Hover effect */
+.rating-badge {
+    transition: transform 0.2s ease;
+}
+
+tr:hover .rating-badge {
+    transform: scale(1.1);
+}
+
+/* Selection Modal Styles */
+.selection-modal {
+    max-width: 800px !important;
+}
+
+.add-options {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin: 30px 0;
+}
+
+.add-option {
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.add-option:hover {
+    border-color: #00002b;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 43, 0.1);
+}
+
+.option-icon {
+    font-size: 32px;
+    margin-bottom: 15px;
+}
+
+.add-option h4 {
+    color: #00002b;
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+.add-option p {
+    color: #666;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.coming-soon {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #00002b;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.modal-close {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    background: none;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.modal-close:hover {
+    background: #f5f5f5;
+    border-color: #00002b;
+    color: #00002b;
+}
+
+/* Add blur overlay styles */
+.blur-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(128, 128, 128, 0.7);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 1;
+}
+
+.blur-overlay:hover {
+    background-color: rgba(128, 128, 128, 0.8);
+}
+
+.blur-overlay.removed {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Ensure rating badge stays above blur when revealed */
+.rating-badge {
+    position: relative;
+    z-index: 0;
+}

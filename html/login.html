@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login - Otani</title>
+    <script>
+        // Dynamically set the CSS path based on environment
+        const isGitHubPages = window.location.hostname.includes('github.io');
+        const cssLink = document.createElement('link');
+        cssLink.rel = 'stylesheet';
+        cssLink.href = isGitHubPages ? '/otani/css/login.css' : '../css/login.css';
+        document.head.appendChild(cssLink);
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .logo a {
+            text-decoration: none;
+            color: inherit;
+            cursor: pointer;
+            display: inline-block;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <a href="https://otani.ai" style="text-decoration: none; color: inherit;">
+            <h1 class="logo">Otani</h1>
+        </a>
+        <p class="welcome">Welcome to Otani</p>
+        <p class="subtitle">Investment Portfolio Management</p>
+        
+        <form class="login-form" id="loginForm">
+            <div class="input-group">
+                <i class="fas fa-envelope"></i>
+                <input type="email" id="email" placeholder="Email" class="login-input" required>
+            </div>
+            <div class="input-group">
+                <i class="fas fa-lock"></i>
+                <input type="password" id="password" placeholder="Password" class="login-input" required>
+            </div>
+            <div id="error-message" class="error-message"></div>
+            <div class="button-group">
+                <button type="submit" class="login-button">Log In</button>
+                <button type="button" class="create-account-button" onclick="window.location.href='createaccount.html'">Create Account</button>
+            </div>
+        </form>
+
+        <div class="footer-text">
+            <p class="powered-by">Powered by Otani</p>
+            <p class="version">v1.0</p>
+        </div>
+    </div>
+    <script>
+        function handleLogin(event) {
+            event.preventDefault();
+            // Store dummy user info
+            localStorage.setItem('user', JSON.stringify({ email: 'user@example.com' }));
+            
+            // Check if we're on GitHub Pages or local
+            const isGitHubPages = window.location.hostname.includes('github.io');
+            
+            // Redirect to appropriate main page
+            if (isGitHubPages) {
+                window.location.href = '/otani/';
+            } else {
+                window.location.href = '/';
+            }
+        }
+        
+        document.getElementById('loginForm').addEventListener('submit', handleLogin);
+    </script>
+</body>
+</html>

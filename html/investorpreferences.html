@@ -1,0 +1,116 @@
+<!--
+    Component: Main Content
+    Description: Primary content area for investor preferences page
+    Styles: ../css/investorpreferences.css
+    
+    Structure:
+    - Four category sections in grid layout
+    - Additional preferences section with textarea
+    
+    Categories:
+    1. Industry - Tech and innovation sectors
+    2. Stage - Investment stages from Seed to Growth
+    3. Location - Geographic investment regions
+    4. Investment Amount - Investment size ranges
+-->
+
+<!-- Main content section - Primary container -->
+<main class="main-content">
+    <div class="title-row">
+        <h2 class="page-title">Investor Preferences</h2>
+        <button class="save-button">Save Preferences</button>
+    </div>
+    
+    <!-- Category grid container -->
+    <div class="categories">
+        <!-- Industry category -->
+        <div class="category">
+            <h3 class="category-header">Industry</h3>
+            <div class="custom-select" data-name="industry">
+                <div class="select-header">
+                    <span class="placeholder">Select industries</span>
+                    <div class="selected-options"></div>
+                    <span class="arrow">▼</span>
+                </div>
+                <div class="options-container">
+                    <div class="option" data-value="AI/ML">AI/ML</div>
+                    <div class="option" data-value="Climate Tech">Climate Tech</div>
+                    <div class="option" data-value="Healthcare/Biotech">Healthcare/Biotech</div>
+                    <div class="option" data-value="Enterprise SaaS">Enterprise SaaS</div>
+                    <div class="option" data-value="Fintech">Fintech</div>
+                    <div class="option" data-value="Healthcare">Healthcare</div>
+                    <div class="option" data-value="Other">Other</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Investment stage category -->
+        <div class="category">
+            <h3 class="category-header">Stage</h3>
+            <div class="custom-select" data-name="stage">
+                <div class="select-header">
+                    <span class="placeholder">Select stages</span>
+                    <div class="selected-options"></div>
+                    <span class="arrow">▼</span>
+                </div>
+                <div class="options-container">
+                    <div class="option" data-value="Seed">Seed</div>
+                    <div class="option" data-value="Series A">Series A</div>
+                    <div class="option" data-value="Series B">Series B</div>
+                    <div class="option" data-value="Growth">Growth</div>
+                    <div class="option" data-value="Other">Other</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Geographic location category -->
+        <div class="category">
+            <h3 class="category-header">Location</h3>
+            <div class="custom-select" data-name="location">
+                <div class="select-header">
+                    <span class="placeholder">Select locations</span>
+                    <div class="selected-options"></div>
+                    <span class="arrow">▼</span>
+                </div>
+                <div class="options-container">
+                    <div class="option" data-value="North America">North America</div>
+                    <div class="option" data-value="Europe">Europe</div>
+                    <div class="option" data-value="Asia">Asia</div>
+                    <div class="option" data-value="Other">Other</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Investment amount category -->
+        <div class="category">
+            <h3 class="category-header">Investment Amount</h3>
+            <div class="custom-select" data-name="investment_amount">
+                <div class="select-header">
+                    <span class="placeholder">Select amounts</span>
+                    <div class="selected-options"></div>
+                    <span class="arrow">▼</span>
+                </div>
+                <div class="options-container">
+                    <div class="option" data-value="$0-1M">$0-1M</div>
+                    <div class="option" data-value="$1-5M">$1-5M</div>
+                    <div class="option" data-value="$5-10M">$5-10M</div>
+                    <div class="option" data-value="$10M+">$10M+</div>
+                    <div class="option" data-value="Other">Other</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Additional preferences section -->
+    <div class="additional-section">
+        <h3 class="category-header">Additional Preferences</h3>
+        <textarea class="preferences-input" 
+                  placeholder="Enter any additional investment preferences..."></textarea>
+    </div>
+</main>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        initializePreferences();
+    });
+</script>
