@@ -403,21 +403,40 @@ const validateAndFormatResponse = (content) => {
         'COMPETITION_RATING'
     ];
 
-    const sections = content.split('\n').filter(line => line.trim());
+    // Clean up markdown formatting and split into sections
+    const cleanContent = content.replace(/\*\*/g, '').trim();
+    const sections = cleanContent.split('\n').filter(line => line.trim());
     console.log('📋 Parsed sections:', sections);
 
     const formattedSections = {};
+    let currentSection = null;
+    let currentContent = [];
 
-    // Extract existing sections
-    sections.forEach(section => {
-        const [type, ...contentParts] = section.split(':');
-        const trimmedType = type.trim();
-        const content = contentParts.join(':').trim();
-        formattedSections[trimmedType] = content;
-        console.log(`📌 Found section ${trimmedType}:`, content);
+    // Process sections and their content
+    sections.forEach(line => {
+        const sectionMatch = line.match(/^([A-Z_]+):\s*(.*)$/);
+        if (sectionMatch) {
+            // If we have a previous section, save it
+            if (currentSection) {
+                formattedSections[currentSection] = currentContent.join(' ').trim();
+                currentContent = [];
+            }
+            currentSection = sectionMatch[1].trim();
+            const content = sectionMatch[2].trim();
+            if (content) {
+                currentContent.push(content);
+            }
+        } else if (currentSection && line.trim()) {
+            currentContent.push(line.trim());
+        }
     });
 
-    // Check for missing sections
+    // Save the last section
+    if (currentSection && currentContent.length > 0) {
+        formattedSections[currentSection] = currentContent.join(' ').trim();
+    }
+
+    // Check for missing sections and add defaults
     requiredSections.forEach(section => {
         if (!formattedSections[section]) {
             console.log(`⚠️ Missing section ${section}, adding default`);
@@ -431,6 +450,7 @@ const validateAndFormatResponse = (content) => {
 
     console.log('🏁 Final formatted sections:', formattedSections);
 
+    // Return formatted content
     return requiredSections
         .map(key => `${key}: ${formattedSections[key]}`)
         .join('\n\n');
