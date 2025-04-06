@@ -696,9 +696,11 @@ const createStatusSelect = (currentStatus, companyIndex) => {
         company.status = e.target.value;
         company.updated_at = new Date().toISOString();
         
-        const otaniResponse = await getOtaniRating(company, getPreferences());
-        company.otani_rating = otaniResponse.rating;
-        company.why = otaniResponse.explanation;
+        // Move company to the end if status is "Pass"
+        if (e.target.value === 'Pass') {
+            companiesList.splice(companyIndex, 1);
+            companiesList.push(company);
+        }
         
         saveCompanies();
         loadCompanies();
