@@ -200,6 +200,22 @@ const initializeEditCompany = () => {
 };
 
 /**
+ * Formats a website URL to ensure it has the proper protocol
+ * @param {string} url - The input URL
+ * @returns {string} - The formatted URL
+ */
+const formatWebsiteUrl = (url) => {
+    // Remove any leading/trailing whitespace
+    let formattedUrl = url.trim();
+    
+    // Remove any existing protocol
+    formattedUrl = formattedUrl.replace(/^(https?:\/\/)?(www\.)?/, '');
+    
+    // Add https:// protocol if not present
+    return `https://${formattedUrl}`;
+};
+
+/**
  * Handles form submission
  * @param {Event} event - Form submission event
  */
@@ -214,13 +230,13 @@ const handleFormSubmit = async (event) => {
 
         const newCompany = {
             company_name: form.companyName.value,
-            website: form.website.value,
-            industry: form.industry.value,
-            stage: form.stage.value,
-            location: form.location.value,
-            your_rating: form.rating.value,
+            website: formatWebsiteUrl(form.website.value),
+            industry: form.industry.value || 'Other',
+            stage: form.stage.value || 'Other',
+            location: form.location.value || 'Other',
+            your_rating: form.rating.value || 'C',
             additional_info: form.additionalInfo.value,
-            status: form.status.value,
+            status: form.status.value || 'Active',
             created_at: new Date().toISOString()
         };
 
@@ -358,10 +374,10 @@ DESCRIPTION: In 2–3 clear sentences, summarize what the company does. Focus on
 
 BUSINESS: In 1–2 sentences, explain how the company makes money. Specify if it's B2B, B2C, SaaS, marketplace, etc., and describe the revenue model (e.g. subscription, transaction-based, licensing).
 
-FOUNDERS: In 2–3 factual sentences, describe the background of the founding team. Include where they went to school and what they studied (especially if it’s relevant to the startup), any prior work experience in relevant industries, how many years of experience they have and in what roles, and whether they’ve built any prior startups, had exits, or achieved anything notable. Focus on founder-market fit and relevant credentials only.
+FOUNDERS: In 2–3 factual sentences, describe the background of the founding team. Include where they went to school and what they studied (especially if it's relevant to the startup), any prior work experience in relevant industries, how many years of experience they have and in what roles, and whether they've built any prior startups, had exits, or achieved anything notable. Focus on founder-market fit and relevant credentials only.
 FOUNDERS_RATING: [A/B/C/D]
 
-MARKET: In 2–3 clear sentences, estimate the total addressable market (TAM) using a bottom-up approach. Define the target customer and estimate their average annual spend on this type of solution. Multiply by the estimated number of potential customers to calculate the TAM, and clearly show the math. If exact numbers aren’t available, make reasonable assumptions and state them explicitly.
+MARKET: In 2–3 clear sentences, estimate the total addressable market (TAM) using a bottom-up approach. Define the target customer and estimate their average annual spend on this type of solution. Multiply by the estimated number of potential customers to calculate the TAM, and clearly show the math. If exact numbers aren't available, make reasonable assumptions and state them explicitly.
 MARKET_RATING: [A/B/C/D]
 
 COMPETITION: In 2–3 sentences, describe the competitive landscape. Identify the key competitors and note whether the market is fragmented or dominated by a few players. Discuss if there are network effects, switching costs, or other dynamics that make it a winner-take-all market, and briefly explain how this company differentiates itself from existing players.
