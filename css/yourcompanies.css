@@ -13,7 +13,7 @@
 }
 
 .page-title {
-    color: #00002b;
+    color: #003870;
     font-family: 'Inter', Arial, sans-serif;
     font-size: 24px;
     font-weight: 600;
@@ -22,7 +22,7 @@
 
 .add-company-button {
     padding: 10px 20px;
-    background-color: #00002b;
+    background-color: #003870;
     color: white;
     border: none;
     border-radius: 6px;
@@ -59,7 +59,7 @@
 
 .companies-table th {
     background-color: #f8f9fa;
-    color: #00002b;
+    color: #003870;
     font-weight: 500;
     font-size: 13px;
     text-transform: uppercase;
