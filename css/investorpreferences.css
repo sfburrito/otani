@@ -19,7 +19,7 @@
 }
 
 .page-title {
-    color: #00002b;
+    color: #003870;
     font-family: 'Inter', Arial, sans-serif;
     font-size: 24px;
     font-weight: 600;
@@ -30,7 +30,7 @@
 .save-button {
     padding: 10px 20px;
     font-size: 14px;
-    background-color: #00002b;
+    background-color: #003870;
     color: white;
     border: none;
     border-radius: 6px;
@@ -54,7 +54,7 @@
 }
 
 .category-header {
-    color: #00002b;
+    color: #003870;
     font-family: 'Inter', Arial, sans-serif;
     font-size: 16px;
     font-weight: 500;
@@ -102,11 +102,11 @@
 }
 
 .select-header:hover {
-    border-color: #00002b;
+    border-color: #003870;
 }
 
 .select-header.active {
-    border-color: #00002b;
+    border-color: #003870;
     box-shadow: 0 0 0 2px rgba(0, 0, 43, 0.1);
 }
 
@@ -155,7 +155,7 @@
 }
 
 .options-container.active {
-    border: 1px solid #00002b;
+    border: 1px solid #003870;
     max-height: 200px;
     overflow-y: auto;
 }
@@ -173,7 +173,7 @@
 
 .option.selected {
     background-color: #e6f3f3;
-    color: #00002b;
+    color: #003870;
 }
 
 /* Hide placeholder when options are selected */
@@ -191,7 +191,7 @@
 }
 
 .options-container::-webkit-scrollbar-thumb {
-    background: #00002b;
+    background: #003870;
     border-radius: 3px;
 }
 
@@ -210,14 +210,14 @@
 
 .preferences-input:focus {
     outline: none;
-    border-color: #00002b;
+    border-color: #003870;
     box-shadow: 0 0 0 2px rgba(0, 0, 43, 0.1);
 }
 
 /* Update selected tags styling */
 .selected-tag {
     background-color: #e6f3f3;  /* Light blue background */
-    color: #00002b;
+    color: #003870;
     padding: 4px 12px;
     border-radius: 16px;
     font-size: 12px;     /* Smaller font size */
@@ -235,7 +235,7 @@
 
 .selected-tag .remove {
     cursor: pointer;
-    color: #00002b;
+    color: #003870;
     opacity: 0.6;
     font-size: 10px;    /* Smaller X icon */
     margin-left: 2px;
