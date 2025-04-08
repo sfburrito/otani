@@ -15,7 +15,7 @@
 
 /* Header container - fixed at top */
 .header {
-    background-color: #00002b;
+    background-color: #ffffff;
     padding: 1rem 2rem;
     position: fixed;
     top: 0;
@@ -41,7 +41,7 @@
 
 /* Logo styling */
 .logo {
-    color: white;
+    color: #003870;
     font-size: 24px;
     font-weight: 600;
     font-family: 'Inter', Arial, sans-serif;
