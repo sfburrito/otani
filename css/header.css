@@ -3,9 +3,9 @@
     Description: Styles for the main navigation header
     
     Color Scheme:
-    - Background: #ffffff (White)
-    - Text: #2c3e50 (Dark Blue)
-    - Button Hover: #f8f9fa (Light Gray)
+    - Background: #00002b (Navy)
+    - Text: #ffffff (White)
+    - Button Hover: #f0f0f0 (Light Gray)
     
     Layout:
     - Fixed at top of viewport
@@ -15,14 +15,14 @@
 
 /* Header container - fixed at top */
 .header {
-    background-color: #ffffff;
+    background-color: #00002b;
     padding: 1rem 2rem;
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     z-index: 1000;  /* Ensure header stays above other content */
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 /* Inner container - controls maximum width and centers content */
@@ -41,7 +41,7 @@
 
 /* Logo styling */
 .logo {
-    color: #2c3e50;
+    color: white;
     font-size: 24px;
     font-weight: 600;
     font-family: 'Inter', Arial, sans-serif;
@@ -52,9 +52,9 @@
 .logout-button {
     padding: 10px 20px;
     font-size: 14px;
-    background-color: #f8f9fa;
-    color: #2c3e50;
-    border: 1px solid #e5e7eb;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 6px;
     cursor: pointer;
     transition: all 0.2s;
@@ -63,6 +63,5 @@
 
 /* Button hover effect */
 .logout-button:hover {
-    background-color: #f3f4f6;
-    border-color: #d1d5db;
+    background-color: rgba(255, 255, 255, 0.2);
 }
