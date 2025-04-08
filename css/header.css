@@ -3,9 +3,9 @@
     Description: Styles for the main navigation header
     
     Color Scheme:
-    - Background: #00002b (Navy)
-    - Text: #ffffff (White)
-    - Button Hover: #f0f0f0 (Light Gray)
+    - Background: #ffffff (White)
+    - Text: #2c3e50 (Dark Blue)
+    - Button Hover: #f8f9fa (Light Gray)
     
     Layout:
     - Fixed at top of viewport
@@ -15,14 +15,14 @@
 
 /* Header container - fixed at top */
 .header {
-    background-color: white;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    background-color: #ffffff;
+    padding: 1rem 2rem;
     position: fixed;
     top: 0;
     left: 0;
-    right: 0;
-    z-index: 1000;
+    width: 100%;
+    z-index: 1000;  /* Ensure header stays above other content */
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 /* Inner container - controls maximum width and centers content */
@@ -35,35 +35,34 @@
 /* Flex container for logo and logout button */
 .header-content {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 2rem;
-    max-width: 1400px;
-    margin: 0 auto;
+    justify-content: space-between;  /* Pushes logo left, button right */
+    align-items: center;             /* Vertically centers items */
 }
 
 /* Logo styling */
 .logo {
+    color: #2c3e50;
     font-size: 24px;
     font-weight: 600;
-    color: #0A2540;
+    font-family: 'Inter', Arial, sans-serif;
+    margin: 0;
 }
 
 /* Logout button styles */
 .logout-button {
-    padding: 8px 16px;
-    background-color: transparent;
-    color: #64748B;
-    border: 1px solid #E2E8F0;
+    padding: 10px 20px;
+    font-size: 14px;
+    background-color: #f8f9fa;
+    color: #2c3e50;
+    border: 1px solid #e5e7eb;
     border-radius: 6px;
     cursor: pointer;
-    font-family: 'Inter', Arial, sans-serif;
-    font-size: 14px;
     transition: all 0.2s;
+    font-family: 'Inter', Arial, sans-serif;
 }
 
 /* Button hover effect */
 .logout-button:hover {
-    background-color: #F8FAFC;
-    border-color: #CBD5E1;
+    background-color: #f3f4f6;
+    border-color: #d1d5db;
 }
