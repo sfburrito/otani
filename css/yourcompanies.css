@@ -13,16 +13,22 @@
 }
 
 .page-title {
-    color: #00002b;
+    color: #0A2540;
     font-family: 'Inter', Arial, sans-serif;
     font-size: 24px;
     font-weight: 600;
     margin: 0;
 }
 
+.page-subtitle {
+    color: #64748B;
+    font-size: 14px;
+    margin-top: 0.5rem;
+}
+
 .add-company-button {
     padding: 10px 20px;
-    background-color: #00002b;
+    background-color: #0A2540;
     color: white;
     border: none;
     border-radius: 6px;
@@ -30,10 +36,13 @@
     transition: all 0.2s;
     font-family: 'Inter', Arial, sans-serif;
     font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .add-company-button:hover {
-    background-color: #000045;
+    background-color: #1E3A8A;
 }
 
 /* Table styles */
@@ -53,13 +62,13 @@
 .companies-table td {
     padding: 12px 16px;
     text-align: left;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid #E2E8F0;
     font-family: 'Inter', Arial, sans-serif;
 }
 
 .companies-table th {
-    background-color: #f8f9fa;
-    color: #00002b;
+    background-color: #F8FAFC;
+    color: #64748B;
     font-weight: 500;
     font-size: 13px;
     text-transform: uppercase;
@@ -68,11 +77,11 @@
 
 .companies-table td {
     font-size: 14px;
-    color: #2c3e50;
+    color: #334155;
 }
 
 .companies-table tbody tr:hover {
-    background-color: rgba(0, 0, 43, 0.02);
+    background-color: #F8FAFC;
 }
 
 /* Column widths for new structure */

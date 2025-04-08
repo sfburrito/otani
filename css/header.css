@@ -15,14 +15,14 @@
 
 /* Header container - fixed at top */
 .header {
-    background-color: #00002b;
-    padding: 1rem 2rem;
+    background-color: white;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    z-index: 1000;  /* Ensure header stays above other content */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    right: 0;
+    z-index: 1000;
 }
 
 /* Inner container - controls maximum width and centers content */
@@ -35,33 +35,35 @@
 /* Flex container for logo and logout button */
 .header-content {
     display: flex;
-    justify-content: space-between;  /* Pushes logo left, button right */
-    align-items: center;             /* Vertically centers items */
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
 }
 
 /* Logo styling */
 .logo {
-    color: white;
     font-size: 24px;
     font-weight: 600;
-    font-family: 'Inter', Arial, sans-serif;
-    margin: 0;
+    color: #0A2540;
 }
 
 /* Logout button styles */
 .logout-button {
-    padding: 10px 20px;
-    font-size: 14px;
-    background-color: rgba(255, 255, 255, 0.1);
-    color: white;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 8px 16px;
+    background-color: transparent;
+    color: #64748B;
+    border: 1px solid #E2E8F0;
     border-radius: 6px;
     cursor: pointer;
-    transition: all 0.2s;
     font-family: 'Inter', Arial, sans-serif;
+    font-size: 14px;
+    transition: all 0.2s;
 }
 
 /* Button hover effect */
 .logout-button:hover {
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: #F8FAFC;
+    border-color: #CBD5E1;
 }
